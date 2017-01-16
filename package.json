@@ -1,0 +1,29 @@
+{
+  "name": "cp3-document-management-system",
+  "version": "1.0.0",
+  "description": "A simple document management system api, with a web app which consumes the api",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andela-aolaniran/cp3-document-management-system.git"
+  },
+  "keywords": [
+    "document",
+    "management",
+    "system",
+    "api"
+  ],
+  "author": "Azeez Olaniran",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/andela-aolaniran/cp3-document-management-system/issues"
+  },
+  "homepage": "https://github.com/andela-aolaniran/cp3-document-management-system#readme",
+  "devDependencies": {
+    "eslint": "^3.13.1",
+    "eslint-plugin-react": "^6.9.0"
+  }
+}
