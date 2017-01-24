@@ -1,14 +1,17 @@
 {
   "root": true,
   "extends": "eslint:recommended",
+  "parser": "babel-eslint",
   "env": {
     "browser": true,
     "commonjs": true,
     "es6": true,
-    "node": true
+    "node": true,
+    "mocha": true
   },
   "parserOptions": {
     "ecmaFeatures": {
+      "modules": true,
       "experimentalObjectRestSpread": true,
       "jsx": true
     },
