@@ -4,6 +4,7 @@
   "description": "A simple document management system api, with a web app which consumes the api",
   "main": "index.js",
   "scripts": {
+    "lint": "./node_modules/eslint/bin/eslint.js --config .eslintrc.json ./server/**/*.js && ./node_modules/eslint/bin/eslint.js --config .eslintrc.json ./server/**/*.js",
     "mocha": "mocha --compilers js:babel-core/register",
     "test": "NODE_ENV=test npm run mocha server/test",
     "cover": "rm -rf coverage/ && NODE_ENV=test babel-node ./node_modules/babel-istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- -R spec server/test",
