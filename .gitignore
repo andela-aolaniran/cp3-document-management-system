@@ -38,3 +38,6 @@ jspm_packages
 
 # Ignore coveralls repo token
 .coveralls.yml
+
+# Ignore npm debug log
+npm-debug.log

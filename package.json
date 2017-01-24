@@ -4,7 +4,10 @@
   "description": "A simple document management system api, with a web app which consumes the api",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "mocha": "mocha --compilers js:babel-core/register",
+    "test": "NODE_ENV=test npm run mocha server/test",
+    "cover": "rm -rf coverage/ && NODE_ENV=test babel-node ./node_modules/babel-istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- -R spec server/test",
+    "coveralls": "npm run cover && cat ./coverage/lcov.info | coveralls"
   },
   "repository": {
     "type": "git",
@@ -23,7 +26,20 @@
   },
   "homepage": "https://github.com/andela-aolaniran/cp3-document-management-system#readme",
   "devDependencies": {
+    "babel": "^6.5.2",
+    "babel-cli": "^6.18.0",
+    "babel-core": "^6.18.2",
+    "babel-istanbul": "^0.11.0",
+    "babel-preset-es2015": "^6.18.0",
+    "babel-preset-react": "^6.22.0",
+    "babel-preset-stage-2": "^6.18.0",
+    "chai": "^3.5.0",
+    "coveralls": "^2.11.15",
     "eslint": "^3.13.1",
-    "eslint-plugin-react": "^6.9.0"
-  }
+    "eslint-plugin-react": "^6.9.0",
+    "istanbul": "^0.4.5",
+    "mocha": "^3.2.0",
+    "mocha-lcov-reporter": "^1.2.0"
+  },
+  "dependencies": {}
 }
