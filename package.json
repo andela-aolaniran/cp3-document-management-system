@@ -7,6 +7,7 @@
     "lint": "./node_modules/eslint/bin/eslint.js --config .eslintrc.json ./server/**/*.js && ./node_modules/eslint/bin/eslint.js --config .eslintrc.json ./server/**/*.js",
     "mocha": "mocha --compilers js:babel-core/register",
     "test": "NODE_ENV=test npm run mocha server/test",
+    "develop_server": "./node_modules/gulp/bin/gulp.js develop_server",
     "cover": "rm -rf coverage/ && NODE_ENV=test babel-node ./node_modules/babel-istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- -R spec server/test",
     "coveralls": "npm run cover && cat ./coverage/lcov.info | coveralls"
   },
@@ -39,6 +40,11 @@
     "coveralls": "^2.11.15",
     "eslint": "^3.14.0",
     "eslint-plugin-react": "^6.9.0",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2",
+    "gulp-concat": "^2.6.1",
+    "gulp-mocha": "^3.0.1",
+    "gulp-nodemon": "^2.2.1",
     "istanbul": "^0.4.5",
     "mocha": "^3.2.0",
     "mocha-lcov-reporter": "^1.2.0"
