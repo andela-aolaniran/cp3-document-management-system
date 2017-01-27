@@ -2,11 +2,11 @@
 import fs from 'fs';
 import  path from 'path';
 import Sequelize from 'sequelize';
-import configFile from '../config/config';
+import configurations from '../config/config';
 
 const basename = path.basename(module.filename);
 const env = process.env.NODE_ENV || 'development';
-const config = configFile[env];
+const config = configurations[env];
 const db  = {};
 let sequelize;
 
