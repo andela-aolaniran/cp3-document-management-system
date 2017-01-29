@@ -21,23 +21,32 @@
       "react"
   ],
   "rules": {
+    "semi": 1,
+    "no-var":1,
+    "prefer-const": 1,
+    "no-const-assign": 1,
+    "spaced-comment": 1,
+    "prefer-arrow-callback": 1,
+    "space-infix-ops": 1,
+    "space-in-parens": 1,
+    "max-len":[1, 80, 1],
     "one-var": 0,
-    "quotes": ["error", "single", "avoid-escape"],
+    "quotes": ["warn", "single", "avoid-escape"],
     "one-var-declaration-per-line": 0,
     "new-cap": 0,
     "consistent-return": 0,
     "no-param-reassign": 0,
     "comma-dangle": 0,
-    "indent":["error", 2],
-    "curly": ["error", "multi-line"],
-    "no-shadow": ["error", { "allow": ["req", "res", "err"] }],
-    "valid-jsdoc": ["error", {
+    "indent":["warn", 2],
+    "curly": ["warn", "multi-line"],
+    "no-shadow": ["warn", { "allow": ["req", "res", "err"] }],
+    "valid-jsdoc": ["warn", {
       "requireReturn": true,
       "requireReturnType": true,
       "requireParamDescription": false,
       "requireReturnDescription": true
     }],
-    "require-jsdoc": ["error", {
+    "require-jsdoc": ["warn", {
       "require": {
         "FunctionDeclaration": true,
         "MethodDefinition": true,
