@@ -7,6 +7,10 @@ Object.defineProperty(exports, "__esModule", {
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); // import dependencies
 
 
+var _jsonwebtoken = require('jsonwebtoken');
+
+var _jsonwebtoken2 = _interopRequireDefault(_jsonwebtoken);
+
 var _models = require('../models');
 
 var _models2 = _interopRequireDefault(_models);
@@ -14,6 +18,8 @@ var _models2 = _interopRequireDefault(_models);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var SECRET_KEY = 'jwt_cp2_dms';
 
 // declare the usersDB
 var usersDB = _models2.default.Users;
@@ -39,7 +45,7 @@ var UsersController = function () {
      * otherwise false
      */
     value: function checkPostRequest(request) {
-      return request.body && request.body.email && request.body.firstName && request.body.password && request.body.lastName;
+      return request.body && request.body.email && request.body.firstName && request.body.password && request.body.lastName && request.body.roleId;
     }
 
     /**
@@ -208,9 +214,15 @@ var UsersController = function () {
         }).then(function (user) {
           if (user) {
             if (user.verifyPassword(request.body.password)) {
+              // send the token here
+              var token = _jsonwebtoken2.default.sign({
+                UserId: user.id,
+                RoleId: user.RoleId
+              }, SECRET_KEY, { expiresIn: '2 days' });
               response.status(200).json({
                 status: 'Success',
-                message: 'Login Successful'
+                message: 'Login Successful',
+                token: token
               });
             } else {
               response.status(401).json({

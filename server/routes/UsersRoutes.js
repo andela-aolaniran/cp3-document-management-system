@@ -1,5 +1,6 @@
 // fetch our dependencies
 import UsersController from '../controllers/UsersController';
+import Authenticator from '../middlewares/Authenticator';
 
 /**
  * Class to create an instance of a UserRoutes Object
@@ -14,8 +15,11 @@ class UsersRoutes {
    */
   static setUserRoutes(app){
     UsersRoutes.createUser(app);
-    // Todo, these routes should require authentication
     UsersRoutes.loginUser(app);
+
+    // setup authentication before protected routes
+    app.use(Authenticator.authenticateUser);
+
     UsersRoutes.logoutUser(app);
     UsersRoutes.fetchUser(app);
     UsersRoutes.fetchUsers(app);

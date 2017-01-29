@@ -11,6 +11,10 @@ var _UsersController = require('../controllers/UsersController');
 
 var _UsersController2 = _interopRequireDefault(_UsersController);
 
+var _Authenticator = require('../middlewares/Authenticator');
+
+var _Authenticator2 = _interopRequireDefault(_Authenticator);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -35,8 +39,11 @@ var UsersRoutes = function () {
      */
     value: function setUserRoutes(app) {
       UsersRoutes.createUser(app);
-      // Todo, these routes should require authentication
       UsersRoutes.loginUser(app);
+
+      // setup authentication before protected routes
+      app.use(_Authenticator2.default.authenticateUser);
+
       UsersRoutes.logoutUser(app);
       UsersRoutes.fetchUser(app);
       UsersRoutes.fetchUsers(app);

@@ -1,5 +1,8 @@
 // import dependencies
+import jwt from 'jsonwebtoken';
 import database from '../models';
+
+const SECRET_KEY = 'jwt_cp2_dms';
 
 // declare the usersDB
 const usersDB = database.Users;
@@ -21,7 +24,8 @@ class UsersController {
       request.body.email &&
       request.body.firstName &&
       request.body.password &&
-      request.body.lastName
+      request.body.lastName &&
+      request.body.roleId
     );
   }
 
@@ -186,9 +190,15 @@ class UsersController {
       .then((user) => {
         if (user) {
           if(user.verifyPassword(request.body.password)) {
+            // send the token here
+            const token = jwt.sign({
+              UserId: user.id,
+              RoleId: user.RoleId
+            }, SECRET_KEY, { expiresIn: '2 days' });
             response.status(200).json({
               status: 'Success',
-              message: 'Login Successful'
+              message: 'Login Successful',
+              token
             });
           } else {
             response.status(401).json({
