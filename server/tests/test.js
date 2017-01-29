@@ -7,5 +7,5 @@ const assert = chai.assert;
 describe('This is just a test', () => {
   it('Should pass the test', () => {
     assert.strictEqual(mathX.name, 'MathX');
-  })
+  });
 });

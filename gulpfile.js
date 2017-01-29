@@ -6,8 +6,8 @@ const mocha = require('gulp-mocha');
 /**
  * Gulp task to run tests after transpilation from es6 to es5
  */
-gulp.task('test', ['transpile'], () =>{
-  gulp.src('dist/test/**/*.js')
+gulp.task('test', ['transpile'], () => {
+  gulp.src('dist/test/**/*.*')
   .pipe(mocha());
 });
 
@@ -15,7 +15,7 @@ gulp.task('test', ['transpile'], () =>{
  * Gulp task to transpile source code in the server folder to es5
  */
 gulp.task('transpile', () => {
-  return gulp.src('./server/**/*.js')
+  return gulp.src(['server/**/*.js'])
   .pipe(babel({presets: ['es2015']}))
   .pipe(gulp.dest('dist'));
 });
@@ -32,7 +32,7 @@ gulp.task('serve', () => {
  * necessary commands afterwards
  */
 gulp.task('watch_server', () => {
-  gulp.watch('./server/**/*.js', ['test']);
+  gulp.watch('server/**/*.*', {cwd: './'}, ['test']);
 });
 
 /**
@@ -41,4 +41,4 @@ gulp.task('watch_server', () => {
  * start the server,
  * listen to changes on the sever files
  */
-gulp.task('develop_server', ['transpile', 'serve', 'watch_server']);
+gulp.task('develop_server', ['test', 'serve', 'watch_server']);

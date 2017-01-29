@@ -7,7 +7,7 @@
     "lint": "./node_modules/eslint/bin/eslint.js --config .eslintrc.json ./server/**/*.js && ./node_modules/eslint/bin/eslint.js --config .eslintrc.json ./server/**/*.js",
     "mocha": "mocha --compilers js:babel-core/register",
     "test": "NODE_ENV=test npm run mocha server/test",
-    "develop_server": "./node_modules/gulp/bin/gulp.js develop_server",
+    "develop:server": "./node_modules/gulp/bin/gulp.js develop_server",
     "cover": "rm -rf coverage/ && NODE_ENV=test babel-node ./node_modules/babel-istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- -R spec server/test",
     "coveralls": "npm run cover && cat ./coverage/lcov.info | coveralls"
   },
@@ -50,6 +50,11 @@
     "mocha-lcov-reporter": "^1.2.0"
   },
   "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
+    "body-parser": "^1.16.0",
+    "fm-log": "^4.4.3",
+    "jsonwebtoken": "^7.2.1",
+    "morgan": "^1.7.0",
     "pg": "^6.1.2",
     "pg-hstore": "^2.3.2",
     "sequelize": "^3.30.0"
