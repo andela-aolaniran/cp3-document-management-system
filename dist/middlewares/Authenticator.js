@@ -11,15 +11,11 @@ var _jsonwebtoken = require('jsonwebtoken');
 
 var _jsonwebtoken2 = _interopRequireDefault(_jsonwebtoken);
 
-var _models = require('../models');
-
-var _models2 = _interopRequireDefault(_models);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var usersDB = _models2.default.Users;
+var SECRET_KEY = 'jwt_cp2_dms';
 
 /**
  * Class to implement authentication middlewares
@@ -38,9 +34,25 @@ var Authenticator = function () {
      * to protected routes
      */
     value: function authenticateUser(request, response, next) {
-      //console.log('Authenticator called');
-      response.send('fuck it');
-      //next();
+      var token = request.headers.authorization || request.headers['x-access-token'] || request.body.token;
+      if (token) {
+        _jsonwebtoken2.default.verify(token, SECRET_KEY, function (error, decoded) {
+          if (error) {
+            response.status(401).json({
+              status: 'Failed',
+              message: 'Authentication failed due to invalid token!'
+            });
+          } else {
+            request.decoded = decoded;
+            next();
+          }
+        });
+      } else {
+        response.status(401).json({
+          status: 'Failed',
+          message: 'Authentication required for this route'
+        });
+      }
     }
   }]);
 
