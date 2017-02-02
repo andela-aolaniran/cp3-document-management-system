@@ -22,19 +22,19 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var SECRET_KEY = 'jwt_cp2_dms';
 
 // declare the usersDB
-var usersDB = _models2.default.Users;
+var userDB = _models2.default.User;
 
 /**
  * Class for the UsersController
  * to handle connections to our database
  */
 
-var UsersController = function () {
-  function UsersController() {
-    _classCallCheck(this, UsersController);
+var UserController = function () {
+  function UserController() {
+    _classCallCheck(this, UserController);
   }
 
-  _createClass(UsersController, null, [{
+  _createClass(UserController, null, [{
     key: 'checkPostRequest',
 
 
@@ -58,8 +58,8 @@ var UsersController = function () {
   }, {
     key: 'createUser',
     value: function createUser(request, response) {
-      if (UsersController.checkPostRequest(request)) {
-        return usersDB.create({
+      if (UserController.checkPostRequest(request)) {
+        return userDB.create({
           email: request.body.email,
           password: request.body.password,
           firstName: request.body.firstName,
@@ -89,7 +89,7 @@ var UsersController = function () {
   }, {
     key: 'deleteUser',
     value: function deleteUser(request, response) {
-      usersDB.findOne({
+      userDB.findOne({
         where: {
           id: request.params.id
         }
@@ -124,7 +124,7 @@ var UsersController = function () {
   }, {
     key: 'updateUser',
     value: function updateUser(request, response) {
-      usersDB.findOne({
+      userDB.findOne({
         where: {
           id: request.params.id
         }
@@ -156,7 +156,7 @@ var UsersController = function () {
   }, {
     key: 'fetchUser',
     value: function fetchUser(request, response) {
-      usersDB.findOne({ where: { id: request.params.id } }).then(function (user) {
+      userDB.findOne({ where: { id: request.params.id } }).then(function (user) {
         if (user) {
           response.status(200).json(user);
         } else {
@@ -182,7 +182,7 @@ var UsersController = function () {
   }, {
     key: 'fetchUsers',
     value: function fetchUsers(request, response) {
-      usersDB.findAll({}).then(function (users) {
+      userDB.findAll({}).then(function (users) {
         if (users) {
           response.status(200).json(users);
         } else {
@@ -207,7 +207,7 @@ var UsersController = function () {
     key: 'loginUser',
     value: function loginUser(request, response) {
       if (request.body.email && request.body.password) {
-        usersDB.findOne({
+        userDB.findOne({
           where: {
             email: request.body.email
           }
@@ -217,7 +217,7 @@ var UsersController = function () {
               // send the token here
               var token = _jsonwebtoken2.default.sign({
                 UserId: user.id,
-                RoleId: user.RoleId
+                roleId: user.roleId
               }, SECRET_KEY, { expiresIn: '2 days' });
               response.status(200).json({
                 status: 'Success',
@@ -260,7 +260,7 @@ var UsersController = function () {
     }
   }]);
 
-  return UsersController;
+  return UserController;
 }();
 
-exports.default = UsersController;
+exports.default = UserController;

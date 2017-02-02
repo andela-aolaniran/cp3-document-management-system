@@ -7,9 +7,9 @@ Object.defineProperty(exports, "__esModule", {
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); // fetch our dependencies
 
 
-var _UsersController = require('../controllers/UsersController');
+var _UserController = require('../controllers/UserController');
 
-var _UsersController2 = _interopRequireDefault(_UsersController);
+var _UserController2 = _interopRequireDefault(_UserController);
 
 var _Authenticator = require('../middlewares/Authenticator');
 
@@ -24,12 +24,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  * and set up all routes associated with a user object
  * for an express application
  */
-var UsersRoutes = function () {
-  function UsersRoutes() {
-    _classCallCheck(this, UsersRoutes);
+var UserRoutes = function () {
+  function UserRoutes() {
+    _classCallCheck(this, UserRoutes);
   }
 
-  _createClass(UsersRoutes, null, [{
+  _createClass(UserRoutes, null, [{
     key: 'setUserRoutes',
 
     /**
@@ -38,17 +38,17 @@ var UsersRoutes = function () {
      * @returns{Void} - Returns Void
      */
     value: function setUserRoutes(app) {
-      UsersRoutes.createUser(app);
-      UsersRoutes.loginUser(app);
+      UserRoutes.createUser(app);
+      UserRoutes.loginUser(app);
 
       // setup authentication before protected routes
       app.use(_Authenticator2.default.authenticateUser);
 
-      UsersRoutes.logoutUser(app);
-      UsersRoutes.fetchUser(app);
-      UsersRoutes.fetchUsers(app);
-      UsersRoutes.updateUser(app);
-      UsersRoutes.deleteUser(app);
+      UserRoutes.logoutUser(app);
+      UserRoutes.fetchUser(app);
+      UserRoutes.fetchUsers(app);
+      UserRoutes.updateUser(app);
+      UserRoutes.deleteUser(app);
     }
 
     /**
@@ -60,7 +60,7 @@ var UsersRoutes = function () {
   }, {
     key: 'createUser',
     value: function createUser(app) {
-      app.post('/api/users/', _UsersController2.default.createUser);
+      app.post('/api/users/', _UserController2.default.createUser);
     }
 
     /**
@@ -72,7 +72,7 @@ var UsersRoutes = function () {
   }, {
     key: 'loginUser',
     value: function loginUser(app) {
-      app.post('/api/users/login', _UsersController2.default.loginUser);
+      app.post('/api/users/login', _UserController2.default.loginUser);
     }
 
     /**
@@ -84,7 +84,7 @@ var UsersRoutes = function () {
   }, {
     key: 'logoutUser',
     value: function logoutUser(app) {
-      app.post('/api/users/logout', _UsersController2.default.logoutUser);
+      app.post('/api/users/logout', _UserController2.default.logoutUser);
     }
 
     /**
@@ -96,7 +96,7 @@ var UsersRoutes = function () {
   }, {
     key: 'fetchUsers',
     value: function fetchUsers(app) {
-      app.get('/api/users/', _UsersController2.default.fetchUsers);
+      app.get('/api/users/', _UserController2.default.fetchUsers);
     }
 
     /**
@@ -108,7 +108,7 @@ var UsersRoutes = function () {
   }, {
     key: 'fetchUser',
     value: function fetchUser(app) {
-      app.get('/api/users/:id', _UsersController2.default.fetchUser);
+      app.get('/api/users/:id', _UserController2.default.fetchUser);
     }
 
     /**
@@ -120,7 +120,7 @@ var UsersRoutes = function () {
   }, {
     key: 'updateUser',
     value: function updateUser(app) {
-      app.put('/api/users/:id', _UsersController2.default.updateUser);
+      app.put('/api/users/:id', _UserController2.default.updateUser);
     }
 
     /**
@@ -132,11 +132,11 @@ var UsersRoutes = function () {
   }, {
     key: 'deleteUser',
     value: function deleteUser(app) {
-      app.delete('/api/users/:id', _UsersController2.default.deleteUser);
+      app.delete('/api/users/:id', _UserController2.default.deleteUser);
     }
   }]);
 
-  return UsersRoutes;
+  return UserRoutes;
 }();
 
-exports.default = UsersRoutes;
+exports.default = UserRoutes;

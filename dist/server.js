@@ -16,9 +16,9 @@ var _fmLog = require('fm-log');
 
 var _fmLog2 = _interopRequireDefault(_fmLog);
 
-var _UsersRoutes = require('./routes/UsersRoutes');
+var _UserRoutes = require('./routes/UserRoutes');
 
-var _UsersRoutes2 = _interopRequireDefault(_UsersRoutes);
+var _UserRoutes2 = _interopRequireDefault(_UserRoutes);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -35,7 +35,7 @@ app.get('/', function (req, res) {
 });
 
 // set up User related routes
-_UsersRoutes2.default.setUserRoutes(app);
+_UserRoutes2.default.setUserRoutes(app);
 
 var port = process.env.PORT || 3090;
 app.listen(port, function () {

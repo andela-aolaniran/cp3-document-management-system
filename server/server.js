@@ -2,8 +2,8 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import morgan from 'morgan';
-import logger from 'fm-log'
-import UsersRoutes from './routes/UsersRoutes';
+import logger from 'fm-log';
+import UserRoutes from './routes/UserRoutes';
 
 const app = express();
 
@@ -17,7 +17,7 @@ app.get('/', (req, res) => {
 });
 
 // set up User related routes
-UsersRoutes.setUserRoutes(app);
+UserRoutes.setUserRoutes(app);
 
 const port = process.env.PORT || 3090;
 app.listen(port, () => {

@@ -2,21 +2,21 @@
   "development": {
     "username": "Andela",
     "password": "andela2016",
-    "database": "cp3_dms_development",
+    "database": "cp3_development",
     "host": "127.0.0.1",
     "dialect": "postgres"
   },
   "test": {
     "username": "root",
     "password": null,
-    "database": "cp3_dms_test",
+    "database": "database_test",
     "host": "127.0.0.1",
     "dialect": "postgres"
   },
   "production": {
     "username": "root",
-    "password": "null",
-    "database": "cp3_dms_production",
+    "password": null,
+    "database": "database_production",
     "host": "127.0.0.1",
     "dialect": "postgres"
   }

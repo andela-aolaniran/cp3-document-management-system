@@ -1,5 +1,5 @@
 // fetch our dependencies
-import UsersController from '../controllers/UsersController';
+import UserController from '../controllers/UserController';
 import Authenticator from '../middlewares/Authenticator';
 
 /**
@@ -7,24 +7,24 @@ import Authenticator from '../middlewares/Authenticator';
  * and set up all routes associated with a user object
  * for an express application
  */
-class UsersRoutes {
+class UserRoutes {
   /**
    * Method to set all User routes
    * @param{Object} app - Express application
    * @returns{Void} - Returns Void
    */
   static setUserRoutes(app){
-    UsersRoutes.createUser(app);
-    UsersRoutes.loginUser(app);
+    UserRoutes.createUser(app);
+    UserRoutes.loginUser(app);
 
     // setup authentication before protected routes
     app.use(Authenticator.authenticateUser);
 
-    UsersRoutes.logoutUser(app);
-    UsersRoutes.fetchUser(app);
-    UsersRoutes.fetchUsers(app);
-    UsersRoutes.updateUser(app);
-    UsersRoutes.deleteUser(app);
+    UserRoutes.logoutUser(app);
+    UserRoutes.fetchUser(app);
+    UserRoutes.fetchUsers(app);
+    UserRoutes.updateUser(app);
+    UserRoutes.deleteUser(app);
   }
 
   /**
@@ -33,7 +33,7 @@ class UsersRoutes {
    * @return{Void} - Returns Void
    */
   static createUser(app){
-    app.post('/api/users/', UsersController.createUser);
+    app.post('/api/users/', UserController.createUser);
   }
 
   /**
@@ -42,7 +42,7 @@ class UsersRoutes {
    * @return{Void} - Returns Void
    */
   static loginUser(app){
-    app.post('/api/users/login', UsersController.loginUser);
+    app.post('/api/users/login', UserController.loginUser);
   }
 
   /**
@@ -51,7 +51,7 @@ class UsersRoutes {
    * @return{Void} - Returns Void
    */
   static logoutUser(app){
-    app.post('/api/users/logout', UsersController.logoutUser);
+    app.post('/api/users/logout', UserController.logoutUser);
   }
 
   /**
@@ -60,7 +60,7 @@ class UsersRoutes {
    * @return{Void} - Returns Void
    */
   static fetchUsers(app){
-    app.get('/api/users/', UsersController.fetchUsers);
+    app.get('/api/users/', UserController.fetchUsers);
   }
 
 
@@ -70,7 +70,7 @@ class UsersRoutes {
    * @return{Void} - Returns Void
    */
   static fetchUser(app){
-    app.get('/api/users/:id', UsersController.fetchUser);
+    app.get('/api/users/:id', UserController.fetchUser);
   }
 
   /**
@@ -79,7 +79,7 @@ class UsersRoutes {
    * @return{Void} - Returns Void
    */
   static updateUser(app){
-    app.put('/api/users/:id', UsersController.updateUser);
+    app.put('/api/users/:id', UserController.updateUser);
   }
 
   /**
@@ -88,8 +88,8 @@ class UsersRoutes {
    * @return{Void} - Returns Void
    */
   static deleteUser(app){
-    app.delete('/api/users/:id', UsersController.deleteUser);
+    app.delete('/api/users/:id', UserController.deleteUser);
   }
 }
 
-export default UsersRoutes;
+export default UserRoutes;

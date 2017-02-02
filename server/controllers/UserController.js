@@ -5,13 +5,13 @@ import database from '../models';
 const SECRET_KEY = 'jwt_cp2_dms';
 
 // declare the usersDB
-const usersDB = database.Users;
+const userDB = database.User;
 
 /**
  * Class for the UsersController
  * to handle connections to our database
  */
-class UsersController {
+class UserController {
 
   /**
    * Method to check that the post request contains required Fields
@@ -36,8 +36,8 @@ class UsersController {
    * @return{Void} - returns void
    */
   static createUser(request, response){
-    if(UsersController.checkPostRequest(request)){
-      return usersDB.create({
+    if(UserController.checkPostRequest(request)){
+      return userDB.create({
         email: request.body.email,
         password: request.body.password,
         firstName: request.body.firstName,
@@ -66,7 +66,7 @@ class UsersController {
    * @return{Void} - returns void
    */
   static deleteUser(request, response){
-    usersDB.findOne({
+    userDB.findOne({
       where: {
         id: request.params.id
       }
@@ -101,7 +101,7 @@ class UsersController {
    * @return{Void} - returns void
    */
   static updateUser(request, response){
-    usersDB.findOne({
+    userDB.findOne({
       where: {
         id: request.params.id
       }
@@ -133,7 +133,7 @@ class UsersController {
    * @return{Void} - returns void
    */
   static fetchUser(request, response) {
-    usersDB.findOne({where: {id: request.params.id}})
+    userDB.findOne({where: {id: request.params.id}})
     .then((user) => {
       if (user) {
         response.status(200).json(user);
@@ -158,7 +158,7 @@ class UsersController {
    * @return{Void} - returns void
    */
   static fetchUsers(request, response){
-    usersDB.findAll({})
+    userDB.findAll({})
     .then((users) => {
       if(users) {
         response.status(200).json(users);
@@ -182,7 +182,7 @@ class UsersController {
    */
   static loginUser(request, response){
     if(request.body.email && request.body.password){
-      usersDB.findOne({
+      userDB.findOne({
         where: {
           email: request.body.email
         } 
@@ -193,7 +193,7 @@ class UsersController {
             // send the token here
             const token = jwt.sign({
               UserId: user.id,
-              RoleId: user.RoleId
+              roleId: user.roleId
             }, SECRET_KEY, { expiresIn: '2 days' });
             response.status(200).json({
               status: 'Success',
@@ -233,4 +233,4 @@ class UsersController {
   }
 }
 
-export default UsersController;
+export default UserController;
