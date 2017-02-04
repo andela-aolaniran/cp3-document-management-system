@@ -5,6 +5,7 @@ import morgan from 'morgan';
 import logger from 'fm-log';
 import UserRoutes from './routes/UserRoutes';
 import DocumentRoutes from './routes/DocumentRoutes';
+import RoleRoutes from './routes/RoleRoutes';
 
 const app = express();
 
@@ -22,6 +23,9 @@ UserRoutes.setUserRoutes(app);
 
 // set up Document related routes
 DocumentRoutes.setDocumentRoutes(app);
+
+// set up Roles related routes
+RoleRoutes.setRoleRoutes(app);
 
 const port = process.env.PORT || 3090;
 app.listen(port, () => {

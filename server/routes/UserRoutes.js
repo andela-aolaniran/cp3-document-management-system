@@ -25,6 +25,7 @@ class UserRoutes {
     UserRoutes.fetchUsers(app);
     UserRoutes.updateUser(app);
     UserRoutes.deleteUser(app);
+    UserRoutes.fetchUserDocuments(app);
   }
 
   /**
@@ -60,7 +61,8 @@ class UserRoutes {
    * @return{Void} - Returns Void
    */
   static fetchUsers(app){
-    app.get('/api/users/', UserController.fetchUsers);
+    app.get('/api/users/', Authenticator.verifyAdmin,
+      UserController.fetchUsers);
   }
 
 
@@ -70,7 +72,8 @@ class UserRoutes {
    * @return{Void} - Returns Void
    */
   static fetchUser(app){
-    app.get('/api/users/:id', UserController.fetchUser);
+    app.get('/api/users/:id', Authenticator.verifyAdmin,
+      UserController.fetchUser);
   }
 
   /**
@@ -88,7 +91,18 @@ class UserRoutes {
    * @return{Void} - Returns Void
    */
   static deleteUser(app){
-    app.delete('/api/users/:id', UserController.deleteUser);
+    app.delete('/api/users/:id',
+      Authenticator.verifyAdmin,
+      UserController.deleteUser);
+  }
+
+  /**
+   * Method to set up route for fetching all specified user documents
+   * @param{Object} app - Express application
+   * @return{Void} - Returns Void
+   */
+  static fetchUserDocuments(app){
+    app.get('/api/users/:id/documents', UserController.fetchUserDocuments);
   }
 }
 

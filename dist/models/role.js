@@ -6,7 +6,10 @@ Object.defineProperty(exports, "__esModule", {
 
 exports.default = function (sequelize, DataTypes) {
   var Role = sequelize.define('Role', {
-    title: DataTypes.STRING
+    title: {
+      type: DataTypes.STRING,
+      allowNull: false
+    }
   }, {
     classMethods: {
       associate: function associate(models) {

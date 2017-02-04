@@ -7,19 +7,17 @@ Object.defineProperty(exports, "__esModule", {
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); // import dependencies
 
 
-var _jsonwebtoken = require('jsonwebtoken');
-
-var _jsonwebtoken2 = _interopRequireDefault(_jsonwebtoken);
-
 var _models = require('../models');
 
 var _models2 = _interopRequireDefault(_models);
 
+var _Authenticator = require('../middlewares/Authenticator');
+
+var _Authenticator2 = _interopRequireDefault(_Authenticator);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var SECRET_KEY = 'jwt_cp2_dms';
 
 // declare the usersDB
 var userDB = _models2.default.User;
@@ -66,14 +64,19 @@ var UserController = function () {
           lastName: request.body.lastName,
           roleId: request.body.roleId
         }).then(function (user) {
-          response.status(201).json(user);
+          response.status(201).json({
+            success: true,
+            message: user.email + ' Succefully Created'
+          });
         }).catch(function (error) {
           // send an array of errors that occurred
-          response.status(400).json(error.errors);
+          response.status(400).json({
+            success: false,
+            message: error.message });
         });
       } else {
         response.status(400).json({
-          status: 'Failed',
+          success: false,
           message: 'Required fields are missing'
         });
       }
@@ -97,20 +100,25 @@ var UserController = function () {
         if (user) {
           user.destroy().then(function () {
             response.status(200).json({
-              status: 'Success',
+              success: true,
               message: 'User deleted'
             });
           }).catch(function (error) {
-            response.status(400).json(error.errors);
+            response.status(400).json({
+              success: true,
+              message: error.message });
           });
         } else {
           response.status(404).json({
-            status: 'Failed',
+            success: false,
             message: 'User not found'
           });
         }
       }).catch(function (error) {
-        response.status(400).json(error.errors);
+        response.status(400).json({
+          success: false,
+          message: error.message
+        });
       });
     }
 
@@ -133,11 +141,13 @@ var UserController = function () {
           user.update(request.body).then(function (updatedUser) {
             response.status(200).json(updatedUser);
           }).catch(function (error) {
-            response.status(400).json(error.errors);
+            response.status(400).json({
+              success: false,
+              message: error.message });
           });
         } else {
           response.status(404).json({
-            status: 'Failed',
+            status: false,
             message: 'User not found'
           });
         }
@@ -156,18 +166,21 @@ var UserController = function () {
   }, {
     key: 'fetchUser',
     value: function fetchUser(request, response) {
-      userDB.findOne({ where: { id: request.params.id } }).then(function (user) {
+      userDB.findById(request.params.id, {
+        attributes: ['email', 'firstName', 'lastName', 'id', 'roleId']
+      }).then(function (user) {
         if (user) {
           response.status(200).json(user);
         } else {
           response.status(404).json({
-            status: 'Failed',
+            status: false,
             message: 'User not found'
           });
         }
       }).catch(function (error) {
         response.status(400).json({
-          error: error
+          success: false,
+          message: error.message
         });
       });
     }
@@ -182,17 +195,21 @@ var UserController = function () {
   }, {
     key: 'fetchUsers',
     value: function fetchUsers(request, response) {
-      userDB.findAll({}).then(function (users) {
+      userDB.findAll({
+        attributes: ['email', 'firstName', 'lastName', 'id', 'roleId']
+      }).then(function (users) {
         if (users) {
           response.status(200).json(users);
         } else {
           response.status(404).json({
-            status: 'Failed',
+            status: false,
             message: 'No Users found'
           });
         }
       }).catch(function (error) {
-        response.json(error);
+        response.json({
+          success: false,
+          message: error.message });
       });
     }
 
@@ -215,31 +232,36 @@ var UserController = function () {
           if (user) {
             if (user.verifyPassword(request.body.password)) {
               // send the token here
-              var token = _jsonwebtoken2.default.sign({
-                UserId: user.id,
-                roleId: user.roleId
-              }, SECRET_KEY, { expiresIn: '2 days' });
-              response.status(200).json({
-                status: 'Success',
-                message: 'Login Successful',
-                token: token
-              });
+              var token = _Authenticator2.default.generateToken(user);
+              if (token) {
+                response.status(200).json({
+                  status: 'Success',
+                  message: 'Login Successful',
+                  token: token
+                });
+              } else {
+                // service is unavailable
+                response.status(503).json({
+                  status: false,
+                  message: 'Login failed. No Token generated'
+                });
+              }
             } else {
               response.status(401).json({
-                status: 'Failed',
+                status: false,
                 message: 'Invalid Credentials'
               });
             }
           } else {
             response.status(404).json({
-              status: 'Failed',
+              status: false,
               message: 'User not found'
             });
           }
         });
       } else {
         response.status(401).json({
-          status: 'Failed',
+          status: false,
           message: 'Missing Credentials'
         });
       }
@@ -257,6 +279,39 @@ var UserController = function () {
     value: function logoutUser(request, response) {
       // Todo, Implement Log out functionality
       response.send('You have hit the logout user controller');
+    }
+
+    /**
+     * Method to fetch all documents of a specific user
+     * @param{Object} request - Request object
+     * @param{Object} response - Response object
+     * @return{Void} - returns void
+     */
+
+  }, {
+    key: 'fetchUserDocuments',
+    value: function fetchUserDocuments(request, response) {
+      userDB.findById(request.params.id, {
+        attributes: ['id', 'email', 'firstName', 'lastName'],
+        include: [{
+          model: _models2.default.Document,
+          attributes: ['id', 'title', 'content', 'ownerId']
+        }]
+      }).then(function (documents) {
+        if (documents) {
+          response.status(200).json(documents);
+        } else {
+          response.status(400).json({
+            status: false,
+            message: 'No Documents found for this user'
+          });
+        }
+      }).catch(function (error) {
+        response.status(400).json({
+          success: false,
+          message: error.message
+        });
+      });
     }
   }]);
 

@@ -1,8 +1,6 @@
 // import dependencies
-import jwt from 'jsonwebtoken';
 import database from '../models';
-
-const SECRET_KEY = 'jwt_cp2_dms';
+import Authenticator from '../middlewares/Authenticator';
 
 // declare the usersDB
 const userDB = database.User;
@@ -45,15 +43,20 @@ class UserController {
         roleId: request.body.roleId
       })
       .then((user) => {
-        response.status(201).json(user);
+        response.status(201).json({
+          success: true,
+          message: `${user.email} Succefully Created`
+        });
       })
       .catch((error) => {
         // send an array of errors that occurred
-        response.status(400).json(error.errors);
+        response.status(400).json({
+          success: false,
+          message: error.message});
       });
     } else {
       response.status(400).json({
-        status: 'Failed',
+        success: false,
         message: 'Required fields are missing'
       });
     }
@@ -75,22 +78,27 @@ class UserController {
         user.destroy()
         .then(() => {
           response.status(200).json({
-            status: 'Success',
+            success: true,
             message: 'User deleted'
           });
         })
         .catch((error) => {
-          response.status(400).json(error.errors);
+          response.status(400).json({
+            success: true,
+            message: error.message});
         });
       } else {
         response.status(404).json({
-          status: 'Failed',
+          success: false,
           message: 'User not found'
         });
       }
     })
     .catch((error) => {
-      response.status(400).json(error.errors);
+      response.status(400).json({
+        success: false,
+        message: error.message
+      });
     });
   }
 
@@ -112,11 +120,13 @@ class UserController {
           response.status(200).json(updatedUser);
         })
         .catch((error) => {
-          response.status(400).json(error.errors);
+          response.status(400).json({
+            success: false,
+            message: error.message});
         });
       } else {
         response.status(404).json({
-          status: 'Failed',
+          status: false,
           message: 'User not found'
         });
       }
@@ -133,20 +143,23 @@ class UserController {
    * @return{Void} - returns void
    */
   static fetchUser(request, response) {
-    userDB.findOne({where: {id: request.params.id}})
+    userDB.findById(request.params.id, {
+      attributes: ['email', 'firstName', 'lastName', 'id', 'roleId']
+    })
     .then((user) => {
       if (user) {
         response.status(200).json(user);
       } else {
         response.status(404).json({
-          status: 'Failed',
+          status: false,
           message: 'User not found'
         });
       }
     })
     .catch((error) => {
       response.status(400).json({
-        error
+        success: false,
+        message: error.message
       });
     });
   }
@@ -158,19 +171,23 @@ class UserController {
    * @return{Void} - returns void
    */
   static fetchUsers(request, response){
-    userDB.findAll({})
+    userDB.findAll({
+      attributes: ['email', 'firstName', 'lastName', 'id', 'roleId']
+    })
     .then((users) => {
       if(users) {
         response.status(200).json(users);
       } else {
         response.status(404).json({
-          status: 'Failed',
+          status: false,
           message: 'No Users found'
         });
       }
     })
     .catch((error) => {
-      response.json(error);
+      response.json({
+        success: false,
+        message: error.message});
     });
   }
 
@@ -191,31 +208,36 @@ class UserController {
         if (user) {
           if(user.verifyPassword(request.body.password)) {
             // send the token here
-            const token = jwt.sign({
-              UserId: user.id,
-              roleId: user.roleId
-            }, SECRET_KEY, { expiresIn: '2 days' });
-            response.status(200).json({
-              status: 'Success',
-              message: 'Login Successful',
-              token
-            });
+            const token = Authenticator.generateToken(user);
+            if (token) {
+              response.status(200).json({
+                status: 'Success',
+                message: 'Login Successful',
+                token
+              }); 
+            } else {
+              // service is unavailable
+              response.status(503).json({
+                status: false,
+                message: 'Login failed. No Token generated'
+              });
+            }
           } else {
             response.status(401).json({
-              status: 'Failed',
+              status: false,
               message: 'Invalid Credentials'
             });
           }
         } else {
           response.status(404).json({
-            status: 'Failed',
+            status: false,
             message: 'User not found'
           });
         }
       });
     } else {
       response.status(401).json({
-        status: 'Failed',
+        status: false,
         message: 'Missing Credentials'
       });
     }
@@ -230,6 +252,39 @@ class UserController {
   static logoutUser(request, response){
     // Todo, Implement Log out functionality
     response.send('You have hit the logout user controller');
+  }
+
+  /**
+   * Method to fetch all documents of a specific user
+   * @param{Object} request - Request object
+   * @param{Object} response - Response object
+   * @return{Void} - returns void
+   */
+  static fetchUserDocuments(request, response){
+    userDB.findById(request.params.id, 
+      { 
+        attributes: ['id', 'email', 'firstName', 'lastName'],
+        include: [{
+          model: database.Document,
+          attributes: ['id', 'title', 'content', 'ownerId']
+        }]
+    })
+    .then((documents) => {
+      if(documents) {
+        response.status(200).json(documents);
+      } else {
+        response.status(400).json({
+          status: false,
+          message: 'No Documents found for this user'
+        });
+      }
+    })
+    .catch((error) => {
+      response.status(400).json({
+        success: false,
+        message: error.message
+      });
+    });
   }
 }
 

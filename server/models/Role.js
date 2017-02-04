@@ -1,6 +1,9 @@
 export default (sequelize, DataTypes) => {
   const Role = sequelize.define('Role', {
-    title: DataTypes.STRING
+    title: {
+      type: DataTypes.STRING,
+      allowNull: false
+    }
   }, {
     classMethods: {
       associate: function(models) {

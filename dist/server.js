@@ -24,12 +24,16 @@ var _DocumentRoutes = require('./routes/DocumentRoutes');
 
 var _DocumentRoutes2 = _interopRequireDefault(_DocumentRoutes);
 
+var _RoleRoutes = require('./routes/RoleRoutes');
+
+var _RoleRoutes2 = _interopRequireDefault(_RoleRoutes);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// fetch dependencies
 var app = (0, _express2.default)();
 
 // use morgan for logging out requests to the console
+// fetch dependencies
 app.use((0, _morgan2.default)('tiny'));
 app.use(_bodyParser2.default.json());
 app.use(_bodyParser2.default.urlencoded({ extended: false }));
@@ -43,6 +47,9 @@ _UserRoutes2.default.setUserRoutes(app);
 
 // set up Document related routes
 _DocumentRoutes2.default.setDocumentRoutes(app);
+
+// set up Roles related routes
+_RoleRoutes2.default.setRoleRoutes(app);
 
 var port = process.env.PORT || 3090;
 app.listen(port, function () {

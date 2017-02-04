@@ -49,6 +49,7 @@ var UserRoutes = function () {
       UserRoutes.fetchUsers(app);
       UserRoutes.updateUser(app);
       UserRoutes.deleteUser(app);
+      UserRoutes.fetchUserDocuments(app);
     }
 
     /**
@@ -96,7 +97,7 @@ var UserRoutes = function () {
   }, {
     key: 'fetchUsers',
     value: function fetchUsers(app) {
-      app.get('/api/users/', _UserController2.default.fetchUsers);
+      app.get('/api/users/', _Authenticator2.default.verifyAdmin, _UserController2.default.fetchUsers);
     }
 
     /**
@@ -108,7 +109,7 @@ var UserRoutes = function () {
   }, {
     key: 'fetchUser',
     value: function fetchUser(app) {
-      app.get('/api/users/:id', _UserController2.default.fetchUser);
+      app.get('/api/users/:id', _Authenticator2.default.verifyAdmin, _UserController2.default.fetchUser);
     }
 
     /**
@@ -132,7 +133,19 @@ var UserRoutes = function () {
   }, {
     key: 'deleteUser',
     value: function deleteUser(app) {
-      app.delete('/api/users/:id', _UserController2.default.deleteUser);
+      app.delete('/api/users/:id', _Authenticator2.default.verifyAdmin, _UserController2.default.deleteUser);
+    }
+
+    /**
+     * Method to set up route for fetching all specified user documents
+     * @param{Object} app - Express application
+     * @return{Void} - Returns Void
+     */
+
+  }, {
+    key: 'fetchUserDocuments',
+    value: function fetchUserDocuments(app) {
+      app.get('/api/users/:id/documents', _UserController2.default.fetchUserDocuments);
     }
   }]);
 
