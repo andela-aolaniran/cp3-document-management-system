@@ -24,4 +24,4 @@ after_success:
   - npm run coveralls
 
 addons:
-  postgresql: "9.6.1"
+  postgresql: "9.3"
