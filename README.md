@@ -1,3 +1,3 @@
 # cp3-document-management-system
 [![Build Status](https://travis-ci.org/andela-aolaniran/cp3-document-management-system.svg?branch=master)](https://travis-ci.org/andela-aolaniran/cp3-document-management-system)
-[![Coverage Status](https://coveralls.io/repos/github/andela-aolaniran/cp3-document-management-system/badge.svg?branch=chore%2F138109431%2Fintegrate-coveralls-code-coverage)](https://coveralls.io/github/andela-aolaniran/cp3-document-management-system?branch=chore%2F138109431%2Fintegrate-coveralls-code-coverage)
+[![Coverage Status](https://coveralls.io/repos/github/andela-aolaniran/cp3-document-management-system/badge.svg?branch=feature%2F138543863%2Fimplement-api-endpoints)](https://coveralls.io/github/andela-aolaniran/cp3-document-management-system?branch=feature%2F138543863%2Fimplement-api-endpoints)

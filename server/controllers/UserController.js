@@ -22,8 +22,7 @@ class UserController {
       request.body.email &&
       request.body.firstName &&
       request.body.password &&
-      request.body.lastName &&
-      request.body.roleId
+      request.body.lastName
     );
   }
 
@@ -35,17 +34,26 @@ class UserController {
    */
   static createUser(request, response){
     if(UserController.checkPostRequest(request)){
+      const roleId = request.body.roleId;
       return userDB.create({
         email: request.body.email,
         password: request.body.password,
         firstName: request.body.firstName,
         lastName: request.body.lastName,
-        roleId: request.body.roleId
+        roleId: roleId ? roleId : 2 // setuser role to default if role id isn't supplied
       })
       .then((user) => {
         response.status(201).json({
           success: true,
-          message: `${user.email} Succefully Created`
+          message: `${user.email} Succefully Created`,
+          user: {
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            roleId: user.roleId,
+            id: user.id,
+            token: Authenticator.generateToken(user)
+          }
         });
       })
       .catch((error) => {
@@ -211,33 +219,33 @@ class UserController {
             const token = Authenticator.generateToken(user);
             if (token) {
               response.status(200).json({
-                status: 'Success',
+                success: true,
                 message: 'Login Successful',
                 token
               }); 
             } else {
               // service is unavailable
               response.status(503).json({
-                status: false,
+                success: false,
                 message: 'Login failed. No Token generated'
               });
             }
           } else {
             response.status(401).json({
-              status: false,
+              success: false,
               message: 'Invalid Credentials'
             });
           }
         } else {
           response.status(404).json({
-            status: false,
+            success: false,
             message: 'User not found'
           });
         }
       });
     } else {
       response.status(401).json({
-        status: false,
+        success: false,
         message: 'Missing Credentials'
       });
     }
@@ -274,7 +282,7 @@ class UserController {
         response.status(200).json(documents);
       } else {
         response.status(400).json({
-          status: false,
+          success: false,
           message: 'No Documents found for this user'
         });
       }

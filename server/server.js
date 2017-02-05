@@ -2,7 +2,6 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import morgan from 'morgan';
-import logger from 'fm-log';
 import UserRoutes from './routes/UserRoutes';
 import DocumentRoutes from './routes/DocumentRoutes';
 import RoleRoutes from './routes/RoleRoutes';
@@ -27,7 +26,4 @@ DocumentRoutes.setDocumentRoutes(app);
 // set up Roles related routes
 RoleRoutes.setRoleRoutes(app);
 
-const port = process.env.PORT || 3090;
-app.listen(port, () => {
-  logger.info(`Server listenening on port ${port}`);
-});
+export default app;
