@@ -18,8 +18,9 @@ const deleteUser = (userEmail) => {
   });
 };
 
-let regularUserToken ;
+let regularUserToken;
 let adminUserToken;
+let regularUserId;
 
 describe('User Endpoints', () => {
   // Create default roles before running all user
@@ -32,6 +33,17 @@ describe('User Endpoints', () => {
       .send(testData.regularUser1)
       .end((error, response) => {
         expect(response.status).to.equal(201);
+        done();
+      });
+    });
+
+    it('Should NOT allow users with Duplicate Email address to be created',
+    (done) => {
+      client.post('/api/users')
+      .send(testData.regularUser1)
+      .end((error, response) => {
+        expect(response.status).to.equal(500);
+        expect(response.body.success).to.equal(false);
         deleteUser(testData.regularUser1.email);
         done();
       });
@@ -211,6 +223,7 @@ describe('User Endpoints', () => {
         expect(response.body.success).to.equal(true);
         expect(response.body).to.have.property('token');
         regularUserToken = response.body.token;
+        regularUserId = response.body.id;
         done();
       });
     });
@@ -249,6 +262,174 @@ describe('User Endpoints', () => {
         password: 'wrongpassword'
       })
       .end((error, response) => {
+        expect(response.body.success).to.equal(false);
+        done();
+      });
+    });
+  });
+  describe('Logout', () => {
+    it('should Successfully Logout an Admin User with a valid token',
+    (done) => {
+      client.post('/api/users/logout')
+      .set({'x-access-token': adminUserToken})
+      .end((error, response) => {
+        expect(response.status).to.equal(200);
+        expect(response.body.success).to.equal(true);
+        done();
+      });
+    });
+
+    it('should Fail to Logout an Admin User with an Invalid token',
+    (done) => {
+      client.post('/api/users/logout')
+      .set({'x-access-token': 'invalidtoken'})
+      .end((error, response) => {
+        expect(response.status).to.equal(401);
+        expect(response.body.success).to.equal(false);
+        done();
+      });
+    });
+
+    it('should Successfully Logout a Regular User with a valid token',
+    (done) => {
+      client.post('/api/users/logout')
+      .set({'x-access-token': regularUserToken})
+      .end((error, response) => {
+        expect(response.status).to.equal(200);
+        expect(response.body.success).to.equal(true);
+        done();
+      });
+    });
+
+    it('should Fail to Logout a Regular User with an Invalid token',
+    (done) => {
+      client.post('/api/users/logout')
+      .set({'x-access-token': 'invalidtoken'})
+      .end((error, response) => {
+        expect(response.status).to.equal(401);
+        expect(response.body.success).to.equal(false);
+        done();
+      });
+    });
+  });
+
+  describe('Get Users', () => {
+    it('Should NOT allow NON-Admin access to list of users', (done) => {
+      client.get('/api/users')
+      .set({'x-access-token': regularUserToken})
+      .end((error, response) => {
+        expect(response.status).to.equal(401);
+        expect(response.body.success).to.equal(false);
+        done();
+      });
+    });
+
+    it('Should Allow an Admin User access to list of Users', (done) => {
+      client.get('/api/users')
+      .set({'x-access-token': adminUserToken})
+      .end((error, response) => {
+        expect(response.status).to.equal(200);
+        expect(response.body).to.be.instanceOf(Array);
+        done();
+      });
+    });
+
+
+    it('Should Not Allow Un-Authorized access to list of Users', (done) => {
+      client.get('/api/users')
+      .end((error, response) => {
+        expect(response.status).to.equal(401);
+        expect(response.body.success).to.equal(false);
+        done();
+      });
+    });
+  });
+
+  describe('Get User', () => {
+    it('Should NOT allow NON-Admin access fetch a User', (done) => {
+      client.get('/api/users/1')
+      .set({'x-access-token': regularUserToken})
+      .end((error, response) => {
+        expect(response.status).to.equal(401);
+        expect(response.body.success).to.equal(false);
+        done();
+      });
+    });
+
+    it('Should Allow an Admin User access to fetch a User', (done) => {
+      client.get('/api/users/1')
+      .set({'x-access-token': adminUserToken})
+      .end((error, response) => {
+        expect(response.status).to.equal(200);
+        expect(response.body).to.be.instanceOf(Object);
+        done();
+      });
+    });
+
+    it('Should Not Allow Un-Authorized access to fetch a User', (done) => {
+      client.get('/api/users/1')
+      .end((error, response) => {
+        expect(response.status).to.equal(401);
+        expect(response.body.success).to.equal(false);
+        done();
+      });
+    });
+
+    it(`Should Fail to return a User if User with such id doesn't 
+    exist`, (done) => {
+      client.get('/api/users/100')
+      .set({'x-access-token': adminUserToken})
+      .end((error, response) => {
+        expect(response.status).to.equal(404);
+        expect(response.body.success).to.equal(false);
+        done();
+      });
+    });
+
+    it(`Should return Server error code if an invalid ID is used
+    to fetch a user`, (done) => {
+      client.get('/api/users/ef')
+      .set({'x-access-token': adminUserToken})
+      .end((error, response) => {
+        expect(response.status).to.equal(500);
+        expect(response.body.success).to.equal(false);
+        done();
+      });
+    });
+  });
+
+  describe('Update User', () => {
+    it('Should NOT allow a User update another Users profile', (done) => {
+      client.put(`/api/users/${regularUserId + 1}`)
+      .set({'x-access-token': regularUserToken})
+      .end((error, response) => {
+        expect(response.status).to.equal(403);
+        expect(response.body.success).to.equal(false);
+        done();
+      });
+    });
+
+    it('Should Allow a User Update his profile if he has a valid Token',
+    (done) => {
+      const newFirstName = 'newName';
+      client.put(`/api/users/${regularUserId}`)
+      .send({
+        firstName: newFirstName 
+      })
+      .set({'x-access-token': regularUserToken})
+      .end((error, response) => {
+        expect(response.status).to.equal(200);
+        expect(response.body.firstName).to.equal(newFirstName);
+        done();
+      });
+    });
+
+    it('Should NOT allow a User update is profile without a Valid Token',
+    (done) => {
+      client.put(`/api/users/${regularUserId}`)
+      .set({'x-access-token': 'invalidToken'})
+      .end((error, response) => {
+        expect(response.status).to.equal(401);
         expect(response.body.success).to.equal(false);
         done();
       });

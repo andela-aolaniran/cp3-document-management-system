@@ -40,7 +40,8 @@ class UserController {
         password: request.body.password,
         firstName: request.body.firstName,
         lastName: request.body.lastName,
-        roleId: roleId ? roleId : 2 // setuser role to default if role id isn't supplied
+        // setuser role to default if role id isn't supplied
+        roleId: roleId ? roleId : 2
       })
       .then((user) => {
         response.status(201).json({
@@ -57,10 +58,10 @@ class UserController {
         });
       })
       .catch((error) => {
-        // send an array of errors that occurred
-        response.status(400).json({
+        response.status(500).json({
           success: false,
-          message: error.message});
+          message: error.message
+        });
       });
     } else {
       response.status(400).json({
@@ -91,9 +92,10 @@ class UserController {
           });
         })
         .catch((error) => {
-          response.status(400).json({
+          response.status(500).json({
             success: true,
-            message: error.message});
+            message: error.message
+          });
         });
       } else {
         response.status(404).json({
@@ -103,7 +105,7 @@ class UserController {
       }
     })
     .catch((error) => {
-      response.status(400).json({
+      response.status(500).json({
         success: false,
         message: error.message
       });
@@ -117,6 +119,14 @@ class UserController {
    * @return{Void} - returns void
    */
   static updateUser(request, response){
+    // users should not be allowed to update other users profile
+    if (request.decoded.userId !== +request.params.id) {
+      response.status(403).json({
+        success: false,
+        status: 'You cannot update other users profile'
+      });
+      return ;
+    }
     userDB.findOne({
       where: {
         id: request.params.id
@@ -128,7 +138,7 @@ class UserController {
           response.status(200).json(updatedUser);
         })
         .catch((error) => {
-          response.status(400).json({
+          response.status(500).json({
             success: false,
             message: error.message});
         });
@@ -140,7 +150,10 @@ class UserController {
       }
     })
     .catch((error) => {
-      response.status(400).json(error.errors);
+      response.status(500).json({
+        success: false,
+        message: error.message
+      });
     });
   }
   
@@ -159,13 +172,13 @@ class UserController {
         response.status(200).json(user);
       } else {
         response.status(404).json({
-          status: false,
+          success: false,
           message: 'User not found'
         });
       }
     })
     .catch((error) => {
-      response.status(400).json({
+      response.status(500).json({
         success: false,
         message: error.message
       });
@@ -193,9 +206,10 @@ class UserController {
       }
     })
     .catch((error) => {
-      response.json({
+      response.status(500).json({
         success: false,
-        message: error.message});
+        message: error.message
+      });
     });
   }
 
@@ -221,7 +235,8 @@ class UserController {
               response.status(200).json({
                 success: true,
                 message: 'Login Successful',
-                token
+                id: user.id,
+                token,
               }); 
             } else {
               // service is unavailable
@@ -258,8 +273,10 @@ class UserController {
    * @return{Void} - returns void
    */
   static logoutUser(request, response){
-    // Todo, Implement Log out functionality
-    response.send('You have hit the logout user controller');
+    response.status(200).json({
+      success: true,
+      message: 'Logout Successful'
+    });
   }
 
   /**
@@ -288,7 +305,7 @@ class UserController {
       }
     })
     .catch((error) => {
-      response.status(400).json({
+      response.status(500).json({
         success: false,
         message: error.message
       });

@@ -65,17 +65,17 @@ class Authenticator {
         id: request.decoded.roleId
       }
     }).then((role) => {
-      if (role.title === 'Admin') {
+      if (role.title === 'admin') {
         next();
       } else {
-        response.status(403).json({
+        response.status(401).json({
           success: false,
-          message: 'Only Admin can delete a user'
+          message: 'Admin status required'
         });
       }
     })
     .catch((error) => {
-      response.status(403).json({
+      response.status(401).json({
         success: false,
         message: error.message
       });

@@ -18,8 +18,8 @@ class UserRoutes {
     UserRoutes.loginUser(app);
 
     // setup authentication before protected routes
+    
     app.use(Authenticator.authenticateUser);
-
     UserRoutes.logoutUser(app);
     UserRoutes.fetchUser(app);
     UserRoutes.fetchUsers(app);
