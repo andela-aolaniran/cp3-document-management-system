@@ -15,10 +15,10 @@ services:
 before_script:
   - psql -c 'drop database if exists cp3_test;' -U postgres
   - psql -c 'create database cp3_test;' -U postgres
-  - NODE_ENV=test npm run migrate
+  - NODE_ENV=travis npm run migrate
 
 script:
-  - npm test
+  - npm run travis_test
 
 after_success:
   - npm run coveralls
