@@ -137,4 +137,4 @@ class SeedHelper {
   }
 }
 
-export default SeedHelper;
+export default SeedHelper.init();

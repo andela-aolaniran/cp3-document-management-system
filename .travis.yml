@@ -18,7 +18,7 @@ before_script:
   - NODE_ENV=test npm run migrate
 
 script:
-  - npm run travis_test
+  - npm test
 
 after_success:
   - npm run coveralls

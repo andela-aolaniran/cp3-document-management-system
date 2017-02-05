@@ -3,39 +3,36 @@ import chai from 'chai';
 import app from '../server';
 import testData from './helpers/SpecHelper';
 import database from '../models';
-import SeedHelper from './helpers/SeedHelper';
 
 const expect = chai.expect;
 
 const client = supertest.agent(app);
+
+// delete the user before each post request to avoid 
+// voilating database constraints
+const deleteUser = (userEmail) => {
+  database.User.destroy({
+    where: {
+      email: userEmail
+    }
+  });
+};
+
 let regularUserToken ;
 let adminUserToken;
 
 describe('User Endpoints', () => {
   // Create default roles before running all user
   // related test suites
-  before(() => {
-    database.sequelize.sync({Force: true});
-    SeedHelper.populateRoleTable();
-  });
 
   describe('Create Regular User', () => {
-    // delete the user before each post request to avoid 
-    // voilating database constraints
-    beforeEach(() => {
-      database.User.destroy({
-        where: {
-          email: testData.regularUser1.email
-        }
-      });
-    });
-
     it(`Should return http code 201 
       if a Regular User is successfully created`, (done) => {
       client.post('/api/users')
       .send(testData.regularUser1)
       .end((error, response) => {
         expect(response.status).to.equal(201);
+        deleteUser(testData.regularUser1.email);
         done();
       });
     });
@@ -46,6 +43,7 @@ describe('User Endpoints', () => {
       .send(testData.regularUser1)
       .end((error, response) => {
         expect(response.body.user).to.have.property('token');
+        deleteUser(testData.regularUser1.email);
         done();
       });
     });
@@ -58,6 +56,7 @@ describe('User Endpoints', () => {
         expect(response.body.user).to.have.property('firstName');
         expect(response.body.user).to.have.property('lastName');
         expect(response.body.user).to.have.property('email');
+        deleteUser(testData.regularUser1.email);
         done();
       });
     });
@@ -67,6 +66,7 @@ describe('User Endpoints', () => {
       .send(testData.regularUser1)
       .end((error, response) => {
         expect(response.body.user).to.not.have.property('password');
+        //deleteUser(testData.regularUser1.email);
         done();
       });
     });
@@ -79,28 +79,20 @@ describe('User Endpoints', () => {
       .end((error, response) => {
         expect(response.body.user.roleId).to.not.be.undefined;
         expect(response.body.user.roleId).to.equal(2);
+        deleteUser(testData.testUser.email);
         done();
       });
     });
   });
 
   describe('Create an Admin user', () => {
-    // delete the user before each post request to avoid 
-    // voilating database constraints
-    beforeEach(() => {
-      database.User.destroy({
-        where: {
-          email: testData.adminUser.email
-        }
-      });
-    });
-
     it(`Should return http code 201 
       if an Admin User is successfully created`, (done) => {
       client.post('/api/users')
       .send(testData.adminUser)
       .end((error, response) => {
         expect(response.status).to.equal(201);
+        deleteUser(testData.adminUser.email);
         done();
       });
     });
@@ -112,6 +104,7 @@ describe('User Endpoints', () => {
       .send(testData.adminUser)
       .end((error, response) => {
         expect(response.body.user).to.have.property('token');
+        deleteUser(testData.adminUser.email);
         done();
       });
     });
@@ -124,6 +117,7 @@ describe('User Endpoints', () => {
         expect(response.body.user).to.have.property('firstName');
         expect(response.body.user).to.have.property('lastName');
         expect(response.body.user).to.have.property('email');
+        deleteUser(testData.adminUser.email);
         done();
       });
     });
@@ -133,6 +127,7 @@ describe('User Endpoints', () => {
       .send(testData.adminUser)
       .end((error, response) => {
         expect(response.body.user).to.not.have.property('password');
+        deleteUser(testData.adminUser.email);
         done();
       });
     });
@@ -145,6 +140,7 @@ describe('User Endpoints', () => {
       .end((error, response) => {
         expect(response.body.user.roleId).to.not.be.undefined;
         expect(response.body.user.roleId).to.equal(1);
+        // deleteUser(testData.adminUser.email);
         done();
       });
     });
@@ -153,13 +149,6 @@ describe('User Endpoints', () => {
   describe('Login', () => {
     const regularUser = testData.regularUser1;
     const adminUser = testData.adminUser;
-    before(() => {
-      // clean our User table
-      database.User.destroy({ where: {} });
-      // create both users in the database
-      database.User.create(regularUser);
-      database.User.create(adminUser);
-    });
 
     it('Should allow login for only CORRECT details of an Admin', (done) => {
       client.post('/api/users/login')
@@ -252,7 +241,6 @@ describe('User Endpoints', () => {
       });
     });
 
-    
     it(`Should NOT allow login for INCORRECT details of a
      Regular User`, (done) => {
       client.post('/api/users/login')
