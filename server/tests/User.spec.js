@@ -16,7 +16,7 @@ describe('User Endpoints', () => {
   // related test suites
   before(() => {
     database.sequelize.sync({Force: true});
-    SeedHelper.populateRoleTable;
+    SeedHelper.populateRoleTable();
   });
 
   describe('Create Regular User', () => {

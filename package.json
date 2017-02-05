@@ -9,7 +9,6 @@
     "start": "babel-node app.js",
     "migrate": "sequelize db:migrate",
     "test": "NODE_ENV=test npm run mocha",
-    "travis_test": "NODE_ENV=travis npm run mocha",
     "develop:server": "NODE_ENV=development ./node_modules/gulp/bin/gulp.js develop_server",
     "cover": "rm -rf coverage/ && NODE_ENV=test babel-node ./node_modules/babel-istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- -R spec server/tests",
     "coveralls": "npm run cover && cat ./coverage/lcov.info | coveralls"
