@@ -7,8 +7,8 @@
     "dialect": "postgres"
   },
   "test": {
-    "username": "Andela",
-    "password": "andela2016",
+    "username": "postgres",
+    "password": "postgres",
     "database": "cp3_test",
     "host": "127.0.0.1",
     "dialect": "postgres",

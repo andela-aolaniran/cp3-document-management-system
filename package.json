@@ -7,7 +7,7 @@
     "lint": "./node_modules/eslint/bin/eslint.js --config .eslintrc.json ./server/**/*.js && ./node_modules/eslint/bin/eslint.js --config .eslintrc.json ./client/**/*.js",
     "mocha": "mocha --compilers js:babel-core/register server/tests",
     "start": "babel-node app.js",
-    "seed": "NODE_ENV=test ./node_modules/.bin/babel-node server/tests/helpers/SeedHelper.js",
+    "migrate": "sequelize db:migrate",
     "test": "NODE_ENV=test npm run mocha",
     "develop:server": "NODE_ENV=development ./node_modules/gulp/bin/gulp.js develop_server",
     "cover": "rm -rf coverage/ && NODE_ENV=test babel-node ./node_modules/babel-istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- -R spec server/tests",
