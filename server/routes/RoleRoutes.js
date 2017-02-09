@@ -12,7 +12,7 @@ class RoleRoutes {
    * @return{Void} returns void
    */
   static setRoleRoutes(app){
-    app.use(Authenticator.authenticateUser);
+    app.use(Authenticator.authenticateUser, Authenticator.verifyAdmin);
     RoleRoutes.getRole(app);
     RoleRoutes.getRoles(app);
     RoleRoutes.createRole(app);

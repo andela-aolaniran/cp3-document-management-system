@@ -144,7 +144,7 @@ class UserController {
         });
       } else {
         response.status(404).json({
-          status: false,
+          success: false,
           message: 'User not found'
         });
       }
@@ -200,7 +200,7 @@ class UserController {
         response.status(200).json(users);
       } else {
         response.status(404).json({
-          status: false,
+          success: false,
           message: 'No Users found'
         });
       }

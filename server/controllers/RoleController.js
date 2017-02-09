@@ -1,4 +1,5 @@
 import database from '../models';
+import Authenticator from '../middlewares/Authenticator';
 
 const roleDb = database.Role;
 
@@ -14,7 +15,6 @@ class RoleController {
    * @return{Void} - Returns void
    */
   static createRole(request, response) {
-    //response.send('You have hit the createRole controller');
     if (request.body && request.body.title) {
       roleDb.create(request.body)
       .then((role) => {
@@ -25,24 +25,23 @@ class RoleController {
           });
         } else {
           response.status(400).json({
-            status: 'Failed',
+            success: false,
             message: 'Role not created'
           });
         }
       })
       .catch((error) => {
         response.status(400).json({
-          status: 'Failed',
+          success: false,
           message: error.message
         });
       });
     } else {
       response.status(400).json({
-        status: 'Failed',
+        success: false,
         message: 'Required field(s) are missing'
       });
     }
-    
   }
 
   /**
@@ -64,15 +63,15 @@ class RoleController {
           title: request.body.title
         });
       } else {
-        response.status(400).json({
-          status: 'Failed',
+        response.status(404).json({
+          success: false,
           message: 'Could not update the specified role'
         });
       }
     })
     .catch((error) => {
-      response.status(400).json({
-        status: 'Failed',
+      response.status(404).json({
+        success: false,
         message: error.message
       });
     });
@@ -93,19 +92,19 @@ class RoleController {
     .then((status) => {
       if (status) {
         response.status(200).json({
-          status: 'Success',
+          success: false,
           message: 'Role Deleted Successfully'
         });
       } else {
         response.status(400).json({
-          status: 'Failed',
+          success: false,
           message: 'Deletion Failed'
         });
       }
     })
     .catch((error) => {
       response.status(400).json({
-        status: 'Failed',
+        success: false,
         message: error.message
       });
     });
@@ -126,14 +125,14 @@ class RoleController {
         response.status(200).json(role);
       } else {
         response.status(400).json({
-          status: 'Failed',
+          success: false,
           message: 'No Roles Found'
         });
       }
     })
     .catch((error) => {
       response.status(400).json({
-        status: 'Failed',
+        success: false,
         message: error.message
       });
     });
@@ -154,14 +153,14 @@ class RoleController {
         response.status(200).json(roles);
       } else {
         response.status(400).json({
-          status: 'Failed',
+          success: false,
           message: 'No Roles Found'
         });
       }
     })
     .catch((error) => {
       response.status(400).json({
-        status: 'Failed',
+        success: false,
         message: error.message
       });
     });

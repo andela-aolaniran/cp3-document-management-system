@@ -7,10 +7,10 @@ import database from '../models';
 const expect = chai.expect;
 
 const client = supertest.agent(app);
-let adminToken, adminId, regularUserToken, regularUserId,
-  newRoleId, newRoleTitle;
+
 
 describe('Roles:', () => {
+  let adminToken, adminId, regularUserToken, regularUserId, newRoleId, newRoleTitle;
   before((done) => {
     // runs before all tests in this block
     client.post('/api/users')
@@ -21,14 +21,15 @@ describe('Roles:', () => {
       client.post('/api/users')
       .send(testData.regularUserRole)
       .end((error1, response2) => {
-        regularUserToken = response.body.user.token;
-        regularUserId = response.body.user.roleId;
+        regularUserToken = response2.body.user.token;
+        regularUserId = response2.body.user.roleId;
         done();
       });
     });
   });
+  
   describe('Create Role', () => {
-    it('should allow only an Admin user with VALID token create a Role',
+    it('should allow an Admin user with VALID token create a Role',
     (done) => {
       client.post('/api/roles')
       .set({'x-access-token': adminToken})
@@ -88,7 +89,6 @@ describe('Roles:', () => {
       .end((error, response) => {
         expect(response.status).to.equal(200);
         expect(response.body.title).to.equal(testData.updateRole1.title);
-        expect(response.body.id).to.equal(testData.updateRole1.id);
         done();
       });
     });
@@ -133,7 +133,7 @@ describe('Roles:', () => {
   });
 
   describe('Get', () => {
-    it('should allow only an Admin User with VALID token get all Roles',
+    it('should allow an Admin User with VALID token get all Roles',
     (done) => {
       client.get('/api/roles')
       .set({'x-access-token': adminToken})
@@ -170,6 +170,17 @@ describe('Roles:', () => {
     });
 
     it('should NOT allow an Admin User with INVALID token get all Roles',
+    (done) => {
+      client.get('/api/roles')
+      .set({'x-access-token': 'invalid token'})
+      .end((error, response) => {
+        expect(response.status).to.equal(401);
+        expect(response.body.success).to.equal(false);
+        done();
+      });
+    });
+
+    it('should NOT allow an Non-Admin User with VALID token get all Roles',
     (done) => {
       client.get('/api/roles')
       .set({'x-access-token': regularUserToken})
