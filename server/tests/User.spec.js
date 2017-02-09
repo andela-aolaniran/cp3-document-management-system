@@ -8,21 +8,11 @@ const expect = chai.expect;
 
 const client = supertest.agent(app);
 
-// delete the user before each post request to avoid 
-// voilating database constraints
-const deleteUser = (userEmail) => {
-  database.User.destroy({
-    where: {
-      email: userEmail
-    }
-  });
-};
-
 let regularUserToken;
 let adminUserToken;
 let regularUserId;
 
-describe('User Endpoints', () => {
+describe('Users:', () => {
   // Create default roles before running all user
   // related test suites
 
@@ -44,7 +34,6 @@ describe('User Endpoints', () => {
       .end((error, response) => {
         expect(response.status).to.equal(500);
         expect(response.body.success).to.equal(false);
-        deleteUser(testData.regularUser1.email);
         done();
       });
     });
@@ -52,10 +41,9 @@ describe('User Endpoints', () => {
     it(`Should return a TOKEN 
       if a Regular User is successfully created`, (done) => {
       client.post('/api/users')
-      .send(testData.regularUser1)
+      .send(testData.regularUser2)
       .end((error, response) => {
         expect(response.body.user).to.have.property('token');
-        deleteUser(testData.regularUser1.email);
         done();
       });
     });
@@ -63,22 +51,20 @@ describe('User Endpoints', () => {
     it(`Should return only necessary
       details of the created Regular User`, (done) => {
       client.post('/api/users')
-      .send(testData.regularUser1)
+      .send(testData.regularUser3)
       .end((error, response) => {
         expect(response.body.user).to.have.property('firstName');
         expect(response.body.user).to.have.property('lastName');
         expect(response.body.user).to.have.property('email');
-        deleteUser(testData.regularUser1.email);
         done();
       });
     });
 
     it('Should NOT return sensitive details of the Regular User', (done) => {
       client.post('/api/users')
-      .send(testData.regularUser1)
+      .send(testData.regularUser4)
       .end((error, response) => {
         expect(response.body.user).to.not.have.property('password');
-        //deleteUser(testData.regularUser1.email);
         done();
       });
     });
@@ -91,7 +77,6 @@ describe('User Endpoints', () => {
       .end((error, response) => {
         expect(response.body.user.roleId).to.not.be.undefined;
         expect(response.body.user.roleId).to.equal(2);
-        deleteUser(testData.testUser.email);
         done();
       });
     });
@@ -104,7 +89,6 @@ describe('User Endpoints', () => {
       .send(testData.adminUser)
       .end((error, response) => {
         expect(response.status).to.equal(201);
-        deleteUser(testData.adminUser.email);
         done();
       });
     });
@@ -113,10 +97,9 @@ describe('User Endpoints', () => {
     it(`Should return a TOKEN 
       if an Admin User is successfully created`, (done) => {
       client.post('/api/users')
-      .send(testData.adminUser)
+      .send(testData.adminUser1)
       .end((error, response) => {
         expect(response.body.user).to.have.property('token');
-        deleteUser(testData.adminUser.email);
         done();
       });
     });
@@ -124,22 +107,20 @@ describe('User Endpoints', () => {
     it(`Should return only necessary
       details of the created Admin user`, (done) => {
       client.post('/api/users')
-      .send(testData.adminUser)
+      .send(testData.adminUser2)
       .end((error, response) => {
         expect(response.body.user).to.have.property('firstName');
         expect(response.body.user).to.have.property('lastName');
         expect(response.body.user).to.have.property('email');
-        deleteUser(testData.adminUser.email);
         done();
       });
     });
 
     it('Should NOT return sensitive details of the Admin user', (done) => {
       client.post('/api/users')
-      .send(testData.adminUser)
+      .send(testData.adminUser3)
       .end((error, response) => {
         expect(response.body.user).to.not.have.property('password');
-        deleteUser(testData.adminUser.email);
         done();
       });
     });
@@ -148,11 +129,10 @@ describe('User Endpoints', () => {
       expect(testData.adminUser.roleId).to.not.be.undefined;
       expect(testData.adminUser.roleId).to.equal(1);
       client.post('/api/users')
-      .send(testData.adminUser)
+      .send(testData.adminUser4)
       .end((error, response) => {
         expect(response.body.user.roleId).to.not.be.undefined;
         expect(response.body.user.roleId).to.equal(1);
-        // deleteUser(testData.adminUser.email);
         done();
       });
     });
@@ -424,7 +404,7 @@ describe('User Endpoints', () => {
       });
     });
 
-    it('Should NOT allow a User update is profile without a Valid Token',
+    it('Should NOT allow a User update his profile without a Valid Token',
     (done) => {
       client.put(`/api/users/${regularUserId}`)
       .set({'x-access-token': 'invalidToken'})

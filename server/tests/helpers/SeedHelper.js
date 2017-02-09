@@ -94,33 +94,39 @@ class SeedHelper {
       {
         title: faker.company.catchPhrase(),
         content: faker.lorem.paragraph(),
+        access: 'role',
         ownerId: 1
       },
       {
         title: faker.company.catchPhrase(),
         content: faker.lorem.paragraph(),
+        access: 'private',
         ownerId: 2
       },
       {
         title: faker.company.catchPhrase(),
         content: faker.lorem.paragraph(),
+        access: 'public',
         ownerId: 3
       },
       {
         title: faker.company.catchPhrase(),
         content: faker.lorem.paragraph(),
+        access: 'public',
         ownerId: 2
 
       },
       {
         title: faker.company.catchPhrase(),
         content: faker.lorem.paragraph(),
+        access: 'public',
         ownerId: 1
       },
       {
         id: 8,
         title: faker.company.catchPhrase(),
         content: faker.lorem.paragraph(),
+        access: 'role',
         ownerId: 2
       }
     ];

@@ -12,18 +12,19 @@ module.exports = {
         isBetaMember: false
       }], {});
     */
-    return queryInterface.bulkInsert('Roles', [{
-      title: 'Regular',
-      id: 2,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    },
-    {
-      title: 'Admin',
-      id: 1,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    }
+    return queryInterface.bulkInsert('Roles', [
+      {
+        title: 'admin',
+        id: 1,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        title: 'regular',
+        id: 2,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }
     ], {});
   },
 

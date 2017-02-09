@@ -19,7 +19,7 @@ class RoleController {
       roleDb.create(request.body)
       .then((role) => {
         if (role) {
-          response.status(203).json({
+          response.status(201).json({
             id: role.id,
             title: role.title
           });
