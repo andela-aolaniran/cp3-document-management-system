@@ -19,12 +19,12 @@ class SeedHelper {
       SeedHelper.populateRoleTable()
       .then(() => {
         SeedHelper.populateUserTable()
-        .then(() => {
-          SeedHelper.populateDocumentTable()
-          .catch((err) => {
-            logger.error(err);
-          });
-        })
+        // .then(() => {
+        //   SeedHelper.populateDocumentTable()
+        //   .catch((err) => {
+        //     logger.error(err);
+        //   });
+        // })
         .catch((err) => {
           logger.error(err);
         });
@@ -139,7 +139,7 @@ class SeedHelper {
   * @return {String} hashed password
   */
   static hashPass(password) {
-    return bcrypt.hashSync(SeedHelper.password, bcrypt.genSaltSync(5));
+    return bcrypt.hashSync(password, bcrypt.genSaltSync(5));
   }
 }
 

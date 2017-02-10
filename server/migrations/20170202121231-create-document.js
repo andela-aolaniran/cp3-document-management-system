@@ -34,10 +34,6 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       },
-      access: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
       updatedAt: {
         allowNull: false,
         type: Sequelize.DATE

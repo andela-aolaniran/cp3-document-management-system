@@ -57,12 +57,44 @@ const testData = {
     password: faker.internet.password(),
     roleId: 1
   },
+  adminUserSearch: {
+    username: faker.internet.userName(),
+    firstName: faker.name.firstName(),
+    lastName: faker.name.lastName(),
+    email: faker.internet.email(),
+    password: faker.internet.password(),
+    roleId: 1
+  },
+  adminUserForDocumentTest: {
+    username: faker.internet.userName(),
+    firstName: faker.name.firstName(),
+    lastName: faker.name.lastName(),
+    email: faker.internet.email(),
+    password: faker.internet.password(),
+    roleId: 1
+  },
   testUser: {
     username: faker.internet.userName(),
     firstName: faker.name.firstName(),
     lastName: faker.name.lastName(),
     email: faker.internet.email(),
     password: faker.internet.password()
+  },
+  regularUserForDocumentTest: {
+    username: faker.internet.userName(),
+    firstName: faker.name.firstName(),
+    lastName: faker.name.lastName(),
+    email: faker.internet.email(),
+    password: faker.internet.password(),
+    roleId: 2
+  },
+  regularUserForDocumentTest2: {
+    username: faker.internet.userName(),
+    firstName: faker.name.firstName(),
+    lastName: faker.name.lastName(),
+    email: faker.internet.email(),
+    password: faker.internet.password(),
+    roleId: 2
   },
   regularUser1: {
     username: faker.internet.userName(),
@@ -112,6 +144,7 @@ const testData = {
     password: faker.internet.password(),
     roleId: 2
   },
+  // Note before using thise documents, a ownerId property should be added
   documentRole1: {
     title: faker.company.catchPhrase(),
     access: 'role',
@@ -165,6 +198,12 @@ const testData = {
   documentPrivate4: {
     title: faker.company.catchPhrase(),
     access: 'private',
+    content: faker.lorem.paragraph()
+  },
+  documentInvalid: {
+  },
+  documentNoAccess: {
+    title: faker.company.catchPhrase(),
     content: faker.lorem.paragraph()
   },
   documentPublic4: {

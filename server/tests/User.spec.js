@@ -357,7 +357,7 @@ describe('Users:', () => {
 
     it(`Should Fail to return a User if User with such id doesn't 
     exist`, (done) => {
-      client.get('/api/users/100')
+      client.get('/api/users/10000')
       .set({'x-access-token': adminUserToken})
       .end((error, response) => {
         expect(response.status).to.equal(404);
@@ -410,6 +410,62 @@ describe('Users:', () => {
       .set({'x-access-token': 'invalidToken'})
       .end((error, response) => {
         expect(response.status).to.equal(401);
+        expect(response.body.success).to.equal(false);
+        done();
+      });
+    });
+  });
+
+  describe('Delete User', () => {
+    it('Should NOT allow another Non-Admin User delete another User', (done) => {
+      client.delete(`/api/users/${regularUserId}`)
+      .set({'x-access-token': regularUserToken})
+      .end((error, response) => {
+        expect(response.status).to.equal(401);
+        expect(response.body.success).to.equal(false);
+        done();
+      });
+    });
+
+    it('Should NOT allow a User with In-Valid Token delete another User',
+    (done) => {
+      client.delete(`/api/users/${regularUserId}`)
+      .set({'x-access-token': 'invalidToken'})
+      .end((error, response) => {
+        expect(response.status).to.equal(401);
+        expect(response.body.success).to.equal(false);
+        done();
+      });
+    });
+
+    it('Should allow an Admin user with Valid Token delete another User',
+    (done) => {
+      client.delete(`/api/users/${regularUserId}`)
+      .set({'x-access-token': adminUserToken})
+      .end((error, response) => {
+        expect(response.status).to.equal(200);
+        expect(response.body.success).to.equal(true);
+        done();
+      });
+    });
+
+    it('Should NOT allow an Admin user with InValid Token delete another User',
+    (done) => {
+      client.delete(`/api/users/${regularUserId}`)
+      .set({'x-access-token': 'invalid token'})
+      .end((error, response) => {
+        expect(response.status).to.equal(401);
+        expect(response.body.success).to.equal(false);
+        done();
+      });
+    });
+
+    it(`Should NOT allow an Admin user with Valid Token delete a User that does 
+    not exist`, (done) => {
+      client.delete(`/api/users/${regularUserId + 10000}`)
+      .set({'x-access-token': adminUserToken})
+      .end((error, response) => {
+        expect(response.status).to.equal(404);
         expect(response.body.success).to.equal(false);
         done();
       });
