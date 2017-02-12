@@ -37,7 +37,8 @@ describe('Search', () => {
     });
   });
 
-  it ('should return documents ordered by published date in descending order', (done) => {
+  it ('should return documents ordered by published date in descending order',
+  (done) => {
     client.get('/api/documents/')
     .set({'x-access-token': adminUserToken})
     .end((error, response) => {

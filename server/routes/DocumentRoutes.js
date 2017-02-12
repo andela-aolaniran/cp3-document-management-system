@@ -22,7 +22,7 @@ class DocumentRoutes {
   /**
    * Method to set controller for fetch documents route
    * @param{Object} app - Express app
-   * @return{Void}
+   * @return{Void} - Returns void
    */
   static getDocuments(app) {
     app.get('/api/documents', DocumentController.fetchDocuments);
@@ -31,7 +31,7 @@ class DocumentRoutes {
   /**
    * Method to set controller for fetch document route
    * @param{Object} app - Express app
-   * @return{Void}
+   * @return{Void} - Returns void
    */
   static getDocument(app) {
     app.get('/api/documents/:id', DocumentController.fetchDocument);
@@ -40,7 +40,7 @@ class DocumentRoutes {
   /**
    * Method to set controller for create a document route
    * @param{Object} app - Express app
-   * @return{Void}
+   * @return{Void}  - Returns void
    */
   static createDocument(app) {
     app.post('/api/documents', DocumentController.createDocument);
@@ -49,7 +49,7 @@ class DocumentRoutes {
   /**
    * Method to set controller for update documents route
    * @param{Object} app - Express app
-   * @return{Void}
+   * @return{Void} - Returns void
    */
   static updateDocument(app) {
     app.put('/api/documents/:id', DocumentController.updateDocument);
@@ -58,7 +58,7 @@ class DocumentRoutes {
   /**
    * Method to set controller for delete document route
    * @param{Object} app - Express app
-   * @return{Void}
+   * @return{Void} - Returns void
    */
   static deleteDocument(app) {
     app.delete('/api/documents/:id', DocumentController.deleteDocument);

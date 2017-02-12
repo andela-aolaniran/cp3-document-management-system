@@ -155,11 +155,6 @@ describe('Documents:', () => {
 
     it(`should allow the creator of a private document access to the
       document`, (done) => {
-      // const document = testData.documentPrivate1;
-      // client.post('/api/documents')
-      // .send(document)
-      // .set({'x-access-token': regularUserToken})
-      // .end((error, response) => {
       client.get(`/api/documents/${privateDocumentData.id}`)
       .set({'x-access-token': privateDocumentData.ownerToken})
       .end((error, response) => {
@@ -172,16 +167,9 @@ describe('Documents:', () => {
           .to.equal(privateDocumentData.document.content);
         done();
       });
-      //});
     });
     it(`should allow a document with access set to 'private'
     be accessible by Admin users`, (done) => {
-      // const document = testData.documentPrivate1;
-      // client.post('/api/documents')
-      // .send(document)
-      // .set({'x-access-token': regularUserToken})
-      // .end((error, response) => {
-        //const documentId = response.body.document.id;
       client.get(`/api/documents/${privateDocumentData.id}`)
       .set({'x-access-token': adminUserToken})
       .end((error, response) => {
@@ -194,37 +182,22 @@ describe('Documents:', () => {
           to.equal(privateDocumentData.document.content);
         done();
       });
-      //});
     });
 
     it(`should NOT allow a document with access set to 'private'
     be accessible by other Non-Admin users`, (done) => {
-      // const document = testData.documentPrivate1;
-      // client.post('/api/documents')
-      // .set({'x-access-token': regularUserToken})
-      // .send(document)
-      // .end((error, response) => {
-      //   const documentId = response.body.document.id;
       client.get(`/api/documents/${privateDocumentData.id}`)
-      // Todo, find a way add user valid token of non-owner of the document
       .set({'x-access-token': regularUser2Token})
       .end((error, response) => {
         expect(response.body.success).to.equal(false);
         expect(response.status).to.equal(401);
         done();
       });
-      //});
     });
 
     it(`should allow a document with access set to 'role' be accessible
     by other authenticated users with same role status as the document owner`,
     (done) => {
-      // const document = testData.documentRole1;
-      // client.post('/api/documents')
-      // .set({'x-access-token': regularUserToken})
-      // .send(document)
-      // .end((error, response) => {
-      //   const documentId = response.body.document.id;
       client.get(`/api/documents/${roleDocumentData.id}`)
       .set({'x-access-token': regularUser2Token})
       .end((error, response) => {
@@ -237,7 +210,6 @@ describe('Documents:', () => {
           .to.equal(roleDocumentData.document.content);
         done();
       });
-      //});
     });
 
     it(`should allow only an Admin User with valid authentication token access
@@ -251,7 +223,7 @@ describe('Documents:', () => {
         documents.forEach((document) => {
           expect(document.access).to.be.oneOf(['role', 'private', 'public']);
         });
-        done()
+        done();
       });
     });
 
@@ -265,7 +237,6 @@ describe('Documents:', () => {
         expect(response.body.success).to.equal(true);
         expect(response.status).to.equal(200);
         const documents = response.body.documents;
-        console.log('documents length: ', documents.length);
         documents.forEach((document) => {
           expect(document.access).to.be.oneOf(['role', 'private', 'public']);
           // ensure only this user private documents are returned

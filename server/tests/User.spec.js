@@ -417,7 +417,8 @@ describe('Users:', () => {
   });
 
   describe('Delete User', () => {
-    it('Should NOT allow another Non-Admin User delete another User', (done) => {
+    it('Should NOT allow another Non-Admin User delete another User',
+    (done) => {
       client.delete(`/api/users/${regularUserId}`)
       .set({'x-access-token': regularUserToken})
       .end((error, response) => {

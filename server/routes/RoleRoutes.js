@@ -26,7 +26,7 @@ class RoleRoutes {
    * @return{Void} returns void
    */
   static getRoles(app) {
-    app.get('/api/roles', RoleController.fetchRoles)
+    app.get('/api/roles', RoleController.fetchRoles);
   }
 
   /**
