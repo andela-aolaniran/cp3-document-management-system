@@ -40,6 +40,7 @@
     "no-param-reassign": 0,
     "no-unused-vars":0,
     "comma-dangle": 0,
+    "import/no-unresolved": 0,
     "indent":["warn", 2],
     "curly": ["warn", "multi-line"],
     "no-shadow": ["warn", { "allow": ["req", "res", "err"] }],

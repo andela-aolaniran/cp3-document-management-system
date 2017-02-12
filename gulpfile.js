@@ -7,41 +7,34 @@ const sequence = require('run-sequence');
 /**
  * Gulp task to run tests after transpilation from es6 to es5
  */
-gulp.task('test', () => {
-  return gulp.src('dist/tests/**/*.spec.js')
-  .pipe(mocha());
-});
+gulp.task('test', () => gulp.src('dist/tests/**/*.spec.js')
+  .pipe(mocha()));
 
 /**
  * Gulp task to transpile source code in the server folder to es5
  * and place in the dist folder
  */
-gulp.task('transpile', () => {
-  return gulp.src(['server/**/*.js'])
-    .pipe(babel({presets: ['es2015']}))
-    .pipe(gulp.dest('dist'));
-});
+gulp.task('transpile', () => gulp.src(['server/**/*.js'])
+    .pipe(babel({ presets: ['es2015'] }))
+    .pipe(gulp.dest('dist')));
 
 /**
  * Gulp task to run the server with nodemon listening for changes
  * and restart the server accordingly.
  */
-gulp.task('serve', () => {
-  return nodemon({'script': './dist/server.js'});
-});
+gulp.task('serve', () => nodemon({ script: './dist/server.js' }));
 
 /**
  * Gulp task to watch the server folder for file changes, then
  * transpile sever code to es5 and place in the dist folder
  */
-gulp.task('watch_server', () => {
-  return gulp.watch('server/**/*.*', {cwd: './'}, () => {
-    sequence(
+gulp.task('watch_server',
+() => gulp.watch('server/**/*.*', { cwd: './' }, () => {
+  sequence(
       'transpile',
       'test'
     );
-  });
-});
+}));
 
 /**
  * Gulp task for development purposes
@@ -55,4 +48,4 @@ gulp.task('develop_server', () => {
     'test',
     'watch_server'
   );
-}); 
+});
