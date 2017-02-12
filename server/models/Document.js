@@ -18,8 +18,10 @@ export default (sequelize, DataTypes) => {
     }
   }, {
     classMethods: {
-      associate: function(models) {
-        Document.belongsTo(models.User, {foreignKey: 'ownerId'});
+      associate: (models) => {
+        Document.belongsTo(models.User, {
+          foreignKey: 'ownerId'
+        });
       }
     }
   });

@@ -18,7 +18,7 @@ describe('Search', () => {
       adminUserToken = response.body.user.token;
       adminUserId = response.body.user.id;
       client.post('/api/documents')
-      .set({'x-access-token': adminUserToken})
+      .set({ 'x-access-token': adminUserToken })
       .send(testDocument)
       .end(() => {
         done();
@@ -26,10 +26,10 @@ describe('Search', () => {
     });
   });
 
-  it ('should return documents limited by a specified number', (done) => {
+  it('should return documents limited by a specified number', (done) => {
     const searchLimit = 3;
     client.get(`/api/documents/?limit=${searchLimit}`)
-    .set({'x-access-token': adminUserToken})
+    .set({ 'x-access-token': adminUserToken })
     .end((error, response) => {
       expect(response.status).to.equal(200);
       expect(response.body.documents.length).to.equal(searchLimit);
@@ -37,10 +37,10 @@ describe('Search', () => {
     });
   });
 
-  it ('should return documents ordered by published date in descending order',
+  it('should return documents ordered by published date in descending order',
   (done) => {
     client.get('/api/documents/')
-    .set({'x-access-token': adminUserToken})
+    .set({ 'x-access-token': adminUserToken })
     .end((error, response) => {
       expect(response.status).to.equal(200);
       let oldestDate = Date.now();
@@ -53,10 +53,10 @@ describe('Search', () => {
     });
   });
 
-  it ('should return only documents that match a specific query', (done) => {
+  it('should return only documents that match a specific query', (done) => {
     const searchText = testDocument.title.split(/\s/)[0];
     client.get(`/api/documents/?search=${searchText}`)
-    .set({'x-access-token': adminUserToken})
+    .set({ 'x-access-token': adminUserToken })
     .end((error, response) => {
       expect(response.status).to.equal(200);
       response.body.documents.forEach((document) => {

@@ -25,3 +25,4 @@ after_success:
 
 addons:
   postgresql: "9.3"
+  

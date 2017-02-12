@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt-nodejs';
+
 export default (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
     id: {
@@ -34,7 +35,7 @@ export default (sequelize, DataTypes) => {
     classMethods: {
       associate: (models) => {
         // associations defined here
-        User.belongsTo(models.Role, {foreignKey: 'roleId'});
+        User.belongsTo(models.Role, { foreignKey: 'roleId' });
         User.hasMany(models.Document, { foreignKey: 'ownerId' });
       }
     },

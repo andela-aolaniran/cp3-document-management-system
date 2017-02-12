@@ -14,7 +14,7 @@ const regularUser2 = testData.regularUserForDocumentTest2;
 describe('Documents:', () => {
   // lets create neccessary users for these tests and get their details
   let regularUserToken, regularUserId, adminUserToken, adminUserId,
-    regularUser2Id, regularUser2Token; 
+    regularUser2Id, regularUser2Token;
   before((done) => {
     client.post('/api/users')
     .send(adminUser)
@@ -39,11 +39,11 @@ describe('Documents:', () => {
 
   describe('Post', () => {
     it('should create a new document with a Creation date defined',
-    (done) => { 
+    (done) => {
       const document = testData.documentPublic1;
       client.post('/api/documents')
       .send(document)
-      .set({'x-access-token': regularUserToken})
+      .set({ 'x-access-token': regularUserToken })
       .end((error, response) => {
         expect(response.body.success).to.equal(true);
         expect(response.body.document.createdAt).to.not.be.undefined;
@@ -56,7 +56,7 @@ describe('Documents:', () => {
       const document = testData.documentRole1;
       client.post('/api/documents')
       .send(document)
-      .set({'x-access-token': regularUserToken})
+      .set({ 'x-access-token': regularUserToken })
       .end((error, response) => {
         expect(response.body.success).to.equal(true);
         expect(response.status).to.equal(201);
@@ -69,7 +69,7 @@ describe('Documents:', () => {
       const document = testData.documentRole1;
       client.post('/api/documents')
       .send(document)
-      .set({'x-access-token': 'invalid token'})
+      .set({ 'x-access-token': 'invalid token' })
       .end((error, response) => {
         expect(response.body.success).to.equal(false);
         expect(response.status).to.equal(401);
@@ -81,7 +81,7 @@ describe('Documents:', () => {
     are missing`, (done) => {
       client.post('/api/documents')
       .send(testData.documentInvalid)
-      .set({'x-access-token': regularUserToken})
+      .set({ 'x-access-token': regularUserToken })
       .end((error, response) => {
         expect(response.body.success).to.equal(false);
         expect(response.status).to.equal(400);
@@ -93,9 +93,9 @@ describe('Documents:', () => {
     ('public') if no access is specified`, (done) => {
       client.post('/api/documents')
       .send(testData.documentNoAccess)
-      .set({'x-access-token': regularUserToken})
+      .set({ 'x-access-token': regularUserToken })
       .end((error, response) => {
-        if(error){
+        if (error) {
           return done();
         }
         expect(response.body.success).to.equal(true);
@@ -108,7 +108,7 @@ describe('Documents:', () => {
       const document = testData.documentPublic1;
       client.post('/api/documents')
       .send(document)
-      .set({'x-access-token': regularUserToken})
+      .set({ 'x-access-token': regularUserToken })
       .end((error, response) => {
         expect(response.body.document.updatedAt).to.not.be.undefined;
         done();
@@ -127,7 +127,7 @@ describe('Documents:', () => {
       // fetch data for documents
       client.post('/api/documents')
       .send(privateDocumentData.document)
-      .set({'x-access-token': regularUserToken})
+      .set({ 'x-access-token': regularUserToken })
       .end((error, response) => {
         // private document
         privateDocumentData.id = response.body.document.id;
@@ -136,7 +136,7 @@ describe('Documents:', () => {
         publicDocumentData.ownerToken = regularUserToken;
         client.post('/api/documents')
         .send(publicDocumentData.document)
-        .set({'x-access-token': regularUserToken})
+        .set({ 'x-access-token': regularUserToken })
         .end((error1, response1) => {
           roleDocumentData.id = response1.body.document.id;
           // role document
@@ -144,7 +144,7 @@ describe('Documents:', () => {
           roleDocumentData.ownerToken = regularUserToken;
           client.post('/api/documents')
           .send(roleDocumentData.document)
-          .set({'x-access-token': regularUserToken})
+          .set({ 'x-access-token': regularUserToken })
           .end((error2, response2) => {
             roleDocumentData.id = response2.body.document.id;
             done();
@@ -156,7 +156,7 @@ describe('Documents:', () => {
     it(`should allow the creator of a private document access to the
       document`, (done) => {
       client.get(`/api/documents/${privateDocumentData.id}`)
-      .set({'x-access-token': privateDocumentData.ownerToken})
+      .set({ 'x-access-token': privateDocumentData.ownerToken })
       .end((error, response) => {
         expect(response.body.success).to.equal(true);
         expect(response.status).to.equal(200);
@@ -171,15 +171,15 @@ describe('Documents:', () => {
     it(`should allow a document with access set to 'private'
     be accessible by Admin users`, (done) => {
       client.get(`/api/documents/${privateDocumentData.id}`)
-      .set({'x-access-token': adminUserToken})
+      .set({ 'x-access-token': adminUserToken })
       .end((error, response) => {
         expect(response.body.success).to.equal(true);
         expect(response.status).to.equal(200);
         expect(response.body.document).to.not.be.undefined;
-        expect(response.body.document.title).
-          to.equal(privateDocumentData.document.title);
-        expect(response.body.document.content).
-          to.equal(privateDocumentData.document.content);
+        expect(response.body.document.title)
+          .to.equal(privateDocumentData.document.title);
+        expect(response.body.document.content)
+          .to.equal(privateDocumentData.document.content);
         done();
       });
     });
@@ -187,7 +187,7 @@ describe('Documents:', () => {
     it(`should NOT allow a document with access set to 'private'
     be accessible by other Non-Admin users`, (done) => {
       client.get(`/api/documents/${privateDocumentData.id}`)
-      .set({'x-access-token': regularUser2Token})
+      .set({ 'x-access-token': regularUser2Token })
       .end((error, response) => {
         expect(response.body.success).to.equal(false);
         expect(response.status).to.equal(401);
@@ -199,7 +199,7 @@ describe('Documents:', () => {
     by other authenticated users with same role status as the document owner`,
     (done) => {
       client.get(`/api/documents/${roleDocumentData.id}`)
-      .set({'x-access-token': regularUser2Token})
+      .set({ 'x-access-token': regularUser2Token })
       .end((error, response) => {
         expect(response.body.success).to.equal(true);
         expect(response.status).to.equal(200);
@@ -215,7 +215,7 @@ describe('Documents:', () => {
     it(`should allow only an Admin User with valid authentication token access
     to all documents regardless of the document access status`, (done) => {
       client.get('/api/documents')
-      .set({'x-access-token': adminUserToken})
+      .set({ 'x-access-token': adminUserToken })
       .end((error, response) => {
         expect(response.body.success).to.equal(true);
         expect(response.status).to.equal(200);
@@ -232,7 +232,7 @@ describe('Documents:', () => {
     private documents`,
     (done) => {
       client.get('/api/documents')
-      .set({'x-access-token': regularUserToken})
+      .set({ 'x-access-token': regularUserToken })
       .end((error, response) => {
         expect(response.body.success).to.equal(true);
         expect(response.status).to.equal(200);
@@ -240,7 +240,7 @@ describe('Documents:', () => {
         documents.forEach((document) => {
           expect(document.access).to.be.oneOf(['role', 'private', 'public']);
           // ensure only this user private documents are returned
-          if(document.access === 'private') {
+          if (document.access === 'private') {
             expect(document.ownerId).to.equal(regularUserId);
           }
         });
@@ -251,7 +251,7 @@ describe('Documents:', () => {
     it(`should NOT allow any user without valid authentication token
     fetch documents`, (done) => {
       client.get('/api/documents')
-      .set({'x-access-token': 'invalid token'})
+      .set({ 'x-access-token': 'invalid token' })
       .end((error, response) => {
         expect(response.body.success).to.equal(false);
         expect(response.status).to.equal(401);

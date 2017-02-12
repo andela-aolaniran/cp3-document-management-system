@@ -5,13 +5,13 @@ import Authenticator from '../middlewares/Authenticator';
  * Class for creating Role routes
  */
 class RoleRoutes {
-  
+
   /**
    * Method to hook up all routes to respective endpoints
    * @param{Object} app - Express app
    * @return{Void} returns void
    */
-  static setRoleRoutes(app){
+  static setRoleRoutes(app) {
     app.use(Authenticator.authenticateUser, Authenticator.verifyAdmin);
     RoleRoutes.getRole(app);
     RoleRoutes.getRoles(app);

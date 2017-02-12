@@ -17,7 +17,7 @@ class UserController {
    * @return{Boolean} - True if request contains all required fields,
    * otherwise false
    */
-  static checkPostRequest(request){
+  static checkPostRequest(request) {
     return (request.body &&
       request.body.email &&
       request.body.firstName &&
@@ -32,16 +32,16 @@ class UserController {
    * @param{Object} response - Response object
    * @return{Void} - returns void
    */
-  static createUser(request, response){
-    if(UserController.checkPostRequest(request)){
+  static createUser(request, response) {
+    if (UserController.checkPostRequest(request)) {
       const roleId = request.body.roleId;
-      return userDB.create({
+      userDB.create({
         email: request.body.email,
         password: request.body.password,
         firstName: request.body.firstName,
         lastName: request.body.lastName,
         // setuser role to default if role id isn't supplied
-        roleId: roleId ? roleId : 2
+        roleId: roleId || 2
       })
       .then((user) => {
         response.status(201).json({
@@ -77,7 +77,7 @@ class UserController {
    * @param{Object} response - Response object
    * @return{Void} - returns void
    */
-  static deleteUser(request, response){
+  static deleteUser(request, response) {
     userDB.findOne({
       where: {
         id: request.params.id
@@ -118,14 +118,14 @@ class UserController {
    * @param{Object} response - Response object
    * @return{Void} - returns void
    */
-  static updateUser(request, response){
+  static updateUser(request, response) {
     // users should not be allowed to update other users profile
     if (request.decoded.userId !== +request.params.id) {
       response.status(403).json({
         success: false,
         status: 'You cannot update other users profile'
       });
-      return ;
+      return;
     }
     userDB.findOne({
       where: {
@@ -140,7 +140,8 @@ class UserController {
         .catch((error) => {
           response.status(500).json({
             success: false,
-            message: error.message});
+            message: error.message
+          });
         });
       } else {
         response.status(404).json({
@@ -156,7 +157,7 @@ class UserController {
       });
     });
   }
-  
+
   /**
    * Method to fetch a specific user (GET)
    * @param{Object} request - Request object
@@ -191,12 +192,12 @@ class UserController {
    * @param{Object} response - Response object
    * @return{Void} - returns void
    */
-  static fetchUsers(request, response){
+  static fetchUsers(request, response) {
     userDB.findAll({
       attributes: ['email', 'firstName', 'lastName', 'id', 'roleId']
     })
     .then((users) => {
-      if(users) {
+      if (users) {
         response.status(200).json(users);
       } else {
         response.status(404).json({
@@ -219,16 +220,16 @@ class UserController {
    * @param{Object} response - Response object
    * @return{Void} - returns void
    */
-  static loginUser(request, response){
-    if(request.body.email && request.body.password){
+  static loginUser(request, response) {
+    if (request.body.email && request.body.password) {
       userDB.findOne({
         where: {
           email: request.body.email
-        } 
+        }
       })
       .then((user) => {
         if (user) {
-          if(user.verifyPassword(request.body.password)) {
+          if (user.verifyPassword(request.body.password)) {
             // send the token here
             const token = Authenticator.generateToken(user);
             if (token) {
@@ -237,7 +238,7 @@ class UserController {
                 message: 'Login Successful',
                 id: user.id,
                 token,
-              }); 
+              });
             } else {
               // service is unavailable
               response.status(503).json({
@@ -272,7 +273,7 @@ class UserController {
    * @param{Object} response - Response object
    * @return{Void} - returns void
    */
-  static logoutUser(request, response){
+  static logoutUser(request, response) {
     response.status(200).json({
       success: true,
       message: 'Logout Successful'
@@ -285,17 +286,16 @@ class UserController {
    * @param{Object} response - Response object
    * @return{Void} - returns void
    */
-  static fetchUserDocuments(request, response){
-    userDB.findById(request.params.id, 
-      { 
-        attributes: ['id', 'email', 'firstName', 'lastName'],
-        include: [{
-          model: database.Document,
-          attributes: ['id', 'title', 'content', 'ownerId']
-        }]
+  static fetchUserDocuments(request, response) {
+    userDB.findById(request.params.id, {
+      attributes: ['id', 'email', 'firstName', 'lastName'],
+      include: [{
+        model: database.Document,
+        attributes: ['id', 'title', 'content', 'ownerId']
+      }]
     })
     .then((documents) => {
-      if(documents) {
+      if (documents) {
         response.status(200).json(documents);
       } else {
         response.status(400).json({

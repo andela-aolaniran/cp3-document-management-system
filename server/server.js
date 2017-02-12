@@ -11,7 +11,7 @@ const app = express();
 // use morgan for logging out requests to the console
 app.use(morgan('tiny'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.urlencoded({ extended: false }));
 
 app.get('/', (req, res) => {
   res.status(200).send('Welcome to cp3_document_management_system');

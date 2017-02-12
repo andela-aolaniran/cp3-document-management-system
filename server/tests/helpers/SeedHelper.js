@@ -1,7 +1,7 @@
-import faker    from 'faker';
-import bcrypt   from 'bcrypt-nodejs';
-import database       from '../../models';
-import logger   from 'fm-log';
+import faker from 'faker';
+import bcrypt from 'bcrypt-nodejs';
+import logger from 'fm-log';
+import database from '../../models';
 
 /**
  * SeedData class to populate database with default data

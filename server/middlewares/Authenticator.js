@@ -12,6 +12,11 @@ class Authenticator {
   /**
    * Method to authenticate a user before proceeding
    * to protected routes
+   * @param {Object} request - The request Object
+   * @param {Object} response - The response Object
+   * @param {Function} next - Function call to move to the next middleware
+   * or endpoint controller
+   * @return {Void} - Returns void
    */
   static authenticateUser(request, response, next) {
     const token = request.headers.authorization ||
@@ -20,11 +25,11 @@ class Authenticator {
     if (token) {
       jwt.verify(token, SECRET_KEY, (error, decoded) => {
         if (error) {
-          response.status(401).json({ 
+          response.status(401).json({
             success: false,
-            message: 'Authentication failed due to invalid token!' 
+            message: 'Authentication failed due to invalid token!'
           });
-        } else { 
+        } else {
           request.decoded = decoded;
           next();
         }

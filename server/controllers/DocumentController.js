@@ -1,8 +1,9 @@
 import database from '../models';
+
 const documentDb = database.Document;
 
 /**
- * Document controller 
+ * Document controller
  */
 class DocumentController {
   /**
@@ -11,7 +12,7 @@ class DocumentController {
    * @param{Object} response - Response Object
    * @return{Void} - returns void
    */
-  static createDocument(request, response){
+  static createDocument(request, response) {
     if (request.body &&
         request.body.title &&
         request.body.content &&
@@ -43,7 +44,6 @@ class DocumentController {
         message: 'Required Fields are missing'
       });
     }
-    
   }
 
   /**
@@ -52,7 +52,7 @@ class DocumentController {
    * @param{Object} response - Response Object
    * @return{Void} - returns void
    */
-  static updateDocument(request, response){
+  static updateDocument(request, response) {
     documentDb.update(request.body, {
       where: {
         id: request.params.id
@@ -84,7 +84,7 @@ class DocumentController {
    * @param{Object} response - Response Object
    * @return{Void} - returns void
    */
-  static fetchDocument(request, response){
+  static fetchDocument(request, response) {
     const documentId = request.params.id;
     const requesterId = request.decoded.userId;
     const requesterRoleId = request.decoded.roleId;
@@ -99,7 +99,7 @@ class DocumentController {
     })
     .then((result) => {
       const document = result ? result.dataValues : null;
-      if(document) {
+      if (document) {
         // lets chceck required access
         // For an Admin, return documents without checking required access
         if (requesterRoleId === 1) {
@@ -111,7 +111,7 @@ class DocumentController {
           // for other users, ensure they have appropriate access rights
         } else if (
           (document.access === 'public'
-          || requesterRoleId === document.User.dataValues.roleId) 
+          || requesterRoleId === document.User.dataValues.roleId)
           && document.access !== 'private') {
           response.status(200).json({
             success: true,
@@ -152,7 +152,7 @@ class DocumentController {
    * @param{Object} response - Response Object
    * @return{Void} - returns void
    */
-  static fetchDocuments(request, response){
+  static fetchDocuments(request, response) {
     const search = request.query.search;
     const limit = request.query.limit;
     const requesterRoleId = request.decoded.roleId;
@@ -165,15 +165,15 @@ class DocumentController {
       }]
     };
     queryBuilder.order = '"createdAt" DESC';
-    if(limit) {
+    if (limit) {
       queryBuilder.limit = limit;
     }
-    if(search) {
+    if (search) {
       queryBuilder.where = {
-        $or: [{title: 
-          {$like: `%${search}%`}
-        }, {content: 
-          {$like: `%${search}%`}
+        $or: [{ title: {
+          $like: `%${search}%` }
+        }, { content: {
+          $like: `%${search}%` }
         }]
       };
     }
@@ -187,7 +187,7 @@ class DocumentController {
           // for other users, ensure they have appropriate access rights
           } else if (
             (document.access === 'public'
-            || requesterRoleId === document.User.dataValues.roleId) 
+            || requesterRoleId === document.User.dataValues.roleId)
             && document.access !== 'private') {
             actualDocuments.push(document.dataValues);
           } else if (document.access === 'private'
@@ -221,7 +221,7 @@ class DocumentController {
    * @param{Object} response - Response Object
    * @return{Void} - returns void
    */
-  static deleteDocument(request, response){
+  static deleteDocument(request, response) {
     documentDb.destroy({
       where: {
         id: request.params.id,

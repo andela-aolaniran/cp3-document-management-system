@@ -1,16 +1,18 @@
 import DocumentController from '../controllers/DocumentController';
-import Authenticator from '../middlewares/Authenticator'
+import Authenticator from '../middlewares/Authenticator';
 
+/**
+ * Class for creating Document routes
+ */
 class DocumentRoutes {
   /**
    * Method to set the various document routes
    * @param{Object} app - Express app
-   * @return{Void}
+   * @return{Void} - returns Void
    */
   static setDocumentRoutes(app) {
     // use autentication middleware
     app.use(Authenticator.authenticateUser);
-    
     // proceed to other endpoints if authentication passes
     DocumentRoutes.getDocuments(app);
     DocumentRoutes.getDocument(app);

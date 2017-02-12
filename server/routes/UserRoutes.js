@@ -13,12 +13,11 @@ class UserRoutes {
    * @param{Object} app - Express application
    * @returns{Void} - Returns Void
    */
-  static setUserRoutes(app){
+  static setUserRoutes(app) {
     UserRoutes.createUser(app);
     UserRoutes.loginUser(app);
 
     // setup authentication before protected routes
-    
     app.use(Authenticator.authenticateUser);
     UserRoutes.logoutUser(app);
     UserRoutes.fetchUser(app);
@@ -33,7 +32,7 @@ class UserRoutes {
    * @param{Object} app - Express application
    * @return{Void} - Returns Void
    */
-  static createUser(app){
+  static createUser(app) {
     app.post('/api/users/', UserController.createUser);
   }
 
@@ -42,7 +41,7 @@ class UserRoutes {
    * @param{Object} app - Express application
    * @return{Void} - Returns Void
    */
-  static loginUser(app){
+  static loginUser(app) {
     app.post('/api/users/login', UserController.loginUser);
   }
 
@@ -51,7 +50,7 @@ class UserRoutes {
    * @param{Object} app - Express application
    * @return{Void} - Returns Void
    */
-  static logoutUser(app){
+  static logoutUser(app) {
     app.post('/api/users/logout', UserController.logoutUser);
   }
 
@@ -60,7 +59,7 @@ class UserRoutes {
    * @param{Object} app - Express application
    * @return{Void} - Returns Void
    */
-  static fetchUsers(app){
+  static fetchUsers(app) {
     app.get('/api/users/', Authenticator.verifyAdmin,
       UserController.fetchUsers);
   }
@@ -71,7 +70,7 @@ class UserRoutes {
    * @param{Object} app - Express application
    * @return{Void} - Returns Void
    */
-  static fetchUser(app){
+  static fetchUser(app) {
     app.get('/api/users/:id', Authenticator.verifyAdmin,
       UserController.fetchUser);
   }
@@ -81,7 +80,7 @@ class UserRoutes {
    * @param{Object} app - Express application
    * @return{Void} - Returns Void
    */
-  static updateUser(app){
+  static updateUser(app) {
     app.put('/api/users/:id', UserController.updateUser);
   }
 
@@ -90,7 +89,7 @@ class UserRoutes {
    * @param{Object} app - Express application
    * @return{Void} - Returns Void
    */
-  static deleteUser(app){
+  static deleteUser(app) {
     app.delete('/api/users/:id',
       Authenticator.verifyAdmin,
       UserController.deleteUser);
@@ -101,7 +100,7 @@ class UserRoutes {
    * @param{Object} app - Express application
    * @return{Void} - Returns Void
    */
-  static fetchUserDocuments(app){
+  static fetchUserDocuments(app) {
     app.get('/api/users/:id/documents', UserController.fetchUserDocuments);
   }
 }
