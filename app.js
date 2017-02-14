@@ -1,7 +1,12 @@
 import logger from 'fm-log';
 import app from './server/server';
+import open from 'open';
 
 const port = process.env.PORT || 3090;
-app.listen(port, () => {
+app.listen(port, (error) => {
+  if (error) {
+    return logger.error(error);
+  }
   logger.info(`Server running on ${port}`);
+    open(`http://localhost:${port}`);
 });
