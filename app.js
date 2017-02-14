@@ -8,5 +8,7 @@ app.listen(port, (error) => {
     return logger.error(error);
   }
   logger.info(`Server running on ${port}`);
+  if (process.NODE_ENV ===  'development') {
     open(`http://localhost:${port}`);
+  }
 });

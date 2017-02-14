@@ -15,7 +15,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.get('/', (request, response) => {
-  response.sendFile(path.join( __dirname, '../client/index.html'));
+  response.sendFile(path.join(__dirname, '../client/index.html'));
 });
 
 // set up User related routes
