@@ -3,10 +3,12 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import morgan from 'morgan';
 import path from 'path';
+import dotenv from 'dotenv';
 import UserRoutes from './routes/UserRoutes';
 import DocumentRoutes from './routes/DocumentRoutes';
 import RoleRoutes from './routes/RoleRoutes';
 
+dotenv.config();
 const app = express();
 
 // use morgan for logging out requests to the console

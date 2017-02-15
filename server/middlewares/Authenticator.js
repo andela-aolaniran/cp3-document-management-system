@@ -2,7 +2,7 @@
 import jwt from 'jsonwebtoken';
 import database from '../models';
 
-const SECRET_KEY = 'jwt_cp2_dms';
+const SECRET_KEY = `${process.env.SECRET_KEY}`;
 const roleDb = database.Role;
 
 /**
