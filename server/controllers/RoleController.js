@@ -92,7 +92,7 @@ class RoleController {
     .then((status) => {
       if (status) {
         response.status(200).json({
-          success: false,
+          success: true,
           message: 'Role Deleted Successfully'
         });
       } else {
