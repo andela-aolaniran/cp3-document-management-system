@@ -123,7 +123,6 @@ class SeedHelper {
         ownerId: 1
       },
       {
-        id: 8,
         title: faker.company.catchPhrase(),
         content: faker.lorem.paragraph(),
         access: 'role',

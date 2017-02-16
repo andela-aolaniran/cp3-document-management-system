@@ -14,7 +14,6 @@ module.exports = {
     */
     return queryInterface.bulkInsert('Documents', [
       {
-        id: 1,
         title: 'Test Document 1',
         content: 'This is surely a test document',
         ownerId: 1,
@@ -23,7 +22,6 @@ module.exports = {
         updatedAt: new Date()
       },
       {
-        id: 2,
         title: 'Test Document 2',
         content: 'Test Document 2',
         ownerId: 2,
@@ -32,7 +30,6 @@ module.exports = {
         updatedAt: new Date()
       },
       {
-        id: 3,
         title: 'Test Document 3',
         content: 'Test Document 3',
         ownerId: 2,
@@ -41,7 +38,6 @@ module.exports = {
         updatedAt: new Date()
       },
       {
-        id: 4,
         title: 'Test Document 4',
         content: 'Test Document 4',
         ownerId: 2,
@@ -50,7 +46,6 @@ module.exports = {
         updatedAt: new Date()
       },
       {
-        id: 5,
         title: 'Test Document 5',
         content: 'Test Document 5',
         ownerId: 2,
@@ -59,7 +54,6 @@ module.exports = {
         updatedAt: new Date()
       },
       {
-        id: 6,
         title: 'Test Document 6',
         content: 'Test Document 6',
         ownerId: 2,
@@ -68,7 +62,6 @@ module.exports = {
         updatedAt: new Date()
       },
       {
-        id: 7,
         title: 'Test Document 7',
         content: 'Test Document 7',
         ownerId: 2,
@@ -77,7 +70,6 @@ module.exports = {
         updatedAt: new Date()
       },
       {
-        id: 8,
         title: 'Test Document 8',
         content: 'Test Document 8',
         ownerId: 2,
@@ -86,7 +78,6 @@ module.exports = {
         updatedAt: new Date()
       },
       {
-        id: 9,
         title: 'Test Document 9',
         content: 'Test Document 9',
         ownerId: 2,
@@ -95,7 +86,6 @@ module.exports = {
         updatedAt: new Date()
       },
       {
-        id: 10,
         title: 'Test Document 10',
         content: 'Test Document 10',
         ownerId: 2,
@@ -104,7 +94,6 @@ module.exports = {
         updatedAt: new Date()
       },
       {
-        id: 11,
         title: 'Test Document 11',
         content: 'Test Document 11',
         ownerId: 2,
@@ -112,7 +101,9 @@ module.exports = {
         createdAt: new Date(),
         updatedAt: new Date()
       }
-    ], {});
+    ], {
+      returning: true
+    });
   },
 
   down: function (queryInterface, Sequelize) {

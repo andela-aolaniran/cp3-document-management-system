@@ -37,7 +37,7 @@ class RoleController {
         });
       });
     } else {
-      response.status(400).json({
+      response.status(500).json({
         success: false,
         message: 'Required field(s) are missing'
       });
@@ -70,7 +70,7 @@ class RoleController {
       }
     })
     .catch((error) => {
-      response.status(404).json({
+      response.status(500).json({
         success: false,
         message: error.message
       });
@@ -96,14 +96,14 @@ class RoleController {
           message: 'Role Deleted Successfully'
         });
       } else {
-        response.status(400).json({
+        response.status(404).json({
           success: false,
           message: 'Deletion Failed'
         });
       }
     })
     .catch((error) => {
-      response.status(400).json({
+      response.status(500).json({
         success: false,
         message: error.message
       });
@@ -124,14 +124,14 @@ class RoleController {
       if (role) {
         response.status(200).json(role);
       } else {
-        response.status(400).json({
+        response.status(404).json({
           success: false,
           message: 'No Roles Found'
         });
       }
     })
     .catch((error) => {
-      response.status(400).json({
+      response.status(500).json({
         success: false,
         message: error.message
       });
@@ -152,14 +152,14 @@ class RoleController {
       if (roles) {
         response.status(200).json(roles);
       } else {
-        response.status(400).json({
+        response.status(404).json({
           success: false,
           message: 'No Roles Found'
         });
       }
     })
     .catch((error) => {
-      response.status(400).json({
+      response.status(500).json({
         success: false,
         message: error.message
       });

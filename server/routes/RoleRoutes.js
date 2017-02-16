@@ -8,61 +8,84 @@ class RoleRoutes {
 
   /**
    * Method to hook up all routes to respective endpoints
-   * @param{Object} app - Express app
+   * @param{Object} router - Express router
    * @return{Void} returns void
    */
-  static setRoleRoutes(app) {
-    app.use(Authenticator.authenticateUser, Authenticator.verifyAdmin);
-    RoleRoutes.getRole(app);
-    RoleRoutes.getRoles(app);
-    RoleRoutes.createRole(app);
-    RoleRoutes.deleteRole(app);
-    RoleRoutes.updateRole(app);
+  static setRoleRoutes(router) {
+    RoleRoutes.getRole(router);
+    RoleRoutes.getRoles(router);
+    RoleRoutes.createRole(router);
+    RoleRoutes.deleteRole(router);
+    RoleRoutes.updateRole(router);
   }
 
   /**
    * Method to setup Route for deleting a specified role
-   * @param{Object} app - Express app
+   * @param{Object} router - Express router
    * @return{Void} returns void
    */
-  static getRoles(app) {
-    app.get('/api/roles', RoleController.fetchRoles);
+  static getRoles(router) {
+    router.get(
+      '/api/roles',
+      Authenticator.authenticateUser,
+      Authenticator.verifyAdmin,
+      RoleController.fetchRoles
+    );
   }
 
   /**
    * Method to setup Route for deleting a specified role
-   * @param{Object} app - Express app
+   * @param{Object} router - Express router
    * @return{Void} returns void
    */
-  static getRole(app) {
-    app.get('/api/roles/:id', RoleController.fetchRole);
+  static getRole(router) {
+    router.get(
+      '/api/roles/:id',
+      Authenticator.authenticateUser,
+      Authenticator.verifyAdmin,
+      RoleController.fetchRole
+    );
   }
 
   /**
    * Method to setup Route for deleting a specified role
-   * @param{Object} app - Express app
+   * @param{Object} router - Express router
    * @return{Void} returns void
    */
-  static createRole(app) {
-    app.post('/api/roles', RoleController.createRole);
+  static createRole(router) {
+    router.post(
+      '/api/roles',
+      Authenticator.authenticateUser,
+      Authenticator.verifyAdmin,
+      RoleController.createRole
+    );
   }
 
   /**
    * Method to setup Route for deleting a specified role
-   * @param{Object} app - Express app
+   * @param{Object} router - Express router
    * @return{Void} returns void
    */
-  static updateRole(app) {
-    app.put('/api/roles/:id', RoleController.updateRole);
+  static updateRole(router) {
+    router.put(
+      '/api/roles/:id',
+      Authenticator.authenticateUser,
+      Authenticator.verifyAdmin,
+      RoleController.updateRole
+    );
   }
 
   /**
    * Method to setup Route for deleting a specified role
-   * @param{Object} app - Express app
+   * @param{Object} router - Express router
    * @return{Void} returns void
    */
-  static deleteRole(app) {
-    app.delete('/api/roles/:id', RoleController.deleteRole);
+  static deleteRole(router) {
+    router.delete(
+      '/api/roles/:id',
+      Authenticator.authenticateUser,
+      Authenticator.verifyAdmin,
+      RoleController.deleteRole);
   }
 }
 

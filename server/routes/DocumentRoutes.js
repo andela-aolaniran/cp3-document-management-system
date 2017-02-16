@@ -7,63 +7,80 @@ import Authenticator from '../middlewares/Authenticator';
 class DocumentRoutes {
   /**
    * Method to set the various document routes
-   * @param{Object} app - Express app
+   * @param{Object} router - Express router
    * @return{Void} - returns Void
    */
-  static setDocumentRoutes(app) {
-    // use autentication middleware
-    app.use(Authenticator.authenticateUser);
-    // proceed to other endpoints if authentication passes
-    DocumentRoutes.getDocuments(app);
-    DocumentRoutes.getDocument(app);
-    DocumentRoutes.createDocument(app);
-    DocumentRoutes.updateDocument(app);
-    DocumentRoutes.deleteDocument(app);
+  static setDocumentRoutes(router) {
+    DocumentRoutes.getDocuments(router);
+    DocumentRoutes.getDocument(router);
+    DocumentRoutes.createDocument(router);
+    DocumentRoutes.updateDocument(router);
+    DocumentRoutes.deleteDocument(router);
   }
 
   /**
    * Method to set controller for fetch documents route
-   * @param{Object} app - Express app
+   * @param{Object} router - Express router
    * @return{Void} - Returns void
    */
-  static getDocuments(app) {
-    app.get('/api/documents', DocumentController.fetchDocuments);
+  static getDocuments(router) {
+    router.get(
+      '/api/documents',
+      Authenticator.authenticateUser,
+      DocumentController.fetchDocuments
+    );
   }
 
   /**
    * Method to set controller for fetch document route
-   * @param{Object} app - Express app
+   * @param{Object} router - Express router
    * @return{Void} - Returns void
    */
-  static getDocument(app) {
-    app.get('/api/documents/:id', DocumentController.fetchDocument);
+  static getDocument(router) {
+    router.get(
+      '/api/documents/:id',
+      Authenticator.authenticateUser,
+      DocumentController.fetchDocument
+    );
   }
 
   /**
    * Method to set controller for create a document route
-   * @param{Object} app - Express app
+   * @param{Object} router - Express router
    * @return{Void}  - Returns void
    */
-  static createDocument(app) {
-    app.post('/api/documents', DocumentController.createDocument);
+  static createDocument(router) {
+    router.post(
+      '/api/documents',
+      Authenticator.authenticateUser,
+      DocumentController.createDocument
+    );
   }
 
   /**
    * Method to set controller for update documents route
-   * @param{Object} app - Express app
+   * @param{Object} router - Express router
    * @return{Void} - Returns void
    */
-  static updateDocument(app) {
-    app.put('/api/documents/:id', DocumentController.updateDocument);
+  static updateDocument(router) {
+    router.put(
+      '/api/documents/:id',
+      Authenticator.authenticateUser,
+      DocumentController.updateDocument
+    );
   }
 
   /**
    * Method to set controller for delete document route
-   * @param{Object} app - Express app
+   * @param{Object} router - Express router
    * @return{Void} - Returns void
    */
-  static deleteDocument(app) {
-    app.delete('/api/documents/:id', DocumentController.deleteDocument);
+  static deleteDocument(router) {
+    router.delete(
+      '/api/documents/:id',
+      Authenticator.authenticateUser,
+      DocumentController.deleteDocument
+    );
   }
 }
 

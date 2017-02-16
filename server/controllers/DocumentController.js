@@ -33,7 +33,7 @@ class DocumentController {
         });
       })
       .catch((error) => {
-        response.status(400).json({
+        response.status(500).json({
           success: false,
           message: error.message
         });
@@ -62,14 +62,14 @@ class DocumentController {
       if (update[0] === 1) {
         response.status(200).json(update);
       } else {
-        response.status(400).json({
+        response.status(404).json({
           success: false,
           message: 'Could not update the specified document'
         });
       }
     })
     .catch((error) => {
-      response.status(400).json({
+      response.status(500).json({
         success: false,
         message: error.message
       });
@@ -118,15 +118,14 @@ class DocumentController {
             message: 'Document Found',
             document
           });
-        } else if (document.access === 'private'
-          && document.ownerId === requesterId) {
+        } else if (document.ownerId === requesterId) {
           response.status(200).json({
             success: true,
             message: 'Document Found',
             document
           });
         } else {
-          response.status(401).json({
+          response.status(403).json({
             success: false,
             message: 'Appropriate access is required to view this document'
           });
@@ -139,7 +138,7 @@ class DocumentController {
       }
     })
     .catch((error) => {
-      response.status(400).json({
+      response.status(500).json({
         success: false,
         message: error.message
       });
@@ -208,7 +207,7 @@ class DocumentController {
       }
     })
     .catch((error) => {
-      response.status(400).json({
+      response.status(500).json({
         success: false,
         message: error.message
       });
@@ -235,14 +234,14 @@ class DocumentController {
           message: 'Document Deleted Successfully'
         });
       } else {
-        response.status(400).json({
+        response.status(404).json({
           success: false,
           message: 'Deletion Failed'
         });
       }
     })
     .catch((error) => {
-      response.status(400).json({
+      response.status(500).json({
         success: false,
         message: error.message
       });

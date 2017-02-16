@@ -73,14 +73,14 @@ class Authenticator {
       if (role.title === 'admin') {
         next();
       } else {
-        response.status(401).json({
+        response.status(403).json({
           success: false,
           message: 'Admin status required'
         });
       }
     })
     .catch((error) => {
-      response.status(401).json({
+      response.status(500).json({
         success: false,
         message: error.message
       });

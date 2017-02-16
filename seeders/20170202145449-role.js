@@ -15,17 +15,17 @@ module.exports = {
     return queryInterface.bulkInsert('Roles', [
       {
         title: 'admin',
-        id: 1,
         createdAt: new Date(),
         updatedAt: new Date()
       },
       {
         title: 'regular',
-        id: 2,
         createdAt: new Date(),
         updatedAt: new Date()
       }
-    ], {});
+    ], {
+      returning: true
+    });
   },
 
   down: function (queryInterface, Sequelize) {

@@ -190,7 +190,7 @@ describe('Documents:', () => {
       .set({ 'x-access-token': regularUser2Token })
       .end((error, response) => {
         expect(response.body.success).to.equal(false);
-        expect(response.status).to.equal(401);
+        expect(response.status).to.equal(403);
         done();
       });
     });

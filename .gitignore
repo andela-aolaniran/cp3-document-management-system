@@ -44,3 +44,6 @@ npm-debug.log
 
 # Ignore configuration files
 .env
+
+# mac files
+.DS_Store

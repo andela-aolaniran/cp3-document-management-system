@@ -93,7 +93,7 @@ class UserController {
         })
         .catch((error) => {
           response.status(500).json({
-            success: true,
+            success: false,
             message: error.message
           });
         });
@@ -127,10 +127,8 @@ class UserController {
       });
       return;
     }
-    userDB.findOne({
-      where: {
-        id: request.params.id
-      }
+    userDB.findById(request.params.id, {
+      attributes: ['id', 'email', 'firstName', 'lastName'],
     }).then((user) => {
       if (user) {
         user.update(request.body)

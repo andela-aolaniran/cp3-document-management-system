@@ -10,7 +10,8 @@ export default (sequelize, DataTypes) => {
     },
     access: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      default: 'public'
     },
     ownerId: {
       type: DataTypes.INTEGER,

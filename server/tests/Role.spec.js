@@ -74,7 +74,7 @@ describe('Roles:', () => {
       .set({ 'x-access-token': regularUserToken })
       .send(testData.newRole3)
       .end((error, response) => {
-        expect(response.status).to.equal(401);
+        expect(response.status).to.equal(403);
         done();
       });
     });
@@ -122,10 +122,10 @@ describe('Roles:', () => {
     UPDATE a Role`,
     (done) => {
       client.put(`/api/roles/${newRoleId}`)
-      .set({ 'x-access-token': 'invalid token' })
+      .set({ 'x-access-token': regularUserToken })
       .send(testData.updateRole1)
       .end((error, response) => {
-        expect(response.status).to.equal(401);
+        expect(response.status).to.equal(403);
         expect(response.body.success).to.equal(false);
         done();
       });
@@ -161,18 +161,7 @@ describe('Roles:', () => {
     it(`should NOT allow any User (Admin, Regular, ...) with an INVALID 
     token to get all Roles`, (done) => {
       client.get('/api/roles')
-      .set({ 'x-access-token': regularUserToken })
-      .end((error, response) => {
-        expect(response.status).to.equal(401);
-        expect(response.body.success).to.equal(false);
-        done();
-      });
-    });
-
-    it('should NOT allow an Admin User with INVALID token get all Roles',
-    (done) => {
-      client.get('/api/roles')
-      .set({ 'x-access-token': 'invalid token' })
+      .set({ 'x-access-token': 'invalid token'})
       .end((error, response) => {
         expect(response.status).to.equal(401);
         expect(response.body.success).to.equal(false);
@@ -185,7 +174,7 @@ describe('Roles:', () => {
       client.get('/api/roles')
       .set({ 'x-access-token': regularUserToken })
       .end((error, response) => {
-        expect(response.status).to.equal(401);
+        expect(response.status).to.equal(403);
         expect(response.body.success).to.equal(false);
         done();
       });

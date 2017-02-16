@@ -298,7 +298,7 @@ describe('Users:', () => {
       client.get('/api/users')
       .set({ 'x-access-token': regularUserToken })
       .end((error, response) => {
-        expect(response.status).to.equal(401);
+        expect(response.status).to.equal(403);
         expect(response.body.success).to.equal(false);
         done();
       });
@@ -330,7 +330,7 @@ describe('Users:', () => {
       client.get('/api/users/1')
       .set({ 'x-access-token': regularUserToken })
       .end((error, response) => {
-        expect(response.status).to.equal(401);
+        expect(response.status).to.equal(403);
         expect(response.body.success).to.equal(false);
         done();
       });
@@ -417,12 +417,12 @@ describe('Users:', () => {
   });
 
   describe('Delete User', () => {
-    it('Should NOT allow another Non-Admin User delete another User',
+    it('Should NOT allow a Non-Admin User delete a User',
     (done) => {
       client.delete(`/api/users/${regularUserId}`)
       .set({ 'x-access-token': regularUserToken })
       .end((error, response) => {
-        expect(response.status).to.equal(401);
+        expect(response.status).to.equal(403);
         expect(response.body.success).to.equal(false);
         done();
       });

@@ -10,6 +10,7 @@ import RoleRoutes from './routes/RoleRoutes';
 
 dotenv.config();
 const app = express();
+const router = express.Router();
 
 // use morgan for logging out requests to the console
 app.use(morgan('tiny'));
@@ -21,12 +22,14 @@ app.get('/', (request, response) => {
 });
 
 // set up User related routes
-UserRoutes.setUserRoutes(app);
+UserRoutes.setUserRoutes(router);
 
 // set up Document related routes
-DocumentRoutes.setDocumentRoutes(app);
+DocumentRoutes.setDocumentRoutes(router);
 
 // set up Roles related routes
-RoleRoutes.setRoleRoutes(app);
+RoleRoutes.setRoleRoutes(router);
+
+app.use(router);
 
 export default app;
