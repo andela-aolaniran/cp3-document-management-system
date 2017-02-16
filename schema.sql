@@ -12,7 +12,6 @@ CREATE TABLE public."users"
   firstName character varying(255) NOT NULL,
   lastName character varying(255) NOT NULL,
   email character varying(255) NOT NULL,
-  username character varying(255) NOT NULL,
   password character varying(255) NOT NULL,
   createdAt timestamp with time zone NOT NULL,
   updatedAt timestamp with time zone NOT NULL,
