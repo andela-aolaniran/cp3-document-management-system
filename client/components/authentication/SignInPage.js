@@ -22,10 +22,10 @@ class SignInPage extends React.Component {
               <div className='row'>
                 <br/>
                 <div className='input-field col s12'>
-                  <input placeHolder='xyz@nomailer.com'
+                  <input
                     id='email' type='email' className='validate' />
                   <label htmlFor='email' data-error='Invalid Email' 
-                    data-success='' className='active'>Email Address </label>
+                    data-success='' className='active'>Email Address</label>
                 </div>
                 <div className='input-field col s12'>
                   <input placeHolder='xyz@nomailer.com'
