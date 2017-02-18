@@ -1,28 +1,35 @@
-// Import dependencies
 import fs from 'fs';
-import  path from 'path';
+import path from 'path';
 import Sequelize from 'sequelize';
-import configurations from '../config/config';
+import configFile from '../../config/config.json';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const basename = path.basename(module.filename);
 const env = process.env.NODE_ENV || 'development';
-const config = configurations[env];
-const db  = {};
+const config = configFile[env];
+const db = {};
 let sequelize;
-
 if (config.use_env_variable) {
   sequelize = new Sequelize(process.env[config.use_env_variable]);
 } else {
-  sequelize = new Sequelize(config.database, config.username, config.password, config);
+  sequelize = new Sequelize(
+    config.database,
+    config.username,
+    config.password,
+    config
+  );
 }
 
 fs
   .readdirSync(__dirname)
-  .filter(function(file) {
-    return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js');
+  .filter((file) => {
+    const isJsFile = (file.indexOf('.') !== 0)
+    && (file !== basename) && (file.slice(-3) === '.js');
+    return isJsFile;
   })
   .forEach((file) => {
-    let model = sequelize['import'](path.join(__dirname, file));
+    const model = sequelize.import(path.join(__dirname, file));
     db[model.name] = model;
   });
 

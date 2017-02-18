@@ -41,3 +41,9 @@ jspm_packages
 
 # Ignore npm debug log
 npm-debug.log
+
+# Ignore configuration files
+.env
+
+# mac files
+.DS_Store
