@@ -4,6 +4,9 @@
 This is a full stack document management system, complete with roles and privileges . Each document defines access rights; the document defines which roles can access it. Also, each document specifies the date it was published.
 Users are categorized by roles.
 
+#### *Postman Collection*
+[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/79158ea63ffdea6731dd)
+
 #### *Features*
 
 1. **Authentication**
