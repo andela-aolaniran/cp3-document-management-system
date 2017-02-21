@@ -29,10 +29,11 @@ describe('Roles:', () => {
   });
 
   describe('Create Role', () => {
+
     it('should allow an Admin user with VALID token create a Role',
     (done) => {
       client.post('/api/roles')
-      .set({ 'x-access-token': adminToken })
+      .set({'x-access-token': adminToken})
       .send(testData.newRole1)
       .end((error, response) => {
         expect(response.status).to.equal(201);
@@ -47,10 +48,22 @@ describe('Roles:', () => {
      DUPLICATE Role`,
     (done) => {
       client.post('/api/roles')
-      .set({ 'x-access-token': adminToken })
-      .send(testData.duplicateRole1)
+      .set({'x-access-token': adminToken})
+      .send(testData.newRole1)
       .end((error, response) => {
-        expect(response.status).to.equal(201);
+        expect(response.status).to.equal(400);
+        done();
+      });
+    });
+
+    it(`should NOT allow an Admin user with VALID token create an
+     Invalid Role`,
+    (done) => {
+      client.post('/api/roles')
+      .set({'x-access-token': adminToken})
+      .send(testData.invalidRole)
+      .end((error, response) => {
+        expect(response.status).to.equal(400);
         done();
       });
     });
@@ -81,6 +94,7 @@ describe('Roles:', () => {
   });
 
   describe('Update Role', () => {
+
     it('should allow only an Admin user with VALID token UPDATE a Role',
     (done) => {
       client.put(`/api/roles/${newRoleId}`)
@@ -133,6 +147,53 @@ describe('Roles:', () => {
   });
 
   describe('Get', () => {
+
+    it('should allow an Admin User with VALID token get a specific Role',
+    (done) => {
+      client.get('/api/roles/2')
+      .set({ 'x-access-token': adminToken })
+      .end((error, response) => {
+        expect(response.status).to.equal(200);
+        expect(response.body).to.be.instanceOf(Object);
+        done();
+      });
+    });
+
+    it(`should NOT allow an Admin User with VALID token get a specific Role 
+    that does NOT exist`,
+    (done) => {
+      client.get('/api/roles/9000')
+      .set({ 'x-access-token': adminToken })
+      .end((error, response) => {
+        expect(response.status).to.equal(404);
+        expect(response.body.success).to.equal(false);
+        done();
+      });
+    });
+
+    it(`should NOT allow a Non Admin authenticated User with VALID token
+    get a specific Role`,
+    (done) => {
+      client.get('/api/roles/2')
+      .set({ 'x-access-token': regularUserToken})
+      .end((error, response) => {
+        expect(response.status).to.equal(403);
+        expect(response.body.success).to.equal(false);
+        done();
+      });
+    });
+
+    it('should NOT allow any un-authenticated user get a specific Role',
+    (done) => {
+      client.get('/api/roles/2')
+      .set({ 'x-access-token': 'invalid token' })
+      .end((error, response) => {
+        expect(response.status).to.equal(401);
+        expect(response.body.success).to.equal(false);
+        done();
+      });
+    });
+
     it('should allow an Admin User with VALID token get all Roles',
     (done) => {
       client.get('/api/roles')
@@ -169,12 +230,48 @@ describe('Roles:', () => {
       });
     });
 
-    it('should NOT allow an Non-Admin User with VALID token get all Roles',
+    it('should NOT allow a Non-Admin User with VALID token get all Roles',
     (done) => {
       client.get('/api/roles')
       .set({ 'x-access-token': regularUserToken })
       .end((error, response) => {
         expect(response.status).to.equal(403);
+        expect(response.body.success).to.equal(false);
+        done();
+      });
+    });
+  });
+
+  describe('Delete Role', () => {
+
+    it('should NOT allow a Non-Admin User with VALID token delete a Role',
+    (done) => {
+      client.get('/api/roles/3')
+      .set({ 'x-access-token': regularUserToken })
+      .end((error, response) => {
+        expect(response.status).to.equal(403);
+        expect(response.body.success).to.equal(false);
+        done();
+      });
+    });
+
+    it('should allow an Admin user with VALID token delete a Role',
+    (done) => {
+      client.delete('/api/roles/3')
+      .set({'x-access-token': adminToken})
+      .end((error, response) => {
+        expect(response.status).to.equal(200);
+        expect(response.body.success).to.equal(true);
+        done();
+      });
+    });
+
+    it(`should NOT allow an Admin user with VALID token delete a 
+    non-existing Role`, (done) => {
+      client.delete('/api/roles/3')
+      .set({'x-access-token': adminToken})
+      .end((error, response) => {
+        expect(response.status).to.equal(404);
         expect(response.body.success).to.equal(false);
         done();
       });

@@ -1,4 +1,3 @@
-// fetch dependencies
 import jwt from 'jsonwebtoken';
 import database from '../models';
 
@@ -79,12 +78,6 @@ class Authenticator {
         });
       }
     })
-    .catch((error) => {
-      response.status(500).json({
-        success: false,
-        message: error.message
-      });
-    });
   }
 }
 

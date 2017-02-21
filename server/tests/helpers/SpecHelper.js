@@ -25,6 +25,10 @@ const testData = {
     password: faker.internet.password(),
     roleId: 1
   },
+  userInvalid: {
+    firstName: 'user with',
+    lastName: 'no password or email'
+  },
   adminUser3: {
     username: faker.internet.userName(),
     firstName: faker.name.firstName(),
@@ -217,14 +221,14 @@ const testData = {
   updateRole1: {
     title: 'rookie update'
   },
-  duplicateRole1: {
-    title: 'rookie'
-  },
   newRole2: {
     title: 'amateur'
   },
   newRole3: {
     title: 'professional'
+  },
+  invalidRole: {
+    id: 'professional'
   }
 };
 

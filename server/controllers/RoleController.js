@@ -18,17 +18,10 @@ class RoleController {
     if (request.body && request.body.title) {
       roleDb.create(request.body)
       .then((role) => {
-        if (role) {
-          response.status(201).json({
-            id: role.id,
-            title: role.title
-          });
-        } else {
-          response.status(400).json({
-            success: false,
-            message: 'Role not created'
-          });
-        }
+        response.status(201).json({
+          id: role.id,
+          title: role.title
+        });
       })
       .catch((error) => {
         response.status(400).json({
@@ -37,7 +30,7 @@ class RoleController {
         });
       });
     } else {
-      response.status(500).json({
+      response.status(400).json({
         success: false,
         message: 'Required field(s) are missing'
       });
@@ -68,12 +61,6 @@ class RoleController {
           message: 'Could not update the specified role'
         });
       }
-    })
-    .catch((error) => {
-      response.status(500).json({
-        success: false,
-        message: error.message
-      });
     });
   }
 
@@ -101,12 +88,6 @@ class RoleController {
           message: 'Deletion Failed'
         });
       }
-    })
-    .catch((error) => {
-      response.status(500).json({
-        success: false,
-        message: error.message
-      });
     });
   }
 
@@ -126,15 +107,9 @@ class RoleController {
       } else {
         response.status(404).json({
           success: false,
-          message: 'No Roles Found'
+          message: 'Role Not Found'
         });
       }
-    })
-    .catch((error) => {
-      response.status(500).json({
-        success: false,
-        message: error.message
-      });
     });
   }
 
@@ -149,20 +124,7 @@ class RoleController {
       attributes: ['id', 'title']
     })
     .then((roles) => {
-      if (roles) {
-        response.status(200).json(roles);
-      } else {
-        response.status(404).json({
-          success: false,
-          message: 'No Roles Found'
-        });
-      }
-    })
-    .catch((error) => {
-      response.status(500).json({
-        success: false,
-        message: error.message
-      });
+      response.status(200).json(roles);
     });
   }
 }

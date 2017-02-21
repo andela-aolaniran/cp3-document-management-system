@@ -69,6 +69,17 @@ describe('Users:', () => {
       });
     });
 
+    it('Should NOT create a User if Required fields/attributes are missing',
+    (done) => {
+      client.post('/api/users')
+      .send(testData.userInvalid)
+      .end((error, response) => {
+        expect(response.status).to.equal(400);
+        expect(response.body.success).to.equal(false);
+        done();
+      });
+    });
+
     it(`Should make a user role be regular by default if no roleId
       is supplied`, (done) => {
       expect(testData.testUser.roleId).to.be.undefined;
@@ -246,6 +257,34 @@ describe('Users:', () => {
         done();
       });
     });
+
+    it('Should NOT allow login for a user that does NOT exist',
+    (done) => {
+      client.post('/api/users/login')
+      .send({
+        email: 'afreakingemail@doesnotexist.com',
+        password: 'randopm password'
+      })
+      .end((error, response) => {
+        expect(response.body.success).to.equal(false);
+        expect(response.status).to.equal(404);
+        done();
+      });
+    });
+
+    it(`Should NOT allow login if all required credentials for login 
+    are NOT supplied`,
+    (done) => {
+      client.post('/api/users/login')
+      .send({
+        email: 'userwithoutapassword@you.com'
+      })
+      .end((error, response) => {
+        expect(response.body.success).to.equal(false);
+        expect(response.status).to.equal(401);
+        done();
+      });
+    });
   });
   describe('Logout', () => {
     it('should Successfully Logout an Admin User with a valid token',
@@ -392,14 +431,16 @@ describe('Users:', () => {
     it('Should Allow a User Update his profile if he has a valid Token',
     (done) => {
       const newFirstName = 'newName';
+      const newPassword = 'hello worldreewer';
       client.put(`/api/users/${regularUserId}`)
       .send({
-        firstName: newFirstName
+        firstName: newFirstName,
+        password: newPassword
       })
-      .set({ 'x-access-token': regularUserToken })
+      .set({'x-access-token': regularUserToken})
       .end((error, response) => {
         expect(response.status).to.equal(200);
-        expect(response.body.firstName).to.equal(newFirstName);
+        expect(response.body.success).to.equal(true);
         done();
       });
     });

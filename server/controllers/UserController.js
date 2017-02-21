@@ -1,4 +1,3 @@
-// import dependencies
 import database from '../models';
 import Authenticator from '../middlewares/Authenticator';
 
@@ -78,24 +77,15 @@ class UserController {
    * @return{Void} - returns void
    */
   static deleteUser(request, response) {
-    userDB.findOne({
+    userDB.destroy({
       where: {
         id: request.params.id
       }
-    }).then((user) => {
-      if (user) {
-        user.destroy()
-        .then(() => {
-          response.status(200).json({
-            success: true,
-            message: 'User deleted'
-          });
-        })
-        .catch((error) => {
-          response.status(500).json({
-            success: false,
-            message: error.message
-          });
+    }).then((rowDeleted) => {
+      if (rowDeleted === 1) {
+        response.status(200).json({
+          success: true,
+          message: 'User deleted'
         });
       } else {
         response.status(404).json({
@@ -104,12 +94,6 @@ class UserController {
         });
       }
     })
-    .catch((error) => {
-      response.status(500).json({
-        success: false,
-        message: error.message
-      });
-    });
   }
 
   /**
@@ -120,26 +104,23 @@ class UserController {
    */
   static updateUser(request, response) {
     // users should not be allowed to update other users profile
+    // except for admins
     if (request.decoded.userId !== +request.params.id) {
       response.status(403).json({
         success: false,
-        status: 'You cannot update other users profile'
+        message: 'Forbidden'
       });
       return;
     }
-    userDB.findById(request.params.id, {
-      attributes: ['id', 'email', 'firstName', 'lastName'],
-    }).then((user) => {
-      if (user) {
-        user.update(request.body)
-        .then((updatedUser) => {
-          response.status(200).json(updatedUser);
-        })
-        .catch((error) => {
-          response.status(500).json({
-            success: false,
-            message: error.message
-          });
+    userDB.update(request.body, {
+      where: {
+        id: request.params.id
+      }
+    }).then((rowUpdated) => {
+      if(rowUpdated[0] === 1){
+        response.status(200).json({
+          success: true,
+          message: 'User Successfully updated'
         });
       } else {
         response.status(404).json({
@@ -147,12 +128,6 @@ class UserController {
           message: 'User not found'
         });
       }
-    })
-    .catch((error) => {
-      response.status(500).json({
-        success: false,
-        message: error.message
-      });
     });
   }
 
@@ -195,20 +170,7 @@ class UserController {
       attributes: ['email', 'firstName', 'lastName', 'id', 'roleId']
     })
     .then((users) => {
-      if (users) {
-        response.status(200).json(users);
-      } else {
-        response.status(404).json({
-          success: false,
-          message: 'No Users found'
-        });
-      }
-    })
-    .catch((error) => {
-      response.status(500).json({
-        success: false,
-        message: error.message
-      });
+      response.status(200).json(users);
     });
   }
 
@@ -229,25 +191,16 @@ class UserController {
         if (user) {
           if (user.verifyPassword(request.body.password)) {
             // send the token here
-            const token = Authenticator.generateToken(user);
-            if (token) {
-              response.status(200).json({
-                success: true,
-                message: 'Login Successful',
-                id: user.id,
-                token,
-              });
-            } else {
-              // service is unavailable
-              response.status(503).json({
-                success: false,
-                message: 'Login failed. No Token generated'
-              });
-            }
+            response.status(200).json({
+              success: true,
+              message: 'Login Successful',
+              id: user.id,
+              token: Authenticator.generateToken(user)
+            });
           } else {
             response.status(401).json({
               success: false,
-              message: 'Invalid Credentials'
+              message: 'Wrong Password'
             });
           }
         } else {
@@ -275,38 +228,6 @@ class UserController {
     response.status(200).json({
       success: true,
       message: 'Logout Successful'
-    });
-  }
-
-  /**
-   * Method to fetch all documents of a specific user
-   * @param{Object} request - Request object
-   * @param{Object} response - Response object
-   * @return{Void} - returns void
-   */
-  static fetchUserDocuments(request, response) {
-    userDB.findById(request.params.id, {
-      attributes: ['id', 'email', 'firstName', 'lastName'],
-      include: [{
-        model: database.Document,
-        attributes: ['id', 'title', 'content', 'ownerId']
-      }]
-    })
-    .then((documents) => {
-      if (documents) {
-        response.status(200).json(documents);
-      } else {
-        response.status(400).json({
-          success: false,
-          message: 'No Documents found for this user'
-        });
-      }
-    })
-    .catch((error) => {
-      response.status(500).json({
-        success: false,
-        message: error.message
-      });
     });
   }
 }

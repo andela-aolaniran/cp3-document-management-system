@@ -11,6 +11,11 @@ const adminUser = testData.adminUserForDocumentTest;
 const regularUser = testData.regularUserForDocumentTest;
 const regularUser2 = testData.regularUserForDocumentTest2;
 
+const privateDocumentData = {};
+const publicDocumentData = {};
+const roleDocumentData = {};
+const fetchLimit = 10;
+
 describe('Documents:', () => {
   // lets create neccessary users for these tests and get their details
   let regularUserToken, regularUserId, adminUserToken, adminUserId,
@@ -117,10 +122,6 @@ describe('Documents:', () => {
   });
 
   describe('GET', () => {
-    const privateDocumentData = {};
-    const publicDocumentData = {};
-    const roleDocumentData = {};
-    const fetchLimit = 10;
     before((done) => {
       privateDocumentData.document = testData.documentPrivate1;
       privateDocumentData.ownerToken = regularUserToken;
@@ -259,6 +260,34 @@ describe('Documents:', () => {
         done();
       });
     });
+  });
+
+  describe('Put', () => {
+    it('should allow the owner of a document update the document', (done) => {
+      const titleUpdate = 'title Update for this document';
+      client.put(`/api/documents/${privateDocumentData.id}`)
+      .set({'x-access-token': privateDocumentData.ownerToken})
+      .send({title: titleUpdate})
+      .end((error, response) => {
+        expect(response.status).to.equal(200);
+        expect(response.body.success).to.equal(true);
+        done();
+      });
+    });
+
+    it('should NOT allow update of a document belonging to another user',
+    (done) => {
+      const titleUpdate = 'title Update for this document again';
+      client.put(`/api/documents/${privateDocumentData.id}`)
+      .set({'x-access-token': regularUser2Token})
+      .send({title: titleUpdate})
+      .end((error, response) => {
+        expect(response.status).to.equal(404);
+        expect(response.body.success).to.equal(false);
+        done();
+      });
+    });
+    
   });
 });
 

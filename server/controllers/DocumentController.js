@@ -1,6 +1,7 @@
 import database from '../models';
 
 const documentDb = database.Document;
+const userDB = database.User;
 
 /**
  * Document controller
@@ -31,12 +32,6 @@ class DocumentController {
           message: `${createdDocument.dataValues.title} Successfully Created`,
           document: createdDocument.dataValues
         });
-      })
-      .catch((error) => {
-        response.status(500).json({
-          success: false,
-          message: error.message
-        });
       });
     } else {
       response.status(400).json({
@@ -53,14 +48,19 @@ class DocumentController {
    * @return{Void} - returns void
    */
   static updateDocument(request, response) {
+    const ownerId = request.decoded.userId;
     documentDb.update(request.body, {
       where: {
-        id: request.params.id
+        id: request.params.id,
+        ownerId: ownerId
       }
     })
     .then((update) => {
       if (update[0] === 1) {
-        response.status(200).json(update);
+        response.status(200).json({
+          success: true,
+          message: 'Document Updated'
+        });
       } else {
         response.status(404).json({
           success: false,
@@ -68,12 +68,6 @@ class DocumentController {
         });
       }
     })
-    .catch((error) => {
-      response.status(500).json({
-        success: false,
-        message: error.message
-      });
-    });
   }
 
   /**
@@ -237,6 +231,38 @@ class DocumentController {
         response.status(404).json({
           success: false,
           message: 'Deletion Failed'
+        });
+      }
+    })
+    .catch((error) => {
+      response.status(500).json({
+        success: false,
+        message: error.message
+      });
+    });
+  }
+
+  /**
+   * Method to fetch all documents of a specific user
+   * @param{Object} request - Request object
+   * @param{Object} response - Response object
+   * @return{Void} - returns void
+   */
+  static fetchUserDocuments(request, response) {
+    userDB.findById(request.params.id, {
+      attributes: ['id', 'email', 'firstName', 'lastName'],
+      include: [{
+        model: database.Document,
+        attributes: ['id', 'title', 'content', 'ownerId']
+      }]
+    })
+    .then((documents) => {
+      if (documents) {
+        response.status(200).json(documents);
+      } else {
+        response.status(400).json({
+          success: false,
+          message: 'No Documents found for this user'
         });
       }
     })
