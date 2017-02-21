@@ -15,11 +15,11 @@ const privateDocumentData = {};
 const publicDocumentData = {};
 const roleDocumentData = {};
 const fetchLimit = 10;
+// lets create neccessary users for these tests and get their details
+let regularUserToken, regularUserId, adminUserToken, adminUserId,
+  regularUser2Id, regularUser2Token;
 
 describe('Documents:', () => {
-  // lets create neccessary users for these tests and get their details
-  let regularUserToken, regularUserId, adminUserToken, adminUserId,
-    regularUser2Id, regularUser2Token;
   before((done) => {
     client.post('/api/users')
     .send(adminUser)
@@ -169,6 +169,44 @@ describe('Documents:', () => {
         done();
       });
     });
+
+    it('should allow a authenticated user fetch only All his/her documents',
+    (done) => {
+      client.get(`/api/users/${regularUserId}/documents`)
+      .set({ 'x-access-token': regularUserToken })
+      .end((error, response) => {
+        expect(response.status).to.equal(200);
+        response.body.forEach(document => {
+          expect(document.ownerId).to.equal(regularUserId);
+        });
+        done();
+      });
+    });
+
+    it(`should NOT return any documents for a user who owns no documents 
+    but tries to fetch all his documents`,
+    (done) => {
+      client.get(`/api/users/${regularUser2Id}/documents`)
+      .set({ 'x-access-token': regularUser2Token })
+      .end((error, response) => {
+        expect(response.status).to.equal(404);
+        expect(response.body.success).to.equal(false);
+        done();
+      });
+    });
+
+    it(`should NOT allow a user request for all documents belonging to a 
+    specific user`,
+    (done) => {
+      client.get(`/api/users/${regularUser2Id}/documents`)
+      .set({ 'x-access-token': regularUserToken })
+      .end((error, response) => {
+        expect(response.status).to.equal(403);
+        expect(response.body.success).to.equal(false);
+        done();
+      });
+    });
+
     it(`should allow a document with access set to 'private'
     be accessible by Admin users`, (done) => {
       client.get(`/api/documents/${privateDocumentData.id}`)
@@ -281,6 +319,43 @@ describe('Documents:', () => {
       client.put(`/api/documents/${privateDocumentData.id}`)
       .set({'x-access-token': regularUser2Token})
       .send({title: titleUpdate})
+      .end((error, response) => {
+        expect(response.status).to.equal(404);
+        expect(response.body.success).to.equal(false);
+        done();
+      });
+    });
+  });
+
+  describe('Delete', () => {
+
+    it(`should NOT allow the owner of a document with INVALID token delete the
+    document`, (done) => {
+      client.delete(`/api/documents/${privateDocumentData.id}`)
+      .set({'x-access-token': 'invalid token'})
+      .end((error, response) => {
+        expect(response.status).to.equal(401);
+        expect(response.body.success).to.equal(false);
+        done();
+      });
+    });
+
+    it(`should allow the owner of a document with valid token delete the
+    document`, (done) => {
+      client.delete(`/api/documents/${privateDocumentData.id}`)
+      .set({'x-access-token': privateDocumentData.ownerToken})
+      .end((error, response) => {
+        expect(response.status).to.equal(200);
+        expect(response.body.success).to.equal(true);
+        done();
+      });
+    });
+
+    it(`should NOT allow user with valid token delete a document belonging 
+    to another user`,
+    (done) => {
+      client.delete(`/api/documents/${publicDocumentData.id}`)
+      .set({'x-access-token': regularUser2Token})
       .end((error, response) => {
         expect(response.status).to.equal(404);
         expect(response.body.success).to.equal(false);

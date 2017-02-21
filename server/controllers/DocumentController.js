@@ -130,12 +130,6 @@ class DocumentController {
           message: 'No Document found'
         });
       }
-    })
-    .catch((error) => {
-      response.status(500).json({
-        success: false,
-        message: error.message
-      });
     });
   }
 
@@ -221,21 +215,15 @@ class DocumentController {
         ownerId: request.decoded.userId
       }
     })
-    .then((status) => {
-      if (status) {
-        response.status(200).json({
-          success: true,
-          message: 'Document Deleted Successfully'
-        });
-      } else {
-        response.status(404).json({
-          success: false,
-          message: 'Deletion Failed'
-        });
-      }
+    .then(status => {
+      console.log('status: ', status);
+      response.status(200).json({
+        success: true,
+        message: status
+      });
     })
     .catch((error) => {
-      response.status(500).json({
+      response.status(404).json({
         success: false,
         message: error.message
       });
@@ -249,29 +237,31 @@ class DocumentController {
    * @return{Void} - returns void
    */
   static fetchUserDocuments(request, response) {
-    userDB.findById(request.params.id, {
-      attributes: ['id', 'email', 'firstName', 'lastName'],
-      include: [{
-        model: database.Document,
-        attributes: ['id', 'title', 'content', 'ownerId']
-      }]
-    })
-    .then((documents) => {
-      if (documents) {
-        response.status(200).json(documents);
-      } else {
-        response.status(400).json({
-          success: false,
-          message: 'No Documents found for this user'
-        });
-      }
-    })
-    .catch((error) => {
-      response.status(500).json({
-        success: false,
-        message: error.message
+    const id = +request.params.id;
+    if(request.decoded.userId === id) {
+      documentDb.findAll({
+        where: {
+          ownerId: id
+        } 
+      })
+      .then(documents => {
+        //console.log('documents: ', documents)
+        if(documents.length > 0) {
+          response.status(200).json(documents);
+        } else {
+          response.status(404).json({
+            success: false,
+            message: 'No Documents found for this user'
+          });
+        }
       });
-    });
+    } else {
+      // only owner of documents should access this
+      response.status(403).json({
+        success: false,
+        message: 'Forbidden'
+      });
+    }
   }
 }
 

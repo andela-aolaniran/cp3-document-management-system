@@ -15,24 +15,18 @@ class SeedHelper {
    */
   static init() {
     database.sequelize.sync({ force: true })
-    .then(() => {
-      SeedHelper.populateRoleTable()
       .then(() => {
-        SeedHelper.populateUserTable()
-        // .then(() => {
-        //   SeedHelper.populateDocumentTable()
-        //   .catch((err) => {
-        //     logger.error(err);
-        //   });
-        // })
-        .catch((err) => {
-          logger.error(err);
-        });
+        return SeedHelper.populateRoleTable();
+      })
+      .then(() => {
+        return SeedHelper.populateUserTable();
+      })
+      .then(() => {
+        return SeedHelper.populateDocumentTable();
       })
       .catch((err) => {
         logger.error(err);
       });
-    });
   }
 
   /**

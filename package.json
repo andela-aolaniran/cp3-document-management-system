@@ -14,7 +14,7 @@
     "start": "babel-node app.js",
     "develop:server": "NODE_ENV=development npm-run-all --parallel test:watch lint:watch open:server",
     "open:server": "nodemon app.js --exec babel-node",
-    "cover": "rm -rf coverage/ && NODE_ENV=test npm run seed && NODE_ENV=test babel-node ./node_modules/babel-istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- -R spec server/tests client/tests",
+    "cover": "rm -rf coverage/ && NODE_ENV=test npm run seed && NODE_ENV=test babel-node ./node_modules/babel-istanbul/lib/cli.js cover _mocha -- -R spec server/tests client/tests",
     "coveralls": "npm run cover && cat ./coverage/lcov.info | coveralls"
   },
   "repository": {
