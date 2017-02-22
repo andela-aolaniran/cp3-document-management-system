@@ -11,6 +11,11 @@ const client = supertest.agent(app);
 let regularUserToken;
 let adminUserToken;
 let regularUserId;
+const regularUser = testData.regularUser1;
+const adminUser = testData.adminUser;
+const passwordUpdateUser = 'hello worldreewer';
+const passwordUpdateAdmin = 'new password 2';
+const newFirstName = 'new first Name';
 
 describe('Users:', () => {
   // Create default roles before running all user
@@ -150,9 +155,6 @@ describe('Users:', () => {
   });
 
   describe('Login', () => {
-    const regularUser = testData.regularUser1;
-    const adminUser = testData.adminUser;
-
     it('Should allow login for only CORRECT details of an Admin', (done) => {
       client.post('/api/users/login')
       .send({
@@ -161,6 +163,7 @@ describe('Users:', () => {
       })
       .end((error, response) => {
         expect(response.body.success).to.equal(true);
+        expect(response.body).to.have.property('token');
         done();
       });
     });
@@ -421,6 +424,7 @@ describe('Users:', () => {
     it('Should NOT allow a User update another Users profile', (done) => {
       client.put(`/api/users/${regularUserId + 1}`)
       .set({ 'x-access-token': regularUserToken })
+      .send({ password: passwordUpdateUser, firstName: newFirstName })
       .end((error, response) => {
         expect(response.status).to.equal(403);
         expect(response.body.success).to.equal(false);
@@ -428,19 +432,85 @@ describe('Users:', () => {
       });
     });
 
-    it('Should Allow a User Update his profile if he has a valid Token',
+    it('Should Allow a User Update his password if he has a valid Token',
     (done) => {
-      const newFirstName = 'newName';
-      const newPassword = 'hello worldreewer';
       client.put(`/api/users/${regularUserId}`)
       .send({
-        firstName: newFirstName,
-        password: newPassword
+        password: passwordUpdateUser
       })
       .set({ 'x-access-token': regularUserToken })
       .end((error, response) => {
         expect(response.status).to.equal(200);
-        expect(response.body.success).to.equal(true);
+        done();
+      });
+    });
+
+    it('Should Allow a User Login with the updated password',
+    (done) => {
+      client.post('/api/users/login')
+      .send({
+        email: regularUser.email,
+        password: passwordUpdateUser
+      })
+      .end((error, response) => {
+        expect(response.status).to.equal(200);
+        expect(response.body).to.have.property('token');
+        done();
+      });
+    });
+
+    it('Should NOT Allow a User Login with the old password',
+    (done) => {
+      client.post('/api/users/login')
+      .send({
+        email: regularUser.email,
+        password: regularUser.password
+      })
+      .end((error, response) => {
+        expect(response.status).to.equal(401);
+        expect(response.body.success).to.equal(false);
+        done();
+      });
+    });
+
+    it(`Should Allow an Admin with a valid token update a regular 
+    user password`,
+    (done) => {
+      client.put(`/api/users/${regularUserId}`)
+      .send({
+        password: passwordUpdateAdmin
+      })
+      .set({ 'x-access-token': adminUserToken })
+      .end((error, response) => {
+        expect(response.status).to.equal(200);
+        done();
+      });
+    });
+
+    it(`Should NOT allow a User Login with the old password already 
+    updated by an Admin`,
+    (done) => {
+      client.post('/api/users/login')
+      .send({
+        email: regularUser.email,
+        password: passwordUpdateUser
+      })
+      .end((error, response) => {
+        expect(response.status).to.equal(401);
+        done();
+      });
+    });
+
+    it('Should Allow a User Login with the new password updated by an Admin',
+    (done) => {
+      client.post('/api/users/login')
+      .send({
+        email: regularUser.email,
+        password: passwordUpdateAdmin
+      })
+      .end((error, response) => {
+        expect(response.status).to.equal(200);
+        expect(response.body).to.have.property('token');
         done();
       });
     });
@@ -449,6 +519,7 @@ describe('Users:', () => {
     (done) => {
       client.put(`/api/users/${regularUserId}`)
       .set({ 'x-access-token': 'invalidToken' })
+      .send({ firstName: 'newMan' })
       .end((error, response) => {
         expect(response.status).to.equal(401);
         expect(response.body.success).to.equal(false);
