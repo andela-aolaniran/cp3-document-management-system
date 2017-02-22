@@ -3,7 +3,12 @@ export default (sequelize, DataTypes) => {
     title: {
       type: DataTypes.STRING,
       unique: true,
-      allowNull: false
+      allowNull: false,
+      validate: {
+        notEmpty: {
+          msg: 'Title cannot be empty'
+        }
+      }
     }
   }, {
     classMethods: {

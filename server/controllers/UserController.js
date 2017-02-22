@@ -59,7 +59,7 @@ class UserController {
       .catch((error) => {
         response.status(500).json({
           success: false,
-          message: error.message
+          message: error.errors
         });
       });
     } else {
@@ -108,16 +108,30 @@ class UserController {
     if (request.decoded.userId === +request.params.id ||
         request.decoded.roleId === 1) {
       userDB.findById(request.params.id)
-      .then(user =>
-        user.update(request.body))
-      .then((updatedUser) => {
-        response.status(200).send({
-          email: updatedUser.email,
-          firstName: updatedUser.firstName,
-          lastName: updatedUser.lastName,
-          roleId: updatedUser.roleId,
-          id: updatedUser.id
-        });
+      .then((user) => {
+        if (user) {
+          user.update(request.body)
+          .then((updatedUser) => {
+            response.status(200).send({
+              email: updatedUser.email,
+              firstName: updatedUser.firstName,
+              lastName: updatedUser.lastName,
+              roleId: updatedUser.roleId,
+              id: updatedUser.id,
+            });
+          })
+          .catch((error) => {
+            response.status(400).json({
+              success: false,
+              message: error.errors
+            });
+          });
+        } else {
+          response.status(404).json({
+            success: false,
+            message: 'User Not Found'
+          });
+        }
       });
     } else {
       response.status(403).json({
@@ -125,23 +139,6 @@ class UserController {
         message: 'Forbidden'
       });
     }
-    // userDB.update(request.body, {
-    //   where: {
-    //     id: request.params.id
-    //   }
-    // }).then((rowUpdated) => {
-    //   if (rowUpdated[0] === 1) {
-    //     response.status(200).json({
-    //       success: true,
-    //       message: 'User Successfully updated'
-    //     });
-    //   } else {
-    //     response.status(404).json({
-    //       success: false,
-    //       message: 'User not found'
-    //     });
-    //   }
-    // });
   }
 
   /**
@@ -167,7 +164,7 @@ class UserController {
     .catch((error) => {
       response.status(500).json({
         success: false,
-        message: error.message
+        message: error.errors
       });
     });
   }

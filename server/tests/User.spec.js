@@ -16,6 +16,9 @@ const adminUser = testData.adminUser;
 const passwordUpdateUser = 'hello worldreewer';
 const passwordUpdateAdmin = 'new password 2';
 const newFirstName = 'new first Name';
+const shortPassword = '123';
+const longPassword = `sdfcgvbhnmdzghjbnmdfcghjndghjndmcxfghgggbjknmdcghjn
+                      gggmdcghvjn dsghvbjndsfghvbjdncsghbjdsghvbjdghvbjdc`;
 
 describe('Users:', () => {
   // Create default roles before running all user
@@ -428,6 +431,36 @@ describe('Users:', () => {
       .end((error, response) => {
         expect(response.status).to.equal(403);
         expect(response.body.success).to.equal(false);
+        done();
+      });
+    });
+
+    it(`Should NOT Allow a User with a Valid token Update his password with a 
+    password that is less than the minimum password lenght`,
+    (done) => {
+      client.put(`/api/users/${regularUserId}`)
+      .send({
+        password: shortPassword
+      })
+      .set({ 'x-access-token': regularUserToken })
+      .end((error, response) => {
+        expect(response.status).to.equal(400);
+        expect(response.body).to.be.instanceOf(Object);
+        done();
+      });
+    });
+
+    it(`Should NOT Allow a User with a Valid token Update his password with a 
+    password that is more than the maximum password lenght`,
+    (done) => {
+      client.put(`/api/users/${regularUserId}`)
+      .send({
+        password: longPassword
+      })
+      .set({ 'x-access-token': regularUserToken })
+      .end((error, response) => {
+        expect(response.status).to.equal(400);
+        expect(response.body).to.be.instanceOf(Object);
         done();
       });
     });

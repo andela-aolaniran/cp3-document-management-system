@@ -10,25 +10,48 @@ export default (sequelize, DataTypes) => {
     },
     firstName: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      validate: {
+        notEmpty: {
+          msg: 'Firstname is required'
+        }
+      }
     },
     lastName: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      validate: {
+        notEmpty: {
+          msg: 'Lastname is required'
+        }
+      }
     },
     password: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      validate: {
+        len: {
+          args: [6, 100],
+          msg: 'Password length should range between 6 - 100 characters'
+        }
+      }
     },
     roleId: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: false,
+      validate: {
+        isInt: {
+          msg: 'roleId must be an integer'
+        }
+      }
     },
     email: {
       type: DataTypes.STRING,
       unique: true,
       validate: {
-        isEmail: true
+        isEmail: {
+          msg: 'Email address is invalid'
+        }
       }
     }
   }, {

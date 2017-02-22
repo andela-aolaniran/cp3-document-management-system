@@ -124,7 +124,7 @@ class DocumentController {
           });
         }
       } else {
-        response.status(400).json({
+        response.status(404).json({
           success: false,
           message: 'No Document found'
         });
@@ -195,7 +195,7 @@ class DocumentController {
     .catch((error) => {
       response.status(500).json({
         success: false,
-        message: error.message
+        message: error.errors
       });
     });
   }
@@ -222,7 +222,7 @@ class DocumentController {
     .catch((error) => {
       response.status(404).json({
         success: false,
-        message: error.message
+        message: error.errors
       });
     });
   }

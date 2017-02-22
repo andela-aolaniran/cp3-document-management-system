@@ -26,7 +26,7 @@ class RoleController {
       .catch((error) => {
         response.status(400).json({
           success: false,
-          message: error.message
+          message: error.errors
         });
       });
     } else {
