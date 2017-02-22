@@ -29,8 +29,8 @@ class DocumentController {
       .then((createdDocument) => {
         response.status(201).json({
           success: true,
-          message: `${createdDocument.dataValues.title} Successfully Created`,
-          document: createdDocument.dataValues
+          message: `${createdDocument.title} Successfully Created`,
+          document: createdDocument
         });
       });
     } else {
@@ -91,8 +91,7 @@ class DocumentController {
         attributes: ['roleId']
       }]
     })
-    .then((result) => {
-      const document = result ? result.dataValues : null;
+    .then((document) => {
       if (document) {
         // lets chceck required access
         // For an Admin, return documents without checking required access
@@ -105,7 +104,7 @@ class DocumentController {
           // for other users, ensure they have appropriate access rights
         } else if (
           (document.access === 'public'
-          || requesterRoleId === document.User.dataValues.roleId)
+          || requesterRoleId === document.User.roleId)
           && document.access !== 'private') {
           response.status(200).json({
             success: true,
@@ -149,9 +148,9 @@ class DocumentController {
       include: [{
         model: database.User,
         attributes: ['roleId']
-      }]
+      }],
+      order: '"createdAt" DESC'
     };
-    queryBuilder.order = '"createdAt" DESC';
     if (limit) {
       queryBuilder.limit = limit;
     }
@@ -165,27 +164,26 @@ class DocumentController {
       };
     }
     documentDb.findAll(queryBuilder)
-    .then((results) => {
-      if (results) {
-        const actualDocuments = [];
-        results.forEach((document) => {
+    .then((fetchedDocments) => {
+      if (fetchedDocments.length > 0) {
+        const accessedDocuments = fetchedDocments.filter((document) => {
           if (requesterRoleId === 1) {
-            actualDocuments.push(document.dataValues);
+            return true;
           // for other users, ensure they have appropriate access rights
           } else if (
             (document.access === 'public'
-            || requesterRoleId === document.User.dataValues.roleId)
+            || requesterRoleId === document.User.roleId)
             && document.access !== 'private') {
-            actualDocuments.push(document.dataValues);
+            return true;
           } else if (document.access === 'private'
             && document.ownerId === requesterId) {
-            actualDocuments.push(document.dataValues);
+            return true;
           }
+          return false;
         });
         response.status(200).json({
           success: true,
-          message: 'Documents Fetched',
-          documents: actualDocuments
+          documents: accessedDocuments
         });
       } else {
         response.status(400).json({
