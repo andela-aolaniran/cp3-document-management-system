@@ -176,7 +176,7 @@ describe('Documents:', () => {
       .set({ 'x-access-token': regularUserToken })
       .end((error, response) => {
         expect(response.status).to.equal(200);
-        response.body.forEach(document => {
+        response.body.forEach((document) => {
           expect(document.ownerId).to.equal(regularUserId);
         });
         done();
@@ -304,8 +304,8 @@ describe('Documents:', () => {
     it('should allow the owner of a document update the document', (done) => {
       const titleUpdate = 'title Update for this document';
       client.put(`/api/documents/${privateDocumentData.id}`)
-      .set({'x-access-token': privateDocumentData.ownerToken})
-      .send({title: titleUpdate})
+      .set({ 'x-access-token': privateDocumentData.ownerToken })
+      .send({ title: titleUpdate })
       .end((error, response) => {
         expect(response.status).to.equal(200);
         expect(response.body.success).to.equal(true);
@@ -317,8 +317,8 @@ describe('Documents:', () => {
     (done) => {
       const titleUpdate = 'title Update for this document again';
       client.put(`/api/documents/${privateDocumentData.id}`)
-      .set({'x-access-token': regularUser2Token})
-      .send({title: titleUpdate})
+      .set({ 'x-access-token': regularUser2Token })
+      .send({ title: titleUpdate })
       .end((error, response) => {
         expect(response.status).to.equal(404);
         expect(response.body.success).to.equal(false);
@@ -328,11 +328,10 @@ describe('Documents:', () => {
   });
 
   describe('Delete', () => {
-
     it(`should NOT allow the owner of a document with INVALID token delete the
     document`, (done) => {
       client.delete(`/api/documents/${privateDocumentData.id}`)
-      .set({'x-access-token': 'invalid token'})
+      .set({ 'x-access-token': 'invalid token' })
       .end((error, response) => {
         expect(response.status).to.equal(401);
         expect(response.body.success).to.equal(false);
@@ -343,7 +342,7 @@ describe('Documents:', () => {
     it(`should allow the owner of a document with valid token delete the
     document`, (done) => {
       client.delete(`/api/documents/${privateDocumentData.id}`)
-      .set({'x-access-token': privateDocumentData.ownerToken})
+      .set({ 'x-access-token': privateDocumentData.ownerToken })
       .end((error, response) => {
         expect(response.status).to.equal(200);
         expect(response.body.success).to.equal(true);
@@ -355,14 +354,13 @@ describe('Documents:', () => {
     to another user`,
     (done) => {
       client.delete(`/api/documents/${publicDocumentData.id}`)
-      .set({'x-access-token': regularUser2Token})
+      .set({ 'x-access-token': regularUser2Token })
       .end((error, response) => {
         expect(response.status).to.equal(404);
         expect(response.body.success).to.equal(false);
         done();
       });
     });
-    
   });
 });
 

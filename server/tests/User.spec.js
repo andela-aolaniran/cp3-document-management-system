@@ -437,7 +437,7 @@ describe('Users:', () => {
         firstName: newFirstName,
         password: newPassword
       })
-      .set({'x-access-token': regularUserToken})
+      .set({ 'x-access-token': regularUserToken })
       .end((error, response) => {
         expect(response.status).to.equal(200);
         expect(response.body.success).to.equal(true);

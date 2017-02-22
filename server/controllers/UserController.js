@@ -93,7 +93,7 @@ class UserController {
           message: 'User not found'
         });
       }
-    })
+    });
   }
 
   /**
@@ -117,7 +117,7 @@ class UserController {
         id: request.params.id
       }
     }).then((rowUpdated) => {
-      if(rowUpdated[0] === 1){
+      if (rowUpdated[0] === 1) {
         response.status(200).json({
           success: true,
           message: 'User Successfully updated'

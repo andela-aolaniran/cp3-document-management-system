@@ -1,8 +1,9 @@
 import fs from 'fs';
 import path from 'path';
 import Sequelize from 'sequelize';
-import configFile from '../../config/config.json';
 import dotenv from 'dotenv';
+import configFile from '../../config/config.json';
+
 dotenv.config();
 
 const basename = path.basename(module.filename);
@@ -24,8 +25,7 @@ if (config.use_env_variable) {
 fs
   .readdirSync(__dirname)
   .filter((file) => {
-    const isJsFile = (file.indexOf('.') !== 0)
-    && (file !== basename) && (file.slice(-3) === '.js');
+    const isJsFile = (file !== basename) && (file.slice(-3) === '.js');
     return isJsFile;
   })
   .forEach((file) => {

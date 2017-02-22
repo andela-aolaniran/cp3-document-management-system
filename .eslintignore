@@ -2,3 +2,4 @@ node_modules/*
 dist/*
 migrations/*
 seeders/*
+webpack.config.dev.js

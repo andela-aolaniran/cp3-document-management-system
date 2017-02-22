@@ -1,6 +1,6 @@
 {
   "root": true,
-  "extends": "eslint:recommended",
+  "extends": "airbnb",
   "parser": "babel-eslint",
   "env": {
     "browser": true,
@@ -21,6 +21,7 @@
       "react"
   ],
   "rules": {
+    "import/no-unresolved": ["error"],
     "semi": 1,
     "no-var":1,
     "prefer-const": 1,

@@ -77,7 +77,7 @@ class Authenticator {
           message: 'Admin status required'
         });
       }
-    })
+    });
   }
 }
 

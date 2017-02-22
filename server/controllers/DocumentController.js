@@ -52,7 +52,7 @@ class DocumentController {
     documentDb.update(request.body, {
       where: {
         id: request.params.id,
-        ownerId: ownerId
+        ownerId
       }
     })
     .then((update) => {
@@ -67,7 +67,7 @@ class DocumentController {
           message: 'Could not update the specified document'
         });
       }
-    })
+    });
   }
 
   /**
@@ -215,8 +215,7 @@ class DocumentController {
         ownerId: request.decoded.userId
       }
     })
-    .then(status => {
-      console.log('status: ', status);
+    .then((status) => {
       response.status(200).json({
         success: true,
         message: status
@@ -238,15 +237,14 @@ class DocumentController {
    */
   static fetchUserDocuments(request, response) {
     const id = +request.params.id;
-    if(request.decoded.userId === id) {
+    if (request.decoded.userId === id) {
       documentDb.findAll({
         where: {
           ownerId: id
-        } 
+        }
       })
-      .then(documents => {
-        //console.log('documents: ', documents)
-        if(documents.length > 0) {
+      .then((documents) => {
+        if (documents.length > 0) {
           response.status(200).json(documents);
         } else {
           response.status(404).json({
