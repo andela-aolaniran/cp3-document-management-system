@@ -8,7 +8,7 @@
     "migrate": "sequelize db:migrate",
     "seed": "babel-node server/tests/helpers/SeedHelper.js",
     "test": "NODE_ENV=test npm run seed && NODE_ENV=test npm run mocha",
-    "lint": "node_modules/.bin/esw server client",
+    "lint": "node_modules/.bin/esw ./",
     "lint:watch": "npm run lint -- --watch",
     "test:watch": "npm run test -- --watch",
     "start": "babel-node app.js",

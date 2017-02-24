@@ -10,8 +10,12 @@ const client = supertest.agent(app);
 
 
 describe('Roles:', () => {
-  let adminToken, adminId, regularUserToken,
-    regularUserId, newRoleId, newRoleTitle;
+  let adminToken;
+  let adminId;
+  let regularUserToken;
+  let regularUserId;
+  let newRoleId;
+  let newRoleTitle;
   before((done) => {
     client.post('/api/users')
     .send(testData.adminUserRole)

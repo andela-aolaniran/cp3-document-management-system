@@ -16,8 +16,12 @@ const publicDocumentData = {};
 const roleDocumentData = {};
 const fetchLimit = 10;
 // lets create neccessary users for these tests and get their details
-let regularUserToken, regularUserId, adminUserToken, adminUserId,
-  regularUser2Id, regularUser2Token;
+let regularUserToken;
+let regularUserId;
+let adminUserToken;
+let adminUserId;
+let regularUser2Id;
+let regularUser2Token;
 
 describe('Documents:', () => {
   before((done) => {

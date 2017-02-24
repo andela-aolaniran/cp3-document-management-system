@@ -7,7 +7,8 @@ import database from '../models';
 const expect = chai.expect;
 const client = supertest.agent(app);
 
-let adminUserToken, adminUserId;
+let adminUserToken;
+let adminUserId;
 const testDocument = testData.documentPublic1;
 describe('Search', () => {
   const adminUser = testData.adminUserSearch;
