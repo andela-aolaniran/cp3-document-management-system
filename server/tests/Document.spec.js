@@ -60,7 +60,7 @@ describe('Documents:', () => {
       });
     });
 
-    it(`should allow only a user with valid authentication token create a new 
+    it(`should allow only a user with valid authentication token create a new
     document`, (done) => {
       const document = testData.documentRole1;
       client.post('/api/documents')
@@ -73,7 +73,7 @@ describe('Documents:', () => {
       });
     });
 
-    it(`should NOT allow a user with Invalid authentication token create a new 
+    it(`should NOT allow a user with Invalid authentication token create a new
     document`, (done) => {
       const document = testData.documentRole1;
       client.post('/api/documents')
@@ -187,7 +187,7 @@ describe('Documents:', () => {
       });
     });
 
-    it(`should NOT return any documents for a user who owns no documents 
+    it(`should NOT return any documents for a user who owns no documents
     but tries to fetch all his documents`,
     (done) => {
       client.get(`/api/users/${regularUser2Id}/documents`)
@@ -199,7 +199,7 @@ describe('Documents:', () => {
       });
     });
 
-    it(`should NOT allow a user request for all documents belonging to a 
+    it(`should NOT allow a user request for all documents belonging to a
     specific user`,
     (done) => {
       client.get(`/api/users/${regularUser2Id}/documents`)
@@ -270,7 +270,7 @@ describe('Documents:', () => {
       });
     });
 
-    it(`should allow a regular User with valid authentication token access to 
+    it(`should allow a regular User with valid authentication token access to
     only all documents with roles set as public, his current role and only his
     private documents`,
     (done) => {
@@ -354,7 +354,7 @@ describe('Documents:', () => {
       });
     });
 
-    it(`should NOT allow user with valid token delete a document belonging 
+    it(`should NOT allow user with valid token delete a document belonging
     to another user`,
     (done) => {
       client.delete(`/api/documents/${publicDocumentData.id}`)
@@ -367,4 +367,3 @@ describe('Documents:', () => {
     });
   });
 });
-

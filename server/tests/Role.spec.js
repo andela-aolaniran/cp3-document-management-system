@@ -71,7 +71,7 @@ describe('Roles:', () => {
       });
     });
 
-    it(`should NOT allow any User (Admin, Regular...) with an INVALID token 
+    it(`should NOT allow any User (Admin, Regular...) with an INVALID token
     create a Role`,
     (done) => {
       client.post('/api/roles')
@@ -83,7 +83,7 @@ describe('Roles:', () => {
       });
     });
 
-    it(`should NOT allow a NON-Admin User with a VALID token 
+    it(`should NOT allow a NON-Admin User with a VALID token
     create a Role`,
     (done) => {
       client.post('/api/roles')
@@ -109,7 +109,7 @@ describe('Roles:', () => {
       });
     });
 
-    it(`should NOT allow an Admin user with VALID token UPDATE a 
+    it(`should NOT allow an Admin user with VALID token UPDATE a
     NON-EXISTENT Role`, (done) => {
       client.put(`/api/roles/${newRoleId + 300}`)
       .set({ 'x-access-token': adminToken })
@@ -134,7 +134,7 @@ describe('Roles:', () => {
       });
     });
 
-    it(`should NOT allow a NON-Admin User with a VALID token 
+    it(`should NOT allow a NON-Admin User with a VALID token
     UPDATE a Role`,
     (done) => {
       client.put(`/api/roles/${newRoleId}`)
@@ -160,7 +160,7 @@ describe('Roles:', () => {
       });
     });
 
-    it(`should NOT allow an Admin User with VALID token get a specific Role 
+    it(`should NOT allow an Admin User with VALID token get a specific Role
     that does NOT exist`,
     (done) => {
       client.get('/api/roles/9000')
@@ -220,7 +220,7 @@ describe('Roles:', () => {
       });
     });
 
-    it(`should NOT allow any User (Admin, Regular, ...) with an INVALID 
+    it(`should NOT allow any User (Admin, Regular, ...) with an INVALID
     token to get all Roles`, (done) => {
       client.get('/api/roles')
       .set({ 'x-access-token': 'invalid token' })
@@ -266,7 +266,7 @@ describe('Roles:', () => {
       });
     });
 
-    it(`should NOT allow an Admin user with VALID token delete a 
+    it(`should NOT allow an Admin user with VALID token delete a
     non-existing Role`, (done) => {
       client.delete('/api/roles/3')
       .set({ 'x-access-token': adminToken })

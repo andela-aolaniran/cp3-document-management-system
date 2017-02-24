@@ -25,7 +25,7 @@ describe('Users:', () => {
   // related test suites
 
   describe('Create Regular User', () => {
-    it(`Should return http code 201 
+    it(`Should return http code 201
       if a Regular User is successfully created`, (done) => {
       client.post('/api/users')
       .send(testData.regularUser1)
@@ -46,7 +46,7 @@ describe('Users:', () => {
       });
     });
 
-    it(`Should return a TOKEN 
+    it(`Should return a TOKEN
       if a Regular User is successfully created`, (done) => {
       client.post('/api/users')
       .send(testData.regularUser2)
@@ -102,7 +102,7 @@ describe('Users:', () => {
   });
 
   describe('Create an Admin user', () => {
-    it(`Should return http code 201 
+    it(`Should return http code 201
       if an Admin User is successfully created`, (done) => {
       client.post('/api/users')
       .send(testData.adminUser)
@@ -113,7 +113,7 @@ describe('Users:', () => {
     });
 
 
-    it(`Should return a TOKEN 
+    it(`Should return a TOKEN
       if an Admin User is successfully created`, (done) => {
       client.post('/api/users')
       .send(testData.adminUser1)
@@ -238,7 +238,7 @@ describe('Users:', () => {
       });
     });
 
-    it(`Should allow login for only CORRECT details of a 
+    it(`Should allow login for only CORRECT details of a
     Regular User`, (done) => {
       client.post('/api/users/login')
       .send({
@@ -278,7 +278,7 @@ describe('Users:', () => {
       });
     });
 
-    it(`Should NOT allow login if all required credentials for login 
+    it(`Should NOT allow login if all required credentials for login
     are NOT supplied`,
     (done) => {
       client.post('/api/users/login')
@@ -400,7 +400,7 @@ describe('Users:', () => {
       });
     });
 
-    it(`Should Fail to return a User if User with such id doesn't 
+    it(`Should Fail to return a User if User with such id doesn't
     exist`, (done) => {
       client.get('/api/users/10000')
       .set({ 'x-access-token': adminUserToken })
@@ -435,7 +435,7 @@ describe('Users:', () => {
       });
     });
 
-    it(`Should NOT Allow a User with a Valid token Update his password with a 
+    it(`Should NOT Allow a User with a Valid token Update his password with a
     password that is less than the minimum password lenght`,
     (done) => {
       client.put(`/api/users/${regularUserId}`)
@@ -450,7 +450,7 @@ describe('Users:', () => {
       });
     });
 
-    it(`Should NOT Allow a User with a Valid token Update his password with a 
+    it(`Should NOT Allow a User with a Valid token Update his password with a
     password that is more than the maximum password lenght`,
     (done) => {
       client.put(`/api/users/${regularUserId}`)
@@ -506,7 +506,7 @@ describe('Users:', () => {
       });
     });
 
-    it(`Should Allow an Admin with a valid token update a regular 
+    it(`Should Allow an Admin with a valid token update a regular
     user password`,
     (done) => {
       client.put(`/api/users/${regularUserId}`)
@@ -520,7 +520,7 @@ describe('Users:', () => {
       });
     });
 
-    it(`Should NOT allow a User Login with the old password already 
+    it(`Should NOT allow a User Login with the old password already
     updated by an Admin`,
     (done) => {
       client.post('/api/users/login')
@@ -606,7 +606,7 @@ describe('Users:', () => {
       });
     });
 
-    it(`Should NOT allow an Admin user with Valid Token delete a User that does 
+    it(`Should NOT allow an Admin user with Valid Token delete a User that does
     not exist`, (done) => {
       client.delete(`/api/users/${regularUserId + 10000}`)
       .set({ 'x-access-token': adminUserToken })
