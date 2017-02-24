@@ -3,3 +3,4 @@ dist/*
 migrations/*
 seeders/*
 coverage/*
+dist/*

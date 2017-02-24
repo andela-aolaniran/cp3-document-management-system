@@ -1,6 +1,6 @@
 import supertest from 'supertest';
 import chai from 'chai';
-import app from '../server';
+import app from '../config/server';
 import testData from './helpers/SpecHelper';
 import database from '../models';
 

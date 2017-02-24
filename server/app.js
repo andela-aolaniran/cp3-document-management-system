@@ -1,6 +1,6 @@
 import logger from 'fm-log';
 import open from 'open';
-import app from './server/server';
+import app from './config/server';
 
 const port = process.env.PORT || 3090;
 app.listen(port, (error) => {
