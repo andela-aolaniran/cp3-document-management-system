@@ -13,7 +13,7 @@
     "lint:watch": "npm run lint -- --watch",
     "test:watch": "npm run test -- --watch",
     "build": "babel server --presets babel-preset-es2015 --out-dir dist --ignore ./server/tests",
-    "prerestart": "npm run build",
+    "prestart": "npm run build",
     "start": "node dist/app.js",
     "develop:server": "NODE_ENV=development npm-run-all --parallel test:watch lint:watch open:server",
     "open:server": "nodemon server/app.js --exec babel-node",

@@ -7,7 +7,7 @@ const basename = path.basename(module.filename);
 const env = process.env.NODE_ENV || 'development';
 const config = configFile[env];
 const db = {};
-const sequelize = new Sequelize(config.url);
+const sequelize = new Sequelize(config.url, config);
 
 fs
   .readdirSync(__dirname)

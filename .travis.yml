@@ -13,8 +13,8 @@ services:
   - postgresql
 
 before_script:
-  - psql -c 'drop database if exists cp3_test;' -U postgres
-  - psql -c 'create database cp3_test;' -U postgres
+  - psql -c 'drop database if exists cp3_test;' -U postgres:postgres
+  - psql -c 'create database cp3_test;' -U postgres:postgres
   - NODE_ENV=test npm run migrate
 
 script:
