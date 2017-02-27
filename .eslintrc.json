@@ -21,7 +21,7 @@
       "react"
   ],
   "rules": {
-    "import/no-unresolved": 1,
+    "import/no-unresolved": 0,
     "semi": 1,
     "no-var":1,
     "prefer-const": 1,
