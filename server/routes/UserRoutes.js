@@ -68,7 +68,6 @@ class UserRoutes {
     router.get(
       '/api/users/',
       Authenticator.authenticateUser,
-      Authenticator.verifyAdmin,
       UserController.fetchUsers
     );
   }
@@ -83,7 +82,6 @@ class UserRoutes {
     router.get(
       '/api/users/:id',
       Authenticator.authenticateUser,
-      Authenticator.verifyAdmin,
       UserController.fetchUser
     );
   }
@@ -110,7 +108,6 @@ class UserRoutes {
     router.delete(
       '/api/users/:id',
       Authenticator.authenticateUser,
-      Authenticator.verifyAdmin,
       UserController.deleteUser
     );
   }

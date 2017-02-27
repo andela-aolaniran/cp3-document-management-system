@@ -10,6 +10,7 @@ module.exports = {
       },
       email: {
         type: Sequelize.STRING,
+        allowNull: false,
         unique: true,
         validate: {
           isEmail: true
@@ -18,6 +19,10 @@ module.exports = {
       firstName: {
         type: Sequelize.STRING,
         allowNull: false
+      },
+      activeToken: {
+        type: Sequelize.TEXT,
+        allowNull: true
       },
       lastName: {
         type: Sequelize.STRING,
@@ -28,14 +33,13 @@ module.exports = {
         allowNull: false
       },
       roleId: {
-        allowNull: false,
         type: Sequelize.INTEGER,
         references: {
           model: 'Roles',
           key: 'id'
         },
-        onDelete: 'cascade',
-        onUpdate: 'cascade'
+        onUpdate: 'cascade',
+        onDelete: 'set null'
       },
       createdAt: {
         allowNull: false,

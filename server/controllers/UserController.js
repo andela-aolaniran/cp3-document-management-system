@@ -16,7 +16,7 @@ class UserController {
    * @return{Boolean} - True if request contains all required fields,
    * otherwise false
    */
-  static checkPostRequest(request) {
+  static validateCreateRequest(request) {
     return (request.body &&
       request.body.email &&
       request.body.firstName &&
@@ -26,45 +26,53 @@ class UserController {
   }
 
   /**
+   * Method to verify if a user is an admin
+   * @param{Number} roleId - id number for user. Admin roleId is 1
+   * @return{Boolean} - True if user roleId corresponds to admin,
+   * otherwise false
+   */
+  static isAdmin(roleId) {
+    return roleId === 1;
+  }
+
+  /**
    * Method to create a new User (POST)
    * @param{Object} request - Request object
    * @param{Object} response - Response object
-   * @return{Void} - returns void
+   * @return{undefined} - returns undefined
    */
   static createUser(request, response) {
-    if (UserController.checkPostRequest(request)) {
-      const roleId = request.body.roleId;
-      userDB.create({
-        email: request.body.email,
-        password: request.body.password,
-        firstName: request.body.firstName,
-        lastName: request.body.lastName,
-        // setuser role to default if role id isn't supplied
-        roleId: roleId || 2
-      })
+    const newUser = request.body;
+    if (UserController.validateCreateRequest(request) &&
+     !Authenticator.verifyAdmin(newUser.roleId)) {
+      // set roleId to default of 2
+      newUser.roleId = newUser.roleId || 2;
+      userDB.create(newUser)
       .then((user) => {
-        response.status(201).json({
-          success: true,
-          message: `${user.email} Succefully Created`,
-          user: {
+        const token = Authenticator.generateToken(user);
+        user.update({ activeToken: token })
+        .then(() => {
+          response.status(201).json({
             email: user.email,
             firstName: user.firstName,
             lastName: user.lastName,
             roleId: user.roleId,
             id: user.id,
-            token: Authenticator.generateToken(user)
-          }
+            token
+          });
         });
       })
       .catch((error) => {
-        response.status(500).json({
-          success: false,
+        response.status(400).json({
           message: error.errors
         });
       });
+    } else if (request.body.roleId === 1) {
+      response.status(403).json({
+        message: 'Cannot create Admin user'
+      });
     } else {
       response.status(400).json({
-        success: false,
         message: 'Required fields are missing'
       });
     }
@@ -74,40 +82,52 @@ class UserController {
    * Method to delete a specific user (DELETE)
    * @param{Object} request - Request object
    * @param{Object} response - Response object
-   * @return{Void} - returns void
+   * @return{undefined} - returns undefined
    */
   static deleteUser(request, response) {
-    userDB.destroy({
-      where: {
-        id: request.params.id
-      }
-    }).then((rowDeleted) => {
-      if (rowDeleted === 1) {
-        response.status(200).json({
-          success: true,
-          message: 'User deleted'
-        });
-      } else {
-        response.status(404).json({
-          success: false,
-          message: 'User not found'
-        });
-      }
-    });
+    const requesterId = request.decoded.roleId;
+    const deleteId = Number(request.params.id);
+    if (Authenticator.verifyAdmin(requesterId) &&
+     deleteId !== requesterId) {
+      userDB.destroy({
+        where: {
+          id: deleteId
+        }
+      }).then((rowDeleted) => {
+        if (rowDeleted === 1) {
+          response.status(200).json({
+            message: 'User deleted'
+          });
+        } else {
+          response.status(404).json({
+            message: 'User not found'
+          });
+        }
+      });
+    } else if (!Authenticator.verifyAdmin(requesterId)) {
+      response.status(403).json({
+        message: 'Only admin can delete a user'
+      });
+    } else {
+      response.status(403).json({
+        message: 'Admin user cannot be deleted'
+      });
+    }
   }
 
   /**
    * Method to update a specific user (PUT)
    * @param{Object} request - Request object
    * @param{Object} response - Response object
-   * @return{Void} - returns void
+   * @return{undefined} - returns undefined
    */
   static updateUser(request, response) {
     // users should not be allowed to update other users profile
     // except for admins
-    if (request.decoded.userId === +request.params.id ||
-        request.decoded.roleId === 1) {
-      userDB.findById(request.params.id)
+    const updateId = Number(request.params.id);
+    if (request.decoded.userId === updateId ||
+        Authenticator.verifyAdmin(request.decoded.roleId)) {
+      userDB.findById(updateId)
       .then((user) => {
         if (user) {
           user.update(request.body)
@@ -122,20 +142,17 @@ class UserController {
           })
           .catch((error) => {
             response.status(400).json({
-              success: false,
               message: error.errors
             });
           });
         } else {
           response.status(404).json({
-            success: false,
             message: 'User Not Found'
           });
         }
       });
     } else {
       response.status(403).json({
-        success: false,
         message: 'Forbidden'
       });
     }
@@ -145,50 +162,84 @@ class UserController {
    * Method to fetch a specific user (GET)
    * @param{Object} request - Request object
    * @param{Object} response - Response object
-   * @return{Void} - returns void
+   * @return{undefined} - returns undefined
    */
   static fetchUser(request, response) {
-    userDB.findById(request.params.id, {
-      attributes: ['email', 'firstName', 'lastName', 'id', 'roleId']
-    })
-    .then((user) => {
-      if (user) {
-        response.status(200).json(user);
-      } else {
-        response.status(404).json({
-          success: false,
-          message: 'User not found'
+    const searchId = Number(request.params.id);
+    const requesterId = request.decoded.userId;
+    if (searchId === requesterId || Authenticator.verifyAdmin(requesterId)) {
+      userDB.findById(searchId, {
+        attributes: ['email', 'firstName', 'lastName', 'id', 'roleId']
+      })
+      .then((user) => {
+        if (user) {
+          response.status(200).json(user);
+        } else {
+          response.status(404).json({
+            message: 'User not found'
+          });
+        }
+      })
+      .catch((error) => {
+        response.status(500).json({
+          message: error.errors
         });
-      }
-    })
-    .catch((error) => {
-      response.status(500).json({
-        success: false,
-        message: error.errors
       });
-    });
+    } else {
+      response.status(403).json({
+        message: 'Only admin can view other users profile'
+      });
+    }
   }
 
   /**
    * Method to fetch all users (GET)
    * @param{Object} request - Request object
    * @param{Object} response - Response object
-   * @return{Void} - returns void
+   * @return{undefined} - returns undefined
    */
   static fetchUsers(request, response) {
-    userDB.findAll({
-      attributes: ['email', 'firstName', 'lastName', 'id', 'roleId']
-    })
-    .then((users) => {
-      response.status(200).json(users);
-    });
+    if (Authenticator.verifyAdmin(request.decoded.userId)) {
+      const search = request.query.search;
+      const limit = request.query.limit;
+      const offset = request.query.offset;
+      const queryBuilder = {
+        attributes: ['email', 'firstName', 'lastName', 'id', 'roleId'],
+        order: '"createdAt" DESC'
+      };
+      if (limit) {
+        queryBuilder.limit = limit >= 0 ? limit : 0;
+      }
+      if (offset) {
+        queryBuilder.offset = offset >= 0 ? offset : 0;
+      }
+      if (search) {
+        queryBuilder.where = {
+          $or: [{ firstName: {
+            $iLike: `%${search}%` }
+          }, { lastName: {
+            $iLike: `%${search}%` }
+          }, { email: {
+            $iLike: `%${search}%` }
+          }]
+        };
+      }
+      userDB.findAll(queryBuilder)
+      .then((users) => {
+        response.status(200).json(users);
+      });
+    } else {
+      response.status(403).json({
+        message: 'Only admin can fetch all users'
+      });
+    }
   }
 
   /**
    * Method to login a specific user (POST)
    * @param{Object} request - Request object
    * @param{Object} response - Response object
-   * @return{Void} - returns void
+   * @return{undefined} - returns undefined
    */
   static loginUser(request, response) {
     if (request.body.email && request.body.password) {
@@ -200,30 +251,30 @@ class UserController {
       .then((user) => {
         if (user) {
           if (user.verifyPassword(request.body.password)) {
-            // send the token here
-            response.status(200).json({
-              success: true,
-              message: 'Login Successful',
-              id: user.id,
-              token: Authenticator.generateToken(user)
+            const token = Authenticator.generateToken(user);
+            // update user activeToken
+            user.update({ activeToken: token })
+            .then(() => {
+              // send the token here
+              response.status(200).json({
+                message: 'Login Successful',
+                token
+              });
             });
           } else {
             response.status(401).json({
-              success: false,
               message: 'Wrong Password'
             });
           }
         } else {
           response.status(404).json({
-            success: false,
             message: 'User not found'
           });
         }
       });
     } else {
-      response.status(401).json({
-        success: false,
-        message: 'Missing Credentials'
+      response.status(400).json({
+        message: 'Missing Login credentials'
       });
     }
   }
@@ -232,12 +283,24 @@ class UserController {
    * Method to logout a specific user (POST)
    * @param{Object} request - Request object
    * @param{Object} response - Response object
-   * @return{Void} - returns void
+   * @return{undefined} - returns undefined
    */
   static logoutUser(request, response) {
-    response.status(200).json({
-      success: true,
-      message: 'Logout Successful'
+    const id = request.decoded.userId;
+    userDB.findById(id)
+    .then((user) => {
+      if (user) {
+        user.update({ activeToken: null })
+        .then(() => {
+          response.status(200).json({
+            message: 'Logout Successful'
+          });
+        });
+      } else {
+        response.status(404).json({
+          message: 'User not found'
+        });
+      }
     });
   }
 }

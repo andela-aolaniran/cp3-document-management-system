@@ -51,7 +51,7 @@ describe('Users:', () => {
       client.post('/api/users')
       .send(testData.regularUser2)
       .end((error, response) => {
-        expect(response.body.user).to.have.property('token');
+        expect(response.body).to.have.property('token');
         done();
       });
     });
@@ -61,9 +61,9 @@ describe('Users:', () => {
       client.post('/api/users')
       .send(testData.regularUser3)
       .end((error, response) => {
-        expect(response.body.user).to.have.property('firstName');
-        expect(response.body.user).to.have.property('lastName');
-        expect(response.body.user).to.have.property('email');
+        expect(response.body).to.have.property('firstName');
+        expect(response.body).to.have.property('lastName');
+        expect(response.body).to.have.property('email');
         done();
       });
     });
@@ -72,7 +72,7 @@ describe('Users:', () => {
       client.post('/api/users')
       .send(testData.regularUser4)
       .end((error, response) => {
-        expect(response.body.user).to.not.have.property('password');
+        expect(response.body).to.not.have.property('password');
         done();
       });
     });
@@ -94,8 +94,8 @@ describe('Users:', () => {
       client.post('/api/users')
       .send(testData.testUser)
       .end((error, response) => {
-        expect(response.body.user.roleId).to.not.be.undefined;
-        expect(response.body.user.roleId).to.equal(2);
+        expect(response.body.roleId).to.not.be.undefined;
+        expect(response.body.roleId).to.equal(2);
         done();
       });
     });
@@ -118,7 +118,7 @@ describe('Users:', () => {
       client.post('/api/users')
       .send(testData.adminUser1)
       .end((error, response) => {
-        expect(response.body.user).to.have.property('token');
+        expect(response.body).to.have.property('token');
         done();
       });
     });
@@ -128,9 +128,9 @@ describe('Users:', () => {
       client.post('/api/users')
       .send(testData.adminUser2)
       .end((error, response) => {
-        expect(response.body.user).to.have.property('firstName');
-        expect(response.body.user).to.have.property('lastName');
-        expect(response.body.user).to.have.property('email');
+        expect(response.body).to.have.property('firstName');
+        expect(response.body).to.have.property('lastName');
+        expect(response.body).to.have.property('email');
         done();
       });
     });
@@ -139,7 +139,7 @@ describe('Users:', () => {
       client.post('/api/users')
       .send(testData.adminUser3)
       .end((error, response) => {
-        expect(response.body.user).to.not.have.property('password');
+        expect(response.body).to.not.have.property('password');
         done();
       });
     });
@@ -150,8 +150,8 @@ describe('Users:', () => {
       client.post('/api/users')
       .send(testData.adminUser4)
       .end((error, response) => {
-        expect(response.body.user.roleId).to.not.be.undefined;
-        expect(response.body.user.roleId).to.equal(1);
+        expect(response.body.roleId).to.not.be.undefined;
+        expect(response.body.roleId).to.equal(1);
         done();
       });
     });
@@ -165,7 +165,7 @@ describe('Users:', () => {
         password: adminUser.password
       })
       .end((error, response) => {
-        expect(response.body.success).to.equal(true);
+        expect(response.status).to.equal(200);
         expect(response.body).to.have.property('token');
         done();
       });
@@ -178,7 +178,7 @@ describe('Users:', () => {
         password: adminUser.password
       })
       .end((error, response) => {
-        expect(response.body.success).to.equal(true);
+        expect(response.body.status).to.equal(200);
         expect(response.body).to.have.property('token');
         adminUserToken = response.body.token;
         done();
@@ -192,7 +192,7 @@ describe('Users:', () => {
         password: 'wrongpassword'
       })
       .end((error, response) => {
-        expect(response.body.success).to.equal(false);
+        expect(response.status).to.equal(401);
         expect(response.body).to.not.have.property('token');
         done();
       });
@@ -205,7 +205,7 @@ describe('Users:', () => {
         password: 'wrong password'
       })
       .end((error, response) => {
-        expect(response.body.success).to.equal(false);
+        expect(response.status).to.equal(401);
         done();
       });
     });
@@ -217,7 +217,7 @@ describe('Users:', () => {
         password: regularUser.password
       })
       .end((error, response) => {
-        expect(response.body.success).to.equal(true);
+        expect(response.status).to.equal(200);
         expect(response.body).to.have.property('token');
         regularUserToken = response.body.token;
         regularUserId = response.body.id;
@@ -232,7 +232,7 @@ describe('Users:', () => {
         password: 'wrongpassword'
       })
       .end((error, response) => {
-        expect(response.body.success).to.equal(false);
+        expect(response.status).to.equal(401);
         expect(response.body).to.not.have.property('token');
         done();
       });
@@ -246,7 +246,8 @@ describe('Users:', () => {
         password: regularUser.password
       })
       .end((error, response) => {
-        expect(response.body.success).to.equal(true);
+        expect(response.status).to.equal(200);
+        expect(response.body).to.have.property('token');
         done();
       });
     });
@@ -259,7 +260,8 @@ describe('Users:', () => {
         password: 'wrongpassword'
       })
       .end((error, response) => {
-        expect(response.body.success).to.equal(false);
+        expect(response.status).to.equal(401);
+        expect(response.body).to.have.property('token');
         done();
       });
     });
@@ -272,8 +274,8 @@ describe('Users:', () => {
         password: 'randopm password'
       })
       .end((error, response) => {
-        expect(response.body.success).to.equal(false);
         expect(response.status).to.equal(404);
+        expect(response.body).to.have.property('token');
         done();
       });
     });
@@ -286,8 +288,8 @@ describe('Users:', () => {
         email: 'userwithoutapassword@you.com'
       })
       .end((error, response) => {
-        expect(response.body.success).to.equal(false);
         expect(response.status).to.equal(401);
+        expect(response.body).to.have.property('token');
         done();
       });
     });
@@ -299,7 +301,6 @@ describe('Users:', () => {
       .set({ 'x-access-token': adminUserToken })
       .end((error, response) => {
         expect(response.status).to.equal(200);
-        expect(response.body.success).to.equal(true);
         done();
       });
     });
@@ -310,7 +311,6 @@ describe('Users:', () => {
       .set({ 'x-access-token': 'invalidtoken' })
       .end((error, response) => {
         expect(response.status).to.equal(401);
-        expect(response.body.success).to.equal(false);
         done();
       });
     });
@@ -321,7 +321,6 @@ describe('Users:', () => {
       .set({ 'x-access-token': regularUserToken })
       .end((error, response) => {
         expect(response.status).to.equal(200);
-        expect(response.body.success).to.equal(true);
         done();
       });
     });
@@ -332,7 +331,6 @@ describe('Users:', () => {
       .set({ 'x-access-token': 'invalidtoken' })
       .end((error, response) => {
         expect(response.status).to.equal(401);
-        expect(response.body.success).to.equal(false);
         done();
       });
     });
@@ -344,7 +342,6 @@ describe('Users:', () => {
       .set({ 'x-access-token': regularUserToken })
       .end((error, response) => {
         expect(response.status).to.equal(403);
-        expect(response.body.success).to.equal(false);
         done();
       });
     });
@@ -364,24 +361,23 @@ describe('Users:', () => {
       client.get('/api/users')
       .end((error, response) => {
         expect(response.status).to.equal(401);
-        expect(response.body.success).to.equal(false);
         done();
       });
     });
   });
 
   describe('Get User', () => {
-    it('Should NOT allow NON-Admin access fetch a User', (done) => {
+    it('Should NOT allow NON-Admin fetch another User', (done) => {
       client.get('/api/users/1')
       .set({ 'x-access-token': regularUserToken })
       .end((error, response) => {
         expect(response.status).to.equal(403);
-        expect(response.body.success).to.equal(false);
         done();
       });
     });
 
-    it('Should Allow an Admin User access to fetch a User', (done) => {
+    it('Should Allow an Admin User with valid token fetch a User',
+    (done) => {
       client.get('/api/users/1')
       .set({ 'x-access-token': adminUserToken })
       .end((error, response) => {
@@ -391,52 +387,38 @@ describe('Users:', () => {
       });
     });
 
-    it('Should Not Allow Un-Authorized access to fetch a User', (done) => {
+    it('Should Not Allow Un-Authorized fetch of a User', (done) => {
       client.get('/api/users/1')
       .end((error, response) => {
         expect(response.status).to.equal(401);
-        expect(response.body.success).to.equal(false);
         done();
       });
     });
 
-    it(`Should Fail to return a User if User with such id doesn't
+    it(`Should NOT return a User if User with specified id doesn't
     exist`, (done) => {
       client.get('/api/users/10000')
       .set({ 'x-access-token': adminUserToken })
       .end((error, response) => {
         expect(response.status).to.equal(404);
-        expect(response.body.success).to.equal(false);
-        done();
-      });
-    });
-
-    it(`Should return Server error code if an invalid ID is used
-    to fetch a user`, (done) => {
-      client.get('/api/users/ef')
-      .set({ 'x-access-token': adminUserToken })
-      .end((error, response) => {
-        expect(response.status).to.equal(500);
-        expect(response.body.success).to.equal(false);
         done();
       });
     });
   });
 
   describe('Update User', () => {
-    it('Should NOT allow a User update another Users profile', (done) => {
+    it('Should NOT allow a User update another User profile', (done) => {
       client.put(`/api/users/${regularUserId + 1}`)
       .set({ 'x-access-token': regularUserToken })
       .send({ password: passwordUpdateUser, firstName: newFirstName })
       .end((error, response) => {
         expect(response.status).to.equal(403);
-        expect(response.body.success).to.equal(false);
         done();
       });
     });
 
     it(`Should NOT Allow a User with a Valid token Update his password with a
-    password that is less than the minimum password lenght`,
+    password that is less than the minimum password length`,
     (done) => {
       client.put(`/api/users/${regularUserId}`)
       .send({
@@ -445,13 +427,12 @@ describe('Users:', () => {
       .set({ 'x-access-token': regularUserToken })
       .end((error, response) => {
         expect(response.status).to.equal(400);
-        expect(response.body).to.be.instanceOf(Object);
         done();
       });
     });
 
     it(`Should NOT Allow a User with a Valid token Update his password with a
-    password that is more than the maximum password lenght`,
+    password that is more than the maximum password length`,
     (done) => {
       client.put(`/api/users/${regularUserId}`)
       .send({
@@ -460,12 +441,11 @@ describe('Users:', () => {
       .set({ 'x-access-token': regularUserToken })
       .end((error, response) => {
         expect(response.status).to.equal(400);
-        expect(response.body).to.be.instanceOf(Object);
         done();
       });
     });
 
-    it('Should Allow a User Update his password if he has a valid Token',
+    it('Should Allow a User Update his password if a valid Token is provided',
     (done) => {
       client.put(`/api/users/${regularUserId}`)
       .send({
@@ -487,7 +467,6 @@ describe('Users:', () => {
       })
       .end((error, response) => {
         expect(response.status).to.equal(200);
-        expect(response.body).to.have.property('token');
         done();
       });
     });
@@ -501,7 +480,6 @@ describe('Users:', () => {
       })
       .end((error, response) => {
         expect(response.status).to.equal(401);
-        expect(response.body.success).to.equal(false);
         done();
       });
     });
@@ -543,7 +521,6 @@ describe('Users:', () => {
       })
       .end((error, response) => {
         expect(response.status).to.equal(200);
-        expect(response.body).to.have.property('token');
         done();
       });
     });
@@ -555,31 +532,29 @@ describe('Users:', () => {
       .send({ firstName: 'newMan' })
       .end((error, response) => {
         expect(response.status).to.equal(401);
-        expect(response.body.success).to.equal(false);
         done();
       });
     });
   });
 
   describe('Delete User', () => {
-    it('Should NOT allow a Non-Admin User delete a User',
+    it(`Should NOT allow a Non-Admin User with a valid tokendelete
+    another User`,
     (done) => {
       client.delete(`/api/users/${regularUserId}`)
       .set({ 'x-access-token': regularUserToken })
       .end((error, response) => {
         expect(response.status).to.equal(403);
-        expect(response.body.success).to.equal(false);
         done();
       });
     });
 
-    it('Should NOT allow a User with In-Valid Token delete another User',
+    it('Should NOT allow a User with an invalid Token delete another User',
     (done) => {
       client.delete(`/api/users/${regularUserId}`)
       .set({ 'x-access-token': 'invalidToken' })
       .end((error, response) => {
         expect(response.status).to.equal(401);
-        expect(response.body.success).to.equal(false);
         done();
       });
     });
@@ -590,7 +565,6 @@ describe('Users:', () => {
       .set({ 'x-access-token': adminUserToken })
       .end((error, response) => {
         expect(response.status).to.equal(200);
-        expect(response.body.success).to.equal(true);
         done();
       });
     });
@@ -601,7 +575,6 @@ describe('Users:', () => {
       .set({ 'x-access-token': 'invalid token' })
       .end((error, response) => {
         expect(response.status).to.equal(401);
-        expect(response.body.success).to.equal(false);
         done();
       });
     });
@@ -612,7 +585,6 @@ describe('Users:', () => {
       .set({ 'x-access-token': adminUserToken })
       .end((error, response) => {
         expect(response.status).to.equal(404);
-        expect(response.body.success).to.equal(false);
         done();
       });
     });

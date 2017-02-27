@@ -26,6 +26,10 @@ export default (sequelize, DataTypes) => {
         }
       }
     },
+    activeToken: {
+      type: DataTypes.TEXT,
+      allowNull: true
+    },
     password: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -38,7 +42,6 @@ export default (sequelize, DataTypes) => {
     },
     roleId: {
       type: DataTypes.INTEGER,
-      allowNull: false,
       validate: {
         isInt: {
           msg: 'roleId must be an integer'

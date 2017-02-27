@@ -28,7 +28,6 @@ export default (sequelize, DataTypes) => {
     },
     ownerId: {
       type: DataTypes.INTEGER,
-      allowNull: false,
       validate: {
         isInt: {
           msg: 'OwnerId must be an integer'
@@ -37,6 +36,7 @@ export default (sequelize, DataTypes) => {
     }
   }, {
     classMethods: {
+      // Associations defined here
       associate: (models) => {
         Document.belongsTo(models.User, {
           foreignKey: 'ownerId'
