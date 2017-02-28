@@ -22,12 +22,13 @@ module.exports = {
       },
       ownerId: {
         type: Sequelize.INTEGER,
+        allowNull: false,
         references: {
           model: 'Users',
           key: 'id'
         },
         onUpdate: 'cascade',
-        onDelete: 'set null'
+        onDelete: 'no action'
       },
       createdAt: {
         allowNull: false,

@@ -1,34 +1,40 @@
 import supertest from 'supertest';
 import chai from 'chai';
-import app from '../config/server';
-import testData from './helpers/SpecHelper';
-import database from '../models';
+import app from '../../config/server';
+import SpecHelper from '../helpers/SpecHelper';
+import SeedHelper from '../helpers/SeedHelper';
 
 const expect = chai.expect;
 
 const client = supertest.agent(app);
-
+const regularUser = SpecHelper.generateRandomUser(2);
 let regularUserToken;
 let adminUserToken;
 let regularUserId;
-const regularUser = testData.regularUser1;
-const adminUser = testData.adminUser;
-const passwordUpdateUser = 'hello worldreewer';
-const passwordUpdateAdmin = 'new password 2';
-const newFirstName = 'new first Name';
-const shortPassword = '123';
-const longPassword = `sdfcgvbhnmdzghjbnmdfcghjndghjndmcxfghgggbjknmdcghjn
-                      gggmdcghvjn dsghvbjndsfghvbjdncsghbjdsghvbjdghvbjdc`;
 
 describe('Users:', () => {
-  // Create default roles before running all user
-  // related test suites
+  // Clear and populate the database first
+  before((done) => {
+    SeedHelper.init()
+    .then(() => {
+      // fetch regular user token and id for further tests
+      client.post('/api/users')
+      .send(regularUser)
+      .end((error, response) => {
+        // set regular user token and id for other tests below
+        regularUserToken = response.body.token;
+        regularUserId = response.body.id;
+        done();
+      });
+    });
+  });
 
   describe('Create Regular User', () => {
+    const newRegularUser = SpecHelper.generateRandomUser(2);
     it(`Should return http code 201
       if a Regular User is successfully created`, (done) => {
       client.post('/api/users')
-      .send(testData.regularUser1)
+      .send(newRegularUser)
       .end((error, response) => {
         expect(response.status).to.equal(201);
         done();
@@ -38,10 +44,9 @@ describe('Users:', () => {
     it('Should NOT allow users with Duplicate Email address to be created',
     (done) => {
       client.post('/api/users')
-      .send(testData.regularUser1)
+      .send(newRegularUser)
       .end((error, response) => {
-        expect(response.status).to.equal(500);
-        expect(response.body.success).to.equal(false);
+        expect(response.status).to.equal(400);
         done();
       });
     });
@@ -49,7 +54,7 @@ describe('Users:', () => {
     it(`Should return a TOKEN
       if a Regular User is successfully created`, (done) => {
       client.post('/api/users')
-      .send(testData.regularUser2)
+      .send(SpecHelper.generateRandomUser(2))
       .end((error, response) => {
         expect(response.body).to.have.property('token');
         done();
@@ -59,7 +64,7 @@ describe('Users:', () => {
     it(`Should return only necessary
       details of the created Regular User`, (done) => {
       client.post('/api/users')
-      .send(testData.regularUser3)
+      .send(SpecHelper.generateRandomUser(2))
       .end((error, response) => {
         expect(response.body).to.have.property('firstName');
         expect(response.body).to.have.property('lastName');
@@ -70,7 +75,7 @@ describe('Users:', () => {
 
     it('Should NOT return sensitive details of the Regular User', (done) => {
       client.post('/api/users')
-      .send(testData.regularUser4)
+      .send(SpecHelper.generateRandomUser(2))
       .end((error, response) => {
         expect(response.body).to.not.have.property('password');
         done();
@@ -79,94 +84,91 @@ describe('Users:', () => {
 
     it('Should NOT create a User if Required fields/attributes are missing',
     (done) => {
+      const invalidUser = {};
       client.post('/api/users')
-      .send(testData.userInvalid)
+      .send(invalidUser)
       .end((error, response) => {
         expect(response.status).to.equal(400);
-        expect(response.body.success).to.equal(false);
         done();
       });
     });
 
     it(`Should make a user role be regular by default if no roleId
       is supplied`, (done) => {
-      expect(testData.testUser.roleId).to.be.undefined;
       client.post('/api/users')
-      .send(testData.testUser)
+      .send(SpecHelper.generateRandomUser())
       .end((error, response) => {
-        expect(response.body.roleId).to.not.be.undefined;
         expect(response.body.roleId).to.equal(2);
         done();
       });
     });
   });
 
-  describe('Create an Admin user', () => {
-    it(`Should return http code 201
-      if an Admin User is successfully created`, (done) => {
-      client.post('/api/users')
-      .send(testData.adminUser)
-      .end((error, response) => {
-        expect(response.status).to.equal(201);
-        done();
-      });
-    });
+  // describe('Create an Admin user', () => {
+  //   it(`Should return http code 201
+  //     if an Admin User is successfully created`, (done) => {
+  //     client.post('/api/users')
+  //     .send(testData.adminUser)
+  //     .end((error, response) => {
+  //       expect(response.status).to.equal(201);
+  //       done();
+  //     });
+  //   });
 
 
-    it(`Should return a TOKEN
-      if an Admin User is successfully created`, (done) => {
-      client.post('/api/users')
-      .send(testData.adminUser1)
-      .end((error, response) => {
-        expect(response.body).to.have.property('token');
-        done();
-      });
-    });
+  //   it(`Should return a TOKEN
+  //     if an Admin User is successfully created`, (done) => {
+  //     client.post('/api/users')
+  //     .send(testData.adminUser1)
+  //     .end((error, response) => {
+  //       expect(response.body).to.have.property('token');
+  //       done();
+  //     });
+  //   });
 
-    it(`Should return only necessary
-      details of the created Admin user`, (done) => {
-      client.post('/api/users')
-      .send(testData.adminUser2)
-      .end((error, response) => {
-        expect(response.body).to.have.property('firstName');
-        expect(response.body).to.have.property('lastName');
-        expect(response.body).to.have.property('email');
-        done();
-      });
-    });
+  //   it(`Should return only necessary
+  //     details of the created Admin user`, (done) => {
+  //     client.post('/api/users')
+  //     .send(testData.adminUser2)
+  //     .end((error, response) => {
+  //       expect(response.body).to.have.property('firstName');
+  //       expect(response.body).to.have.property('lastName');
+  //       expect(response.body).to.have.property('email');
+  //       done();
+  //     });
+  //   });
 
-    it('Should NOT return sensitive details of the Admin user', (done) => {
-      client.post('/api/users')
-      .send(testData.adminUser3)
-      .end((error, response) => {
-        expect(response.body).to.not.have.property('password');
-        done();
-      });
-    });
+  //   it('Should NOT return sensitive details of the Admin user', (done) => {
+  //     client.post('/api/users')
+  //     .send(testData.adminUser3)
+  //     .end((error, response) => {
+  //       expect(response.body).to.not.have.property('password');
+  //       done();
+  //     });
+  //   });
 
-    it('Admin user roleId should be 1', (done) => {
-      expect(testData.adminUser.roleId).to.not.be.undefined;
-      expect(testData.adminUser.roleId).to.equal(1);
-      client.post('/api/users')
-      .send(testData.adminUser4)
-      .end((error, response) => {
-        expect(response.body.roleId).to.not.be.undefined;
-        expect(response.body.roleId).to.equal(1);
-        done();
-      });
-    });
-  });
+  //   it('Admin user roleId should be 1', (done) => {
+  //     expect(testData.adminUser.roleId).to.not.be.undefined;
+  //     expect(testData.adminUser.roleId).to.equal(1);
+  //     client.post('/api/users')
+  //     .send(testData.adminUser4)
+  //     .end((error, response) => {
+  //       expect(response.body.roleId).to.not.be.undefined;
+  //       expect(response.body.roleId).to.equal(1);
+  //       done();
+  //     });
+  //   });
+  // });
 
   describe('Login', () => {
     it('Should allow login for only CORRECT details of an Admin', (done) => {
       client.post('/api/users/login')
       .send({
-        email: adminUser.email,
-        password: adminUser.password
+        email: SpecHelper.validAdminUser.email,
+        password: SpecHelper.validAdminUser.password
       })
       .end((error, response) => {
         expect(response.status).to.equal(200);
-        expect(response.body).to.have.property('token');
         done();
       });
     });
@@ -174,12 +176,13 @@ describe('Users:', () => {
     it('Should return a TOKEN if Admin Login is successful', (done) => {
       client.post('/api/users/login')
       .send({
-        email: adminUser.email,
-        password: adminUser.password
+        email: SpecHelper.validAdminUser.email,
+        password: SpecHelper.validAdminUser.password
       })
       .end((error, response) => {
-        expect(response.body.status).to.equal(200);
+        expect(response.status).to.equal(200);
         expect(response.body).to.have.property('token');
+        // set the admin user token for other tests
         adminUserToken = response.body.token;
         done();
       });
@@ -188,11 +191,10 @@ describe('Users:', () => {
     it('Should NOT return a TOKEN if Admin Login FAILS', (done) => {
       client.post('/api/users/login')
       .send({
-        email: adminUser.email,
+        email: SpecHelper.validAdminUser.email,
         password: 'wrongpassword'
       })
       .end((error, response) => {
-        expect(response.status).to.equal(401);
         expect(response.body).to.not.have.property('token');
         done();
       });
@@ -201,7 +203,7 @@ describe('Users:', () => {
     it('Should NOT allow login for INCORRECT details of an Admin', (done) => {
       client.post('/api/users/login')
       .send({
-        email: adminUser.email,
+        email: SpecHelper.validAdminUser.email,
         password: 'wrong password'
       })
       .end((error, response) => {
@@ -213,14 +215,12 @@ describe('Users:', () => {
     it('Should return a TOKEN if Regular User Login is successful', (done) => {
       client.post('/api/users/login')
       .send({
-        email: regularUser.email,
-        password: regularUser.password
+        email: SpecHelper.validRegularUser.email,
+        password: SpecHelper.validRegularUser.password
       })
       .end((error, response) => {
         expect(response.status).to.equal(200);
         expect(response.body).to.have.property('token');
-        regularUserToken = response.body.token;
-        regularUserId = response.body.id;
         done();
       });
     });
@@ -228,7 +228,7 @@ describe('Users:', () => {
     it('Should NOT return a TOKEN if Regular User Login FAILS', (done) => {
       client.post('/api/users/login')
       .send({
-        email: regularUser.email,
+        email: SpecHelper.validRegularUser.email,
         password: 'wrongpassword'
       })
       .end((error, response) => {
@@ -242,8 +242,8 @@ describe('Users:', () => {
     Regular User`, (done) => {
       client.post('/api/users/login')
       .send({
-        email: regularUser.email,
-        password: regularUser.password
+        email: SpecHelper.validRegularUser.email,
+        password: SpecHelper.validRegularUser.password
       })
       .end((error, response) => {
         expect(response.status).to.equal(200);
@@ -256,88 +256,61 @@ describe('Users:', () => {
      Regular User`, (done) => {
       client.post('/api/users/login')
       .send({
-        email: regularUser.email,
+        email: SpecHelper.validRegularUser1.email,
         password: 'wrongpassword'
       })
       .end((error, response) => {
         expect(response.status).to.equal(401);
-        expect(response.body).to.have.property('token');
+        expect(response.body).to.not.have.property('token');
         done();
       });
     });
 
     it('Should NOT allow login for a user that does NOT exist',
     (done) => {
+      const nonRegisteredUser = SpecHelper.generateRandomUser(2);
       client.post('/api/users/login')
       .send({
-        email: 'afreakingemail@doesnotexist.com',
-        password: 'randopm password'
+        email: nonRegisteredUser.email,
+        password: nonRegisteredUser.password
       })
       .end((error, response) => {
         expect(response.status).to.equal(404);
-        expect(response.body).to.have.property('token');
+        expect(response.body).to.not.have.property('token');
         done();
       });
     });
 
-    it(`Should NOT allow login if all required credentials for login
-    are NOT supplied`,
+    it('Should NOT allow login if email is not provided',
     (done) => {
       client.post('/api/users/login')
       .send({
-        email: 'userwithoutapassword@you.com'
+        password: SpecHelper.validRegularUser.password
       })
       .end((error, response) => {
-        expect(response.status).to.equal(401);
-        expect(response.body).to.have.property('token');
-        done();
-      });
-    });
-  });
-  describe('Logout', () => {
-    it('should Successfully Logout an Admin User with a valid token',
-    (done) => {
-      client.post('/api/users/logout')
-      .set({ 'x-access-token': adminUserToken })
-      .end((error, response) => {
-        expect(response.status).to.equal(200);
+        expect(response.status).to.equal(400);
+        expect(response.body).to.not.have.property('token');
         done();
       });
     });
 
-    it('should Fail to Logout an Admin User with an Invalid token',
+    it('Should NOT allow login if password is not provided',
     (done) => {
-      client.post('/api/users/logout')
-      .set({ 'x-access-token': 'invalidtoken' })
+      client.post('/api/users/login')
+      .send({
+        email: SpecHelper.validRegularUser.email
+      })
       .end((error, response) => {
-        expect(response.status).to.equal(401);
-        done();
-      });
-    });
-
-    it('should Successfully Logout a Regular User with a valid token',
-    (done) => {
-      client.post('/api/users/logout')
-      .set({ 'x-access-token': regularUserToken })
-      .end((error, response) => {
-        expect(response.status).to.equal(200);
-        done();
-      });
-    });
-
-    it('should Fail to Logout a Regular User with an Invalid token',
-    (done) => {
-      client.post('/api/users/logout')
-      .set({ 'x-access-token': 'invalidtoken' })
-      .end((error, response) => {
-        expect(response.status).to.equal(401);
+        expect(response.status).to.equal(400);
+        expect(response.body).to.not.have.property('token');
         done();
       });
     });
   });
 
   describe('Get Users', () => {
-    it('Should NOT allow NON-Admin access to list of users', (done) => {
+    it('Should NOT allow NON-Admin with a valid token access to list of users',
+    (done) => {
       client.get('/api/users')
       .set({ 'x-access-token': regularUserToken })
       .end((error, response) => {
@@ -367,8 +340,9 @@ describe('Users:', () => {
   });
 
   describe('Get User', () => {
-    it('Should NOT allow NON-Admin fetch another User', (done) => {
-      client.get('/api/users/1')
+    it('Should NOT allow NON-Admin  user with valid token fetch another User',
+    (done) => {
+      client.get(`/api/users/${regularUserId + 1}`)
       .set({ 'x-access-token': regularUserToken })
       .end((error, response) => {
         expect(response.status).to.equal(403);
@@ -378,7 +352,7 @@ describe('Users:', () => {
 
     it('Should Allow an Admin User with valid token fetch a User',
     (done) => {
-      client.get('/api/users/1')
+      client.get(`/api/users/${regularUserId}`)
       .set({ 'x-access-token': adminUserToken })
       .end((error, response) => {
         expect(response.status).to.equal(200);
@@ -410,7 +384,7 @@ describe('Users:', () => {
     it('Should NOT allow a User update another User profile', (done) => {
       client.put(`/api/users/${regularUserId + 1}`)
       .set({ 'x-access-token': regularUserToken })
-      .send({ password: passwordUpdateUser, firstName: newFirstName })
+      .send({ password: 'new password' })
       .end((error, response) => {
         expect(response.status).to.equal(403);
         done();
@@ -420,6 +394,7 @@ describe('Users:', () => {
     it(`Should NOT Allow a User with a Valid token Update his password with a
     password that is less than the minimum password length`,
     (done) => {
+      const shortPassword = '123';
       client.put(`/api/users/${regularUserId}`)
       .send({
         password: shortPassword
@@ -434,6 +409,8 @@ describe('Users:', () => {
     it(`Should NOT Allow a User with a Valid token Update his password with a
     password that is more than the maximum password length`,
     (done) => {
+      const longPassword = `sdfcgvbhnmdzghjbnmdfcghjndghjndmcxfghgggbjknmdcghjn
+      gggmdcghvjn dsghvbjndsfghvbjdncsghbjdsghvbjdghvbjdc`;
       client.put(`/api/users/${regularUserId}`)
       .send({
         password: longPassword
@@ -447,9 +424,11 @@ describe('Users:', () => {
 
     it('Should Allow a User Update his password if a valid Token is provided',
     (done) => {
+      // add the new password to the regular userObject
+      regularUser.newPassword = 'new password';
       client.put(`/api/users/${regularUserId}`)
       .send({
-        password: passwordUpdateUser
+        password: regularUser.newPassword
       })
       .set({ 'x-access-token': regularUserToken })
       .end((error, response) => {
@@ -463,7 +442,7 @@ describe('Users:', () => {
       client.post('/api/users/login')
       .send({
         email: regularUser.email,
-        password: passwordUpdateUser
+        password: regularUser.newPassword
       })
       .end((error, response) => {
         expect(response.status).to.equal(200);
@@ -487,9 +466,11 @@ describe('Users:', () => {
     it(`Should Allow an Admin with a valid token update a regular
     user password`,
     (done) => {
+      // add the admin set password to the regular user Object
+      regularUser.adminSetPassword = 'admin set password';
       client.put(`/api/users/${regularUserId}`)
       .send({
-        password: passwordUpdateAdmin
+        password: regularUser.adminSetPassword
       })
       .set({ 'x-access-token': adminUserToken })
       .end((error, response) => {
@@ -504,7 +485,7 @@ describe('Users:', () => {
       client.post('/api/users/login')
       .send({
         email: regularUser.email,
-        password: passwordUpdateUser
+        password: regularUser.newPassword
       })
       .end((error, response) => {
         expect(response.status).to.equal(401);
@@ -517,10 +498,13 @@ describe('Users:', () => {
       client.post('/api/users/login')
       .send({
         email: regularUser.email,
-        password: passwordUpdateAdmin
+        password: regularUser.adminSetPassword
       })
       .end((error, response) => {
         expect(response.status).to.equal(200);
+        // update the user token as a new token is always
+        // generated on every login
+        regularUserToken = response.body.token;
         done();
       });
     });
@@ -537,11 +521,75 @@ describe('Users:', () => {
     });
   });
 
+  describe('Logout', () => {
+    const newRegularUser = SpecHelper.generateRandomUser(2);
+    before((done) => {
+      client.post('/api/users')
+      .send(newRegularUser)
+      .end((error, response) => {
+        newRegularUser.token = response.body.token;
+        newRegularUser.id = response.body.id;
+        done();
+      });
+    });
+
+    it('should Successfully Logout an Admin User with a valid token',
+    (done) => {
+      client.post('/api/users/logout')
+      .set({ 'x-access-token': adminUserToken })
+      .end((error, response) => {
+        expect(response.status).to.equal(200);
+        done();
+      });
+    });
+
+    it('should Fail to Logout an Admin User with an Invalid token',
+    (done) => {
+      client.post('/api/users/logout')
+      .set({ 'x-access-token': 'invalidtoken' })
+      .end((error, response) => {
+        expect(response.status).to.equal(401);
+        done();
+      });
+    });
+
+    it('should Successfully Logout a Regular User with a valid token',
+    (done) => {
+      client.post('/api/users/logout')
+      .set({ 'x-access-token': newRegularUser.token })
+      .end((error, response) => {
+        expect(response.status).to.equal(200);
+        done();
+      });
+    });
+
+    it('should Fail to Logout a Regular User with an Invalid token',
+    (done) => {
+      client.post('/api/users/logout')
+      .set({ 'x-access-token': 'invalidtoken' })
+      .end((error, response) => {
+        expect(response.status).to.equal(401);
+        done();
+      });
+    });
+  });
+
   describe('Delete User', () => {
-    it(`Should NOT allow a Non-Admin User with a valid tokendelete
+    const currentAdminUser = SpecHelper.validAdminUser;
+    before((done) => {
+      client.post('/api/users/login')
+      .send(currentAdminUser)
+      .end((error, response) => {
+        currentAdminUser.token = response.body.token;
+        currentAdminUser.id = response.body.id;
+        done();
+      });
+    });
+
+    it(`Should NOT allow a Non-Admin User with a valid token delete
     another User`,
     (done) => {
-      client.delete(`/api/users/${regularUserId}`)
+      client.delete(`/api/users/${regularUserId + 1}`)
       .set({ 'x-access-token': regularUserToken })
       .end((error, response) => {
         expect(response.status).to.equal(403);
@@ -551,7 +599,7 @@ describe('Users:', () => {
 
     it('Should NOT allow a User with an invalid Token delete another User',
     (done) => {
-      client.delete(`/api/users/${regularUserId}`)
+      client.delete(`/api/users/${regularUserId + 1}`)
       .set({ 'x-access-token': 'invalidToken' })
       .end((error, response) => {
         expect(response.status).to.equal(401);
@@ -562,7 +610,7 @@ describe('Users:', () => {
     it('Should allow an Admin user with Valid Token delete another User',
     (done) => {
       client.delete(`/api/users/${regularUserId}`)
-      .set({ 'x-access-token': adminUserToken })
+      .set({ 'x-access-token': currentAdminUser.token })
       .end((error, response) => {
         expect(response.status).to.equal(200);
         done();
@@ -582,7 +630,7 @@ describe('Users:', () => {
     it(`Should NOT allow an Admin user with Valid Token delete a User that does
     not exist`, (done) => {
       client.delete(`/api/users/${regularUserId + 10000}`)
-      .set({ 'x-access-token': adminUserToken })
+      .set({ 'x-access-token': currentAdminUser.token })
       .end((error, response) => {
         expect(response.status).to.equal(404);
         done();

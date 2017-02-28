@@ -28,6 +28,7 @@ export default (sequelize, DataTypes) => {
     },
     ownerId: {
       type: DataTypes.INTEGER,
+      allowNull: false,
       validate: {
         isInt: {
           msg: 'OwnerId must be an integer'

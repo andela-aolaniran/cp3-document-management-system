@@ -1,5 +1,12 @@
 export default (sequelize, DataTypes) => {
   const Role = sequelize.define('Role', {
+    id: {
+      allowNull: false,
+      autoIncrement: true,
+      primaryKey: true,
+      noUpdate: true,
+      type: DataTypes.INTEGER
+    },
     title: {
       type: DataTypes.STRING,
       unique: true,

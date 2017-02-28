@@ -4,18 +4,16 @@
   "description": "A simple document management system api, with a web app which consumes the api",
   "main": "index.js",
   "scripts": {
-    "mocha": "mocha --compilers js:babel-core/register server/tests client/tests",
+    "mocha": "mocha --compilers js:babel-core/register server/tests/**/*.spec.js client/tests",
     "migrate": "sequelize db:migrate",
-    "seed": "babel-node server/tests/helpers/SeedHelper.js",
-    "seed:all": "sequelize db:seed:all",
-    "pretest": "NODE_ENV=test npm run seed",
+    "seed": "sequelize db:seed:all",
     "test": "NODE_ENV=test npm run mocha",
     "lint": "node_modules/.bin/esw ./",
     "lint:watch": "npm run lint -- --watch",
     "test:watch": "npm run test -- --watch",
     "transpile": "rm -rf dist/ && babel server --presets babel-preset-es2015 --out-dir dist --ignore ./server/tests",
     "prestart": "npm run transpile",
-    "heroku-postbuild": "npm run transpile && npm run migrate && npm run seed:all",
+    "heroku-postbuild": "npm run migrate && npm run seed",
     "start": "node dist/app.js",
     "develop:server": "NODE_ENV=development npm-run-all --parallel test:watch lint:watch open:server",
     "open:server": "nodemon server/app.js --exec babel-node",
@@ -80,7 +78,6 @@
   },
   "dependencies": {
     "babel": "^6.5.2",
-    "webpack": "1.13.0",
     "babel-cli": "^6.18.0",
     "babel-core": "^6.18.2",
     "babel-eslint": "^7.1.1",
@@ -117,6 +114,7 @@
     "sequelize": "^3.30.0",
     "sequelize-cli": "^2.4.0",
     "supertest": "^3.0.0",
-    "toastr": "2.1.2"
+    "toastr": "2.1.2",
+    "webpack": "1.13.0"
   }
 }

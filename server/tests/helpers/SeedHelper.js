@@ -1,7 +1,5 @@
-import faker from 'faker';
-import bcrypt from 'bcrypt-nodejs';
-import logger from 'fm-log';
 import database from '../../models';
+import SpecHelper from './SpecHelper';
 
 /**
  * SeedData class to populate database with default data
@@ -11,50 +9,34 @@ class SeedHelper {
   /**
    * Perform the sequential population of the database
    * in order of associations
-   * @return {Void} - Returns Void
+   * @return {Object} - Returns a Promise Object
    */
   static init() {
-    database.sequelize.sync({ force: true })
+    return database.sequelize.sync({ force: true })
       .then(() => SeedHelper.populateRoleTable())
       .then(() => SeedHelper.populateUserTable())
-      .then(() => SeedHelper.populateDocumentTable())
-      .catch((err) => {
-        logger.error(err);
-      });
+      .then(() => SeedHelper.populateDocumentTable());
   }
 
   /**
-   * Populates database with users
+   * Populates database with test users
    * @returns {Object} - a Promise object
    */
   static populateUserTable() {
     const users = [
-      {
-        username: faker.internet.userName(),
-        firstName: faker.name.firstName(),
-        lastName: faker.name.lastName(),
-        email: 'azeez.olaniran@andela.com',
-        password: SeedHelper.hashPass('code'),
-        roleId: 1
-      },
-      {
-        username: faker.internet.userName(),
-        firstName: faker.name.firstName(),
-        lastName: faker.name.lastName(),
-        email: faker.internet.email(),
-        password: SeedHelper.hashPass('pass'),
-        roleId: 2
-      },
-      {
-        username: faker.internet.userName(),
-        firstName: faker.name.firstName(),
-        lastName: faker.name.lastName(),
-        email: faker.internet.email(),
-        password: SeedHelper.hashPass('password'),
-        roleId: 2
-      },
+      SpecHelper.validAdminUser,
+      SpecHelper.validRegularUser,
+      SpecHelper.validRegularUser1,
+      SpecHelper.validRegularUser2,
+      SpecHelper.validRegularUser3,
+      SpecHelper.validRegularUser4,
+      SpecHelper.validRegularUser5,
+      SpecHelper.validRegularUser6,
+      SpecHelper.validRegularUser7,
+      SpecHelper.validRegularUser8,
+      SpecHelper.validRegularUser9
     ];
-    return database.User.bulkCreate(users);
+    return database.User.bulkCreate(users, { individualHooks: true });
   }
 
   /**
@@ -63,14 +45,10 @@ class SeedHelper {
    */
   static populateRoleTable() {
     const roles = [
-      {
-        title: 'admin',
-      },
-      {
-        title: 'regular'
-      },
+      SpecHelper.validAdminRole,
+      SpecHelper.validRegularRole
     ];
-    return database.Role.bulkCreate(roles);
+    return database.Role.bulkCreate(roles, { individualHooks: true });
   }
 
   /**
@@ -79,55 +57,21 @@ class SeedHelper {
    */
   static populateDocumentTable() {
     const documents = [
-      {
-        title: faker.company.catchPhrase(),
-        content: faker.lorem.paragraph(),
-        access: 'role',
-        ownerId: 1
-      },
-      {
-        title: faker.company.catchPhrase(),
-        content: faker.lorem.paragraph(),
-        access: 'private',
-        ownerId: 2
-      },
-      {
-        title: faker.company.catchPhrase(),
-        content: faker.lorem.paragraph(),
-        access: 'public',
-        ownerId: 3
-      },
-      {
-        title: faker.company.catchPhrase(),
-        content: faker.lorem.paragraph(),
-        access: 'public',
-        ownerId: 2
-
-      },
-      {
-        title: faker.company.catchPhrase(),
-        content: faker.lorem.paragraph(),
-        access: 'public',
-        ownerId: 1
-      },
-      {
-        title: faker.company.catchPhrase(),
-        content: faker.lorem.paragraph(),
-        access: 'role',
-        ownerId: 2
-      }
+      SpecHelper.validPrivateDocument,
+      SpecHelper.validPrivateDocument1,
+      SpecHelper.validPrivateDocument2,
+      SpecHelper.validPrivateDocument3,
+      SpecHelper.validPublicDocument,
+      SpecHelper.validPublicDocument1,
+      SpecHelper.validPublicDocument2,
+      SpecHelper.validPublicDocument3,
+      SpecHelper.validRoleDocument,
+      SpecHelper.validRoleDocument1,
+      SpecHelper.validRoleDocument2,
+      SpecHelper.validRoleDocument3
     ];
-    return database.Document.bulkCreate(documents);
-  }
-
-  /**
-  * Generate a hash from plain password string
-  * @param {String} password
-  * @return {String} hashed password
-  */
-  static hashPass(password) {
-    return bcrypt.hashSync(password, bcrypt.genSaltSync(5));
+    return database.Document.bulkCreate(documents, { individualHooks: true });
   }
 }
 
-export default SeedHelper.init();
+export default SeedHelper;

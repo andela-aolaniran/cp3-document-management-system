@@ -69,8 +69,7 @@ class Authenticator {
 
   /**
    * Method to verify that user is an Admin
-   * to access Admin endpoints
-   * @param{Number} roleId - id (integer) for the role
+   * @param{Number} roleId - id (integer) of the role to be tested
    * @return{Boolean} - true if roleId corresponds to an admin id,
    * otherwise false
    */

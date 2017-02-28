@@ -9,8 +9,7 @@ const config = configFile[env];
 const db = {};
 const sequelize = new Sequelize(config.url, config);
 
-fs
-  .readdirSync(__dirname)
+fs.readdirSync(__dirname)
   .filter((file) => {
     const isJsFile = (file !== basename) && (file.slice(-3) === '.js');
     return isJsFile;
