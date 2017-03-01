@@ -74,6 +74,19 @@ describe('Documents:', () => {
       });
     });
 
+    it('should NOT create a document with an invalid access status',
+    (done) => {
+      const roleDocument = SpecHelper.generateRandomDocument('role');
+      roleDocument.access = 'privatee';
+      client.post('/api/documents')
+      .send(roleDocument)
+      .set({ 'x-access-token': regularUser1.token })
+      .end((error, response) => {
+        expect(response.status).to.equal(400);
+        done();
+      });
+    });
+
     it(`should NOT allow a user with Invalid authentication token create a new
     document`, (done) => {
       const publicDocument = SpecHelper.generateRandomDocument('public');

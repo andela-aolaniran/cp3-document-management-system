@@ -28,6 +28,9 @@ class DocumentController {
       documentDb.create(document)
       .then((createdDocument) => {
         response.status(201).json(createdDocument);
+      })
+      .catch((error) => {
+        response.status(400).send(error.errors);
       });
     } else {
       response.status(400).json({
