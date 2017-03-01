@@ -1,9 +1,8 @@
-// fetch dependencies
 import jwt from 'jsonwebtoken';
 import database from '../models';
 
 const SECRET_KEY = `${process.env.SECRET_KEY}`;
-const roleDb = database.Role;
+const userDb = database.User;
 
 /**
  * Class to implement authentication middlewares
@@ -26,17 +25,29 @@ class Authenticator {
       jwt.verify(token, SECRET_KEY, (error, decoded) => {
         if (error) {
           response.status(401).json({
-            success: false,
             message: 'Authentication failed due to invalid token!'
           });
         } else {
-          request.decoded = decoded;
-          next();
+          const id = decoded.userId;
+          userDb.findOne({
+            where: { id },
+            attributes: ['activeToken']
+          })
+          .then((user) => {
+            const activeToken = user.activeToken;
+            if (activeToken === token) {
+              request.decoded = decoded;
+              next();
+            } else {
+              response.status(401).json({
+                message: 'Authentication failed due to expired token!'
+              });
+            }
+          });
         }
       });
     } else {
       response.status(401).json({
-        success: false,
         message: 'Authentication required for this route'
       });
     }
@@ -58,33 +69,12 @@ class Authenticator {
 
   /**
    * Method to verify that user is an Admin
-   * to access Admin endpoints
-   * @param{Object} request - Request Object
-   * @param{Object} response - Response Object
-   * @param{Object} next - Function to pass flow to the next controller
-   * @return{Void} - returns Void
+   * @param{Number} roleId - id (integer) of the role to be tested
+   * @return{Boolean} - true if roleId corresponds to an admin id,
+   * otherwise false
    */
-  static verifyAdmin(request, response, next) {
-    roleDb.findOne({
-      where: {
-        id: request.decoded.roleId
-      }
-    }).then((role) => {
-      if (role.title === 'admin') {
-        next();
-      } else {
-        response.status(403).json({
-          success: false,
-          message: 'Admin status required'
-        });
-      }
-    })
-    .catch((error) => {
-      response.status(500).json({
-        success: false,
-        message: error.message
-      });
-    });
+  static verifyAdmin(roleId) {
+    return roleId === 1;
   }
 }
 

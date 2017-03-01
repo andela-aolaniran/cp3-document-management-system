@@ -1,8 +1,11 @@
 # cp3-document-management-system
-[![Build Status](https://travis-ci.org/andela-aolaniran/cp3-document-management-system.png?branch=feature/138543863/implement-api-endpoints)](https://travis-ci.org/andela-aolaniran/cp3-document-management-system)  [![Coverage Status](https://coveralls.io/repos/github/andela-aolaniran/cp3-document-management-system/badge.svg?branch=feature%2F138543863%2Fimplement-api-endpoints)](https://coveralls.io/github/andela-aolaniran/cp3-document-management-system?branch=feature%2F138543863%2Fimplement-api-endpoints)
+[![Build Status](https://travis-ci.org/andela-aolaniran/cp3-document-management-system.png?branch=feature/138543863/implement-api-endpoints)](https://travis-ci.org/andela-aolaniran/cp3-document-management-system)  [![Coverage Status](https://coveralls.io/repos/github/andela-aolaniran/cp3-document-management-system/badge.png?branch=feature%2F138543863%2Fimplement-api-endpoints)](https://coveralls.io/github/andela-aolaniran/cp3-document-management-system?branch=feature%2F138543863%2Fimplement-api-endpoints)  [![Issue Count](https://codeclimate.com/github/andela-aolaniran/cp3-document-management-system/badges/issue_count.svg)](https://codeclimate.com/github/andela-aolaniran/cp3-document-management-system)
 ## cp3-document-management-system
 This is a full stack document management system, complete with roles and privileges . Each document defines access rights; the document defines which roles can access it. Also, each document specifies the date it was published.
 Users are categorized by roles.
+
+#### *Postman Collection*
+[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/79158ea63ffdea6731dd)
 
 #### *Features*
 
@@ -38,20 +41,20 @@ Users are categorized by roles.
 | **POST** | api/users/logout | Logs a user out |
 | **POST** | api/users/ | Creates a new user. Required attributes are `firstName`, `lastName`, `email`, `password`. If a `role` is not specified, a defualt role of `regular` created |
 | **GET** | api/users/ | Fetch all registered users (`admin` privilege required) |
-| **GET** | api/users/<id> | Fetch a user by specific id (`admin` privilege required) |
-| **PUT** | api/users/<id> | Update a specific user (by id) attributes|
-| **DELETE** | api/users/<id> |Delete a specific user by id. (`admin` privilege required |
+| **GET** | api/users/:id | Fetch a user by specific id (`admin` privilege required) |
+| **PUT** | api/users/:id | Update a specific user (by id) attributes|
+| **DELETE** | api/users/:id |Delete a specific user by id. (`admin` privilege required |
 | **POST** | api/documents/ | Creates a new document instance. Required attributes are `title` and `content`. If an `access` is NOT specified, the document is marked  _public_ |
 | **GET** | api/documents/ | Fetch all documents (returns all documents based on each document access right and the requesters role) |
-| **GET** | api/documents/<id> | Fectch a specific document by it's id |
-| **PUT** | api/documents/<id> | Update specific document attributes by it's id |
-| **DELETE** | api/documents/<id> | Delete a specific document by it's id |
-| **GET** | api/users/<id>/documents | Find all documents belonging to the specified user |
+| **GET** | api/documents/:id | Fectch a specific document by it's id |
+| **PUT** | api/documents/:id | Update specific document attributes by it's id |
+| **DELETE** | api/documents/:id | Delete a specific document by it's id |
+| **GET** | api/users/:id/documents | Find all documents belonging to the specified user |
 | **POST** | api/roles/ | Create a new role (`admin` privilege required) |
 | **GET** | api/roles/ | Fetches all roles (`admin privilege required`) |
-| **GET** | api/roles/<id> | Find a role by id (`admin privilege required`) |
-| **PUT** | api/roles/<id> | Update role attributes (`admin privilege required`) |
-| **DELETE** | api/delete/<id> | Delete role (`admin privilege required`) |
+| **GET** | api/roles/:id | Find a role by id (`admin privilege required`) |
+| **PUT** | api/roles/:id | Update role attributes (`admin privilege required`) |
+| **DELETE** | api/delete/:id | Delete role (`admin privilege required`) |
 
 #### *Contributing*
 1. Fork this repository to your GitHub account

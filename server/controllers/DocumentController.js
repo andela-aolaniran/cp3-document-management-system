@@ -1,4 +1,5 @@
 import database from '../models';
+import Authenticator from '../middlewares/Authenticator';
 
 const documentDb = database.Document;
 
@@ -26,21 +27,13 @@ class DocumentController {
       };
       documentDb.create(document)
       .then((createdDocument) => {
-        response.status(201).json({
-          success: true,
-          message: `${createdDocument.dataValues.title} Successfully Created`,
-          document: createdDocument.dataValues
-        });
+        response.status(201).json(createdDocument);
       })
       .catch((error) => {
-        response.status(500).json({
-          success: false,
-          message: error.message
-        });
+        response.status(400).send(error.errors);
       });
     } else {
       response.status(400).json({
-        success: false,
         message: 'Required Fields are missing'
       });
     }
@@ -53,26 +46,30 @@ class DocumentController {
    * @return{Void} - returns void
    */
   static updateDocument(request, response) {
-    documentDb.update(request.body, {
-      where: {
-        id: request.params.id
-      }
-    })
-    .then((update) => {
-      if (update[0] === 1) {
-        response.status(200).json(update);
+    const requesterId = request.decoded.userId;
+    const requesterRoleId = request.decoded.roleId;
+    const documentId = Number(request.params.id);
+    documentDb.findById(documentId)
+    .then((foundDocument) => {
+      if (foundDocument) {
+        if (foundDocument.ownerId === requesterId ||
+        Authenticator.verifyAdmin(requesterRoleId)) {
+          foundDocument.update(request.body)
+          .then(() => {
+            response.status(200).json({
+              message: 'Document Updated'
+            });
+          });
+        } else {
+          response.status(403).json({
+            message: 'You do not have access to update other users document'
+          });
+        }
       } else {
         response.status(404).json({
-          success: false,
-          message: 'Could not update the specified document'
+          message: 'Document was not found'
         });
       }
-    })
-    .catch((error) => {
-      response.status(500).json({
-        success: false,
-        message: error.message
-      });
     });
   }
 
@@ -97,51 +94,30 @@ class DocumentController {
         attributes: ['roleId']
       }]
     })
-    .then((result) => {
-      const document = result ? result.dataValues : null;
+    .then((document) => {
       if (document) {
         // lets chceck required access
         // For an Admin, return documents without checking required access
-        if (requesterRoleId === 1) {
-          response.status(200).json({
-            success: true,
-            message: 'Document Found',
-            document
-          });
+        if (Authenticator.verifyAdmin(requesterRoleId)) {
+          response.status(200).json(document);
           // for other users, ensure they have appropriate access rights
         } else if (
           (document.access === 'public'
-          || requesterRoleId === document.User.dataValues.roleId)
+          || (document.User && requesterRoleId === document.User.roleId))
           && document.access !== 'private') {
-          response.status(200).json({
-            success: true,
-            message: 'Document Found',
-            document
-          });
+          response.status(200).json(document);
         } else if (document.ownerId === requesterId) {
-          response.status(200).json({
-            success: true,
-            message: 'Document Found',
-            document
-          });
+          response.status(200).json(document);
         } else {
           response.status(403).json({
-            success: false,
             message: 'Appropriate access is required to view this document'
           });
         }
       } else {
-        response.status(400).json({
-          success: false,
+        response.status(404).json({
           message: 'No Document found'
         });
       }
-    })
-    .catch((error) => {
-      response.status(500).json({
-        success: false,
-        message: error.message
-      });
     });
   }
 
@@ -154,6 +130,7 @@ class DocumentController {
   static fetchDocuments(request, response) {
     const search = request.query.search;
     const limit = request.query.limit;
+    const offset = request.query.offset;
     const requesterRoleId = request.decoded.roleId;
     const requesterId = request.decoded.userId;
     const queryBuilder = {
@@ -161,11 +138,14 @@ class DocumentController {
       include: [{
         model: database.User,
         attributes: ['roleId']
-      }]
+      }],
+      order: '"createdAt" DESC'
     };
-    queryBuilder.order = '"createdAt" DESC';
     if (limit) {
-      queryBuilder.limit = limit;
+      queryBuilder.limit = limit >= 0 ? limit : 0;
+    }
+    if (offset) {
+      queryBuilder.offset = offset >= 0 ? offset : 0;
     }
     if (search) {
       queryBuilder.where = {
@@ -177,39 +157,33 @@ class DocumentController {
       };
     }
     documentDb.findAll(queryBuilder)
-    .then((results) => {
-      if (results) {
-        const actualDocuments = [];
-        results.forEach((document) => {
-          if (requesterRoleId === 1) {
-            actualDocuments.push(document.dataValues);
+    .then((fetchedDocments) => {
+      if (fetchedDocments.length > 0) {
+        const accessedDocuments = fetchedDocments.filter((document) => {
+          if (Authenticator.verifyAdmin(requesterId)) {
+            return true;
           // for other users, ensure they have appropriate access rights
           } else if (
             (document.access === 'public'
-            || requesterRoleId === document.User.dataValues.roleId)
+            || (document.User && requesterRoleId === document.User.roleId))
             && document.access !== 'private') {
-            actualDocuments.push(document.dataValues);
+            return true;
           } else if (document.access === 'private'
             && document.ownerId === requesterId) {
-            actualDocuments.push(document.dataValues);
+            return true;
           }
+          return false;
         });
-        response.status(200).json({
-          success: true,
-          message: 'Documents Fetched',
-          documents: actualDocuments
-        });
+        response.status(200).json(accessedDocuments);
       } else {
-        response.status(400).json({
-          success: false,
+        response.status(404).json({
           message: 'Documents not found'
         });
       }
     })
     .catch((error) => {
       response.status(500).json({
-        success: false,
-        message: error.message
+        message: error.errors
       });
     });
   }
@@ -221,31 +195,63 @@ class DocumentController {
    * @return{Void} - returns void
    */
   static deleteDocument(request, response) {
-    documentDb.destroy({
-      where: {
-        id: request.params.id,
-        ownerId: request.decoded.userId
-      }
-    })
-    .then((status) => {
-      if (status) {
-        response.status(200).json({
-          success: true,
-          message: 'Document Deleted Successfully'
-        });
+    const requesterId = request.decoded.userId;
+    const requesterRoleId = request.decoded.roleId;
+    const documentId = Number(request.params.id);
+    documentDb.findById(documentId)
+    .then((foundDocument) => {
+      if (foundDocument) {
+        if (foundDocument.ownerId === requesterId ||
+        Authenticator.verifyAdmin(requesterRoleId)) {
+          foundDocument.destroy()
+          .then(() => {
+            response.status(200).json({
+              message: 'Document deleted'
+            });
+          });
+        } else {
+          response.status(403).json({
+            message: 'You do not have access to delete other users document'
+          });
+        }
       } else {
         response.status(404).json({
-          success: false,
-          message: 'Deletion Failed'
+          message: 'Document was not found'
         });
       }
-    })
-    .catch((error) => {
-      response.status(500).json({
-        success: false,
-        message: error.message
-      });
     });
+  }
+
+  /**
+   * Method to fetch all documents of a specific user
+   * @param{Object} request - Request object
+   * @param{Object} response - Response object
+   * @return{Void} - returns void
+   */
+  static fetchUserDocuments(request, response) {
+    const id = Number(request.params.id);
+    const requesterId = request.decoded.userId;
+    if (requesterId === id || Authenticator.verifyAdmin(requesterId)) {
+      documentDb.findAll({
+        where: {
+          ownerId: id
+        }
+      })
+      .then((documents) => {
+        if (documents.length > 0) {
+          response.status(200).json(documents);
+        } else {
+          response.status(404).json({
+            message: 'No Documents found for this user'
+          });
+        }
+      });
+    } else {
+      // only owner of documents should access this
+      response.status(403).json({
+        message: 'Appropriate access is required to view these documents'
+      });
+    }
   }
 }
 

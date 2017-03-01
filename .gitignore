@@ -47,3 +47,6 @@ npm-debug.log
 
 # mac files
 .DS_Store
+
+# ignore generated dist files
+dist

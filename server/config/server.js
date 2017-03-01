@@ -4,9 +4,9 @@ import bodyParser from 'body-parser';
 import morgan from 'morgan';
 import path from 'path';
 import dotenv from 'dotenv';
-import UserRoutes from './routes/UserRoutes';
-import DocumentRoutes from './routes/DocumentRoutes';
-import RoleRoutes from './routes/RoleRoutes';
+import UserRoutes from '../routes/UserRoutes';
+import DocumentRoutes from '../routes/DocumentRoutes';
+import RoleRoutes from '../routes/RoleRoutes';
 
 dotenv.config();
 const app = express();
@@ -18,7 +18,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.get('/', (request, response) => {
-  response.sendFile(path.join(__dirname, '../client/index.html'));
+  response.sendFile(path.join(__dirname, '../../client/index.html'));
 });
 
 // set up User related routes
