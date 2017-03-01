@@ -16,10 +16,6 @@ module.exports = {
         type: Sequelize.TEXT,
         allowNull: false
       },
-      access: {
-        type: Sequelize.TEXT,
-        allowNull: false
-      },
       ownerId: {
         type: Sequelize.INTEGER,
         allowNull: false,
@@ -37,6 +33,7 @@ module.exports = {
       access: {
         type: Sequelize.STRING,
         allowNull: false,
+        default: 'public',
         validate: {
          isIn: [['public', 'private', 'role']]
        }

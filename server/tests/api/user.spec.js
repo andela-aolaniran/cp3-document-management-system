@@ -1,10 +1,8 @@
 import supertest from 'supertest';
-import chai from 'chai';
+import { expect } from 'chai';
 import app from '../../config/server';
 import SpecHelper from '../helpers/SpecHelper';
 import SeedHelper from '../helpers/SeedHelper';
-
-const expect = chai.expect;
 
 const client = supertest.agent(app);
 const regularUser = SpecHelper.generateRandomUser(2);
@@ -103,62 +101,6 @@ describe('Users:', () => {
       });
     });
   });
-
-  // describe('Create an Admin user', () => {
-  //   it(`Should return http code 201
-  //     if an Admin User is successfully created`, (done) => {
-  //     client.post('/api/users')
-  //     .send(testData.adminUser)
-  //     .end((error, response) => {
-  //       expect(response.status).to.equal(201);
-  //       done();
-  //     });
-  //   });
-
-
-  //   it(`Should return a TOKEN
-  //     if an Admin User is successfully created`, (done) => {
-  //     client.post('/api/users')
-  //     .send(testData.adminUser1)
-  //     .end((error, response) => {
-  //       expect(response.body).to.have.property('token');
-  //       done();
-  //     });
-  //   });
-
-  //   it(`Should return only necessary
-  //     details of the created Admin user`, (done) => {
-  //     client.post('/api/users')
-  //     .send(testData.adminUser2)
-  //     .end((error, response) => {
-  //       expect(response.body).to.have.property('firstName');
-  //       expect(response.body).to.have.property('lastName');
-  //       expect(response.body).to.have.property('email');
-  //       done();
-  //     });
-  //   });
-
-  //   it('Should NOT return sensitive details of the Admin user', (done) => {
-  //     client.post('/api/users')
-  //     .send(testData.adminUser3)
-  //     .end((error, response) => {
-  //       expect(response.body).to.not.have.property('password');
-  //       done();
-  //     });
-  //   });
-
-  //   it('Admin user roleId should be 1', (done) => {
-  //     expect(testData.adminUser.roleId).to.not.be.undefined;
-  //     expect(testData.adminUser.roleId).to.equal(1);
-  //     client.post('/api/users')
-  //     .send(testData.adminUser4)
-  //     .end((error, response) => {
-  //       expect(response.body.roleId).to.not.be.undefined;
-  //       expect(response.body.roleId).to.equal(1);
-  //       done();
-  //     });
-  //   });
-  // });
 
   describe('Login', () => {
     it('Should allow login for only CORRECT details of an Admin', (done) => {

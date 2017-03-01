@@ -83,25 +83,30 @@ class RoleController {
    * @return{Void} - Returns void
    */
   static deleteRole(request, response) {
+    const id = request.params.id;
     if (Authenticator.verifyAdmin(request.decoded.userId)) {
-      roleDb.destroy({
-        where: {
-          id: request.params.id
-        }
-      })
-      .then((status) => {
-        if (status) {
-          response.status(200).json({
-            success: true,
-            message: 'Role Deleted Successfully'
-          });
-        } else {
-          response.status(404).json({
-            success: false,
-            message: 'Deletion Failed'
-          });
-        }
-      });
+      if (id === 1 || id === 2) {
+        response.status(403).json({
+          message: 'Cannot delete admin role'
+        });
+      } else {
+        roleDb.destroy({
+          where: {
+            id
+          }
+        })
+        .then((status) => {
+          if (status) {
+            response.status(200).json({
+              message: 'Role Deleted Successfully'
+            });
+          } else {
+            response.status(404).json({
+              message: 'Deletion Failed'
+            });
+          }
+        });
+      }
     } else {
       response.status(403).json({
         message: 'Admin permission required'
@@ -118,7 +123,7 @@ class RoleController {
   static fetchRole(request, response) {
     if (Authenticator.verifyAdmin(request.decoded.userId)) {
       roleDb.findById(request.params.id, {
-        attributes: ['id', 'title']
+        attributes: ['id', 'title', 'createdAt']
       })
       .then((role) => {
         if (role) {
@@ -149,7 +154,7 @@ class RoleController {
       const limit = request.query.limit;
       const offset = request.query.offset;
       const queryBuilder = {
-        attributes: ['id', 'title'],
+        attributes: ['id', 'title', 'createdAt'],
         order: '"createdAt" DESC'
       };
       if (limit) {

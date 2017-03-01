@@ -26,16 +26,6 @@ class UserController {
   }
 
   /**
-   * Method to verify if a user is an admin
-   * @param{Number} roleId - id number for user. Admin roleId is 1
-   * @return{Boolean} - True if user roleId corresponds to admin,
-   * otherwise false
-   */
-  static isAdmin(roleId) {
-    return roleId === 1;
-  }
-
-  /**
    * Method to create a new User (POST)
    * @param{Object} request - Request object
    * @param{Object} response - Response object
@@ -43,10 +33,11 @@ class UserController {
    */
   static createUser(request, response) {
     const newUser = request.body;
+    const roleId = !newUser.roleId ? 2 : Number(newUser.roleId);
     if (UserController.validateCreateRequest(request) &&
-     !Authenticator.verifyAdmin(newUser.roleId)) {
-      // set roleId to default of 2
-      newUser.roleId = newUser.roleId || 2;
+      !Authenticator.verifyAdmin(roleId)) {
+      // set a valid roleId
+      newUser.roleId = roleId;
       userDB.create(newUser)
       .then((user) => {
         const token = Authenticator.generateToken(user);
@@ -58,6 +49,7 @@ class UserController {
             lastName: user.lastName,
             roleId: user.roleId,
             id: user.id,
+            createdAt: user.createdAt,
             token
           });
         });
@@ -67,7 +59,7 @@ class UserController {
           message: error.errors
         });
       });
-    } else if (request.body.roleId === 1) {
+    } else if (Authenticator.verifyAdmin(roleId)) {
       response.status(403).json({
         message: 'Cannot create Admin user'
       });
@@ -137,6 +129,7 @@ class UserController {
               firstName: updatedUser.firstName,
               lastName: updatedUser.lastName,
               roleId: updatedUser.roleId,
+              updatedAt: updatedUser.updatedAt,
               id: updatedUser.id,
             });
           })
@@ -169,7 +162,9 @@ class UserController {
     const requesterId = request.decoded.userId;
     if (searchId === requesterId || Authenticator.verifyAdmin(requesterId)) {
       userDB.findById(searchId, {
-        attributes: ['email', 'firstName', 'lastName', 'id', 'roleId']
+        attributes: [
+          'email', 'firstName', 'lastName', 'id', 'roleId', 'createdAt'
+        ]
       })
       .then((user) => {
         if (user) {
@@ -204,7 +199,9 @@ class UserController {
       const limit = request.query.limit;
       const offset = request.query.offset;
       const queryBuilder = {
-        attributes: ['email', 'firstName', 'lastName', 'id', 'roleId'],
+        attributes: [
+          'email', 'firstName', 'lastName', 'id', 'roleId', 'createdAt'
+        ],
         order: '"createdAt" DESC'
       };
       if (limit) {

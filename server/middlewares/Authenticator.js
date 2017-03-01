@@ -35,7 +35,7 @@ class Authenticator {
           })
           .then((user) => {
             const activeToken = user.activeToken;
-            if (activeToken !== null && user.activeToken === token) {
+            if (activeToken === token) {
               request.decoded = decoded;
               next();
             } else {

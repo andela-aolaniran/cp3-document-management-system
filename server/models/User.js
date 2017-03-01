@@ -6,7 +6,6 @@ export default (sequelize, DataTypes) => {
       allowNull: false,
       autoIncrement: true,
       primaryKey: true,
-      noUpdate: true,
       type: DataTypes.INTEGER
     },
     firstName: {
@@ -44,6 +43,7 @@ export default (sequelize, DataTypes) => {
     roleId: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      default: 2,
       validate: {
         isInt: {
           msg: 'roleId must be an integer'

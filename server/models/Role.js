@@ -4,7 +4,6 @@ export default (sequelize, DataTypes) => {
       allowNull: false,
       autoIncrement: true,
       primaryKey: true,
-      noUpdate: true,
       type: DataTypes.INTEGER
     },
     title: {

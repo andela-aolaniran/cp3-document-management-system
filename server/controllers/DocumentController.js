@@ -27,9 +27,7 @@ class DocumentController {
       };
       documentDb.create(document)
       .then((createdDocument) => {
-        response.status(201).json({
-          document: createdDocument
-        });
+        response.status(201).json(createdDocument);
       });
     } else {
       response.status(400).json({
@@ -45,18 +43,25 @@ class DocumentController {
    * @return{Void} - returns void
    */
   static updateDocument(request, response) {
-    const ownerId = request.decoded.userId;
-    documentDb.update(request.body, {
-      where: {
-        id: request.params.id,
-        ownerId
-      }
-    })
-    .then((update) => {
-      if (update[0] === 1) {
-        response.status(200).json({
-          message: 'Document Updated'
-        });
+    const requesterId = request.decoded.userId;
+    const requesterRoleId = request.decoded.roleId;
+    const documentId = Number(request.params.id);
+    documentDb.findById(documentId)
+    .then((foundDocument) => {
+      if (foundDocument) {
+        if (foundDocument.ownerId === requesterId ||
+        Authenticator.verifyAdmin(requesterRoleId)) {
+          foundDocument.update(request.body)
+          .then(() => {
+            response.status(200).json({
+              message: 'Document Updated'
+            });
+          });
+        } else {
+          response.status(403).json({
+            message: 'You do not have access to update other users document'
+          });
+        }
       } else {
         response.status(404).json({
           message: 'Document was not found'
@@ -91,21 +96,15 @@ class DocumentController {
         // lets chceck required access
         // For an Admin, return documents without checking required access
         if (Authenticator.verifyAdmin(requesterRoleId)) {
-          response.status(200).json({
-            document
-          });
+          response.status(200).json(document);
           // for other users, ensure they have appropriate access rights
         } else if (
           (document.access === 'public'
           || (document.User && requesterRoleId === document.User.roleId))
           && document.access !== 'private') {
-          response.status(200).json({
-            document
-          });
+          response.status(200).json(document);
         } else if (document.ownerId === requesterId) {
-          response.status(200).json({
-            document
-          });
+          response.status(200).json(document);
         } else {
           response.status(403).json({
             message: 'Appropriate access is required to view this document'
@@ -172,9 +171,7 @@ class DocumentController {
           }
           return false;
         });
-        response.status(200).json({
-          documents: accessedDocuments
-        });
+        response.status(200).json(accessedDocuments);
       } else {
         response.status(404).json({
           message: 'Documents not found'
@@ -195,21 +192,30 @@ class DocumentController {
    * @return{Void} - returns void
    */
   static deleteDocument(request, response) {
-    documentDb.destroy({
-      where: {
-        id: Number(request.params.id),
-        ownerId: request.decoded.userId
+    const requesterId = request.decoded.userId;
+    const requesterRoleId = request.decoded.roleId;
+    const documentId = Number(request.params.id);
+    documentDb.findById(documentId)
+    .then((foundDocument) => {
+      if (foundDocument) {
+        if (foundDocument.ownerId === requesterId ||
+        Authenticator.verifyAdmin(requesterRoleId)) {
+          foundDocument.destroy()
+          .then(() => {
+            response.status(200).json({
+              message: 'Document deleted'
+            });
+          });
+        } else {
+          response.status(403).json({
+            message: 'You do not have access to delete other users document'
+          });
+        }
+      } else {
+        response.status(404).json({
+          message: 'Document was not found'
+        });
       }
-    })
-    .then((status) => {
-      response.status(200).json({
-        message: status
-      });
-    })
-    .catch((error) => {
-      response.status(404).json({
-        message: error.errors
-      });
     });
   }
 

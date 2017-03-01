@@ -4,7 +4,7 @@
   "description": "A simple document management system api, with a web app which consumes the api",
   "main": "index.js",
   "scripts": {
-    "mocha": "mocha --compilers js:babel-core/register server/tests/**/*.spec.js client/tests",
+    "mocha": "mocha --timeout 5000 --compilers js:babel-core/register server/tests/**/*.spec.js client/tests",
     "migrate": "sequelize db:migrate",
     "seed": "sequelize db:seed:all",
     "test": "NODE_ENV=test npm run mocha",
@@ -17,7 +17,7 @@
     "start": "node dist/app.js",
     "develop:server": "NODE_ENV=development npm-run-all --parallel test:watch lint:watch open:server",
     "open:server": "nodemon server/app.js --exec babel-node",
-    "cover": "rm -rf coverage/ && NODE_ENV=test npm run seed && NODE_ENV=test babel-node ./node_modules/babel-istanbul/lib/cli.js cover _mocha -- -R spec server/tests client/tests",
+    "cover": "rm -rf coverage/ && NODE_ENV=test babel-node ./node_modules/babel-istanbul/lib/cli.js cover _mocha -- -R spec server/tests/**/*.spec.js client/tests",
     "coveralls": "npm run cover && cat ./coverage/lcov.info | coveralls"
   },
   "repository": {
