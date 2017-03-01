@@ -16,6 +16,21 @@ class DocumentRoutes {
     DocumentRoutes.createDocument(router);
     DocumentRoutes.updateDocument(router);
     DocumentRoutes.deleteDocument(router);
+    DocumentRoutes.fetchUserDocuments(router);
+  }
+
+
+  /**
+   * Method to set up route for fetching all specified user documents
+   * @param{Object} router - Express router
+   * @return{Void} - Returns Void
+   */
+  static fetchUserDocuments(router) {
+    router.get(
+      '/api/users/:id/documents',
+      Authenticator.authenticateUser,
+      DocumentController.fetchUserDocuments
+    );
   }
 
   /**

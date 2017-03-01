@@ -1,31 +1,43 @@
-CREATE TABLE public."roles"
+CREATE TABLE public."Roles"
 (
-  id integer PRIMARY KEY,
-  title character varying(255) NOT NULL,
-  createdAt timestamp with time zone NOT NULL,
-  updatedAt timestamp with time zone NOT NULL
-);
+  id integer NOT NULL DEFAULT nextval('"Roles_id_seq"'::regclass),
+  title character varying(255) COLLATE pg_catalog."default" NOT NULL,
+  "createdAt" timestamp with time zone NOT NULL,
+  "updatedAt" timestamp with time zone NOT NULL,
+  CONSTRAINT "Roles_pkey" PRIMARY KEY (id),
+  CONSTRAINT "Roles_title_key" UNIQUE (title)
+)
 
-CREATE TABLE public."users"
+CREATE TABLE public."Users"
 (
-  id integer PRIMARY KEY,
-  firstName character varying(255) NOT NULL,
-  lastName character varying(255) NOT NULL,
-  email character varying(255) NOT NULL,
-  password character varying(255) NOT NULL,
-  createdAt timestamp with time zone NOT NULL,
-  updatedAt timestamp with time zone NOT NULL,
-  roleId integer REFERENCES "roles" ON DELETE CASCADE DEFAULT 2
-);
+  id integer NOT NULL DEFAULT nextval('"Users_id_seq"'::regclass),
+  "firstName" character varying(255) COLLATE pg_catalog."default" NOT NULL,
+  "lastName" character varying(255) COLLATE pg_catalog."default" NOT NULL,
+  password character varying(255) COLLATE pg_catalog."default" NOT NULL,
+  "roleId" integer NOT NULL,
+  email character varying(255) COLLATE pg_catalog."default",
+  "createdAt" timestamp with time zone NOT NULL,
+  "updatedAt" timestamp with time zone NOT NULL,
+  CONSTRAINT "Users_pkey" PRIMARY KEY (id),
+  CONSTRAINT "Users_email_key" UNIQUE (email),
+  CONSTRAINT "Users_roleId_fkey" FOREIGN KEY ("roleId")
+      REFERENCES public."Roles" (id) MATCH SIMPLE
+      ON UPDATE CASCADE
+      ON DELETE CASCADE
+)
 
-CREATE TABLE public."documents"
+CREATE TABLE public."Documents"
 (
-  id integer PRIMARY KEY,
-  title character varying(255) NOT NULL,
-  content text NOT NULL,
-  public boolean DEFAULT false,
-  createdAt timestamp with time zone NOT NULL,
-  updatedAt timestamp with time zone NOT NULL,
-  roleId integer REFERENCES "roles" ON DELETE CASCADE,
-  ownerId integer REFERENCES "users" ON DELETE CASCADE
-);
+  id integer NOT NULL DEFAULT nextval('"Documents_id_seq"'::regclass),
+  title character varying(255) COLLATE pg_catalog."default" NOT NULL,
+  content text COLLATE pg_catalog."default" NOT NULL,
+  access character varying(255) COLLATE pg_catalog."default" NOT NULL,
+  "ownerId" integer NOT NULL,
+  "createdAt" timestamp with time zone NOT NULL,
+  "updatedAt" timestamp with time zone NOT NULL,
+  CONSTRAINT "Documents_pkey" PRIMARY KEY (id),
+  CONSTRAINT "Documents_ownerId_fkey" FOREIGN KEY ("ownerId")
+      REFERENCES public."Users" (id) MATCH SIMPLE
+      ON UPDATE CASCADE
+      ON DELETE NO ACTION
+)

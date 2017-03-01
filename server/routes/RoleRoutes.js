@@ -28,7 +28,6 @@ class RoleRoutes {
     router.get(
       '/api/roles',
       Authenticator.authenticateUser,
-      Authenticator.verifyAdmin,
       RoleController.fetchRoles
     );
   }
@@ -42,7 +41,6 @@ class RoleRoutes {
     router.get(
       '/api/roles/:id',
       Authenticator.authenticateUser,
-      Authenticator.verifyAdmin,
       RoleController.fetchRole
     );
   }
@@ -56,7 +54,6 @@ class RoleRoutes {
     router.post(
       '/api/roles',
       Authenticator.authenticateUser,
-      Authenticator.verifyAdmin,
       RoleController.createRole
     );
   }
@@ -70,7 +67,6 @@ class RoleRoutes {
     router.put(
       '/api/roles/:id',
       Authenticator.authenticateUser,
-      Authenticator.verifyAdmin,
       RoleController.updateRole
     );
   }
@@ -84,7 +80,6 @@ class RoleRoutes {
     router.delete(
       '/api/roles/:id',
       Authenticator.authenticateUser,
-      Authenticator.verifyAdmin,
       RoleController.deleteRole);
   }
 }

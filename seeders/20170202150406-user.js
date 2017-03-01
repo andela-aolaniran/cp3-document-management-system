@@ -1,5 +1,8 @@
 'use strict';
 const bcrypt = require('bcrypt-nodejs');
+const dotenv = require('dotenv');
+
+dotenv.config();
 module.exports = {
   up: function (queryInterface, Sequelize) {
     /*
@@ -15,10 +18,10 @@ module.exports = {
 
     return queryInterface.bulkInsert('Users', [
       {
-        email: 'azeez.olaniran@andela.com',
-        firstName: 'Azeez',
-        lastName: 'Olaniran',
-        password: bcrypt.hashSync('password', bcrypt.genSaltSync(8)),
+        email: process.env.ADMIN_EMAIL,
+        firstName: process.env.ADMIN_FIRST_NAME,
+        lastName: process.env.ADMIN_LAST_NAME,
+        password: bcrypt.hashSync(process.env.ADMIN_PASSWORD, bcrypt.genSaltSync(8)),
         roleId: 1,
         createdAt: new Date(),
         updatedAt: new Date()
