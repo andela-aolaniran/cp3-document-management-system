@@ -10,48 +10,48 @@ Users are categorized by roles.
 #### *Features*
 
 1. **Authentication**
-- It uses JWT for authentication.  
-- It generates a token and returns to the client.  
-- It verifies the token on every request to authenticated endpoints.
+  - It uses JWT for authentication.  
+  - It generates and returns a token on successful login or creation of a user.  
+  - It verifies the token on every request to authenticated endpoints.
 
 2. **Users**
-- It allows users to be created.  
-- It sets a newly created user's role to `regular` by default.   
-- It allows only the created user to edit, and update its information.   
-- All registered users can be retrieved by the admin user.
+  - It allows creation of new users. 
+  - It ensures no other user can be assigned the admin role (there is only one admin)
+  - It sets a newly created user's role category to `regular` by default if a valid role is not specified.   
+  - It allows created user to edit/update their information.
+  - Only the admin user can update/edit other users information.
+  - All registered users can be retrieved by the admin user or other registered users (it doesn't return sensitive information of the users retrieved).
 
 3. **Roles**
-- It ensures that users have a role (default role is `regular`).   
-- It ensures users roles could be `admin` or `regular`.   
-- It ensures new roles can be created, updated and deleted by an admin user.   
-- It returns all roles to an admin user.
+  - It ensures that created users have a role defined (default role is `regular`).  
+  - It ensures new roles can be created, updated and deleted by only the admin user.   
+  - It allows only the admin user carry out CRUD operations on the roles.
 
 4. **Documents**
-- It allows new documents to be created/saved by users.  
-- It ensures all documents have an access defined (default access is `public`).  
-- It allows only admin users to retrieve all documents regardless of the document access.  
-- It ensures ONLY private and public access documents to be retrieved by its owners, along with documents with role access of the user.     
-- It ensures only authenticated users can delete, edit and update documents they own.   
-- It allows admin to delete any document regardless of the document access level.   
+  - It allows new documents to be created/saved by users.  
+  - It ensures all documents have an access type defined (default access type is `public`).  
+  - It allows only admin users retrieve all documents regardless of the document required access type.  
+  - It ensures private access typed documents can only be retrieved by their owners, public access typed documents can be retrieved by all users and role access typed documents can be retrieved by ONLY users with the same role level as the document owner.     
+  - It ensures only authenticated users can delete, edit and update documents they own and users cannot delete documents they do not own (with the exception of the admin). 
 
 #### *API Endpoints*
 | **HTTP Verb** | **Endpoint** | **Functionality**|
 |------|-------|-----------------|
 | **POST** | api/users/login | Logs a user in and returns a token which should be subsequently used to access authenticated endpoints |
-| **POST** | api/users/logout | Logs a user out |
-| **POST** | api/users/ | Creates a new user. Required attributes are `firstName`, `lastName`, `email`, `password`. If a `role` is not specified, a defualt role of `regular` created |
+| **POST** | api/users/logout | Logs a user out, and invalidates the token associated |
+| **POST** | api/users/ | Creates a new user. Required attributes are `firstName`, `lastName`, `email`, `password`. If a `role` category is not specified, a default role of `regular` is assigned |
 | **GET** | api/users/ | Fetch all registered users (`admin` privilege required) |
-| **GET** | api/users/:id | Fetch a user by specific id (`admin` privilege required) |
+| **GET** | api/users/:id | Fetch a user by specific id |
 | **PUT** | api/users/:id | Update a specific user (by id) attributes|
-| **DELETE** | api/users/:id |Delete a specific user by id. (`admin` privilege required |
-| **POST** | api/documents/ | Creates a new document instance. Required attributes are `title` and `content`. If an `access` is NOT specified, the document is marked  _public_ |
-| **GET** | api/documents/ | Fetch all documents (returns all documents based on each document access right and the requesters role) |
+| **DELETE** | api/users/:id | Delete a specific user by id. (`admin` privilege required |
+| **POST** | api/documents/ | Creates a new document instance. Required attributes are `title` and `content`. If an `access` restriction is NOT specified, the document is marked  _public_ |
+| **GET** | api/documents/ | Fetch all documents (returns all documents the requester should have access to) |
 | **GET** | api/documents/:id | Fectch a specific document by it's id |
 | **PUT** | api/documents/:id | Update specific document attributes by it's id |
 | **DELETE** | api/documents/:id | Delete a specific document by it's id |
-| **GET** | api/users/:id/documents | Find all documents belonging to the specified user |
+| **GET** | api/users/:id/documents | Find a specific user and all documents belonging to the user|
 | **POST** | api/roles/ | Create a new role (`admin` privilege required) |
-| **GET** | api/roles/ | Fetches all roles (`admin privilege required`) |
+| **GET** | api/roles/ | Fetches all available roles (`admin privilege required`) |
 | **GET** | api/roles/:id | Find a role by id (`admin privilege required`) |
 | **PUT** | api/roles/:id | Update role attributes (`admin privilege required`) |
 | **DELETE** | api/delete/:id | Delete role (`admin privilege required`) |
@@ -63,6 +63,18 @@ Users are categorized by roles.
 4. Commit your changes
 5. Push to the remote branch
 6. Open a Pull Request
+
+#### *Task List*
+- [x] Setup Version Control System
+- [x] Integrate Slack BOT notifications
+- [x] Integrate Hound CI service
+- [x] Integrate Travis CI service
+- [x] Integrate Code Coverage and Code Quality service
+- [x] ORM (Sequelize) setup
+- [x] Create specified API endpoints
+- [x] Implement Feedback from API defense
+- [ ] Set up Webpack to run mundane tasks for development of the Client side
+- [ ] create a frontend/client side interface using React with Redux architecture
 
 #### *Technologies*
 CP3-Document-Management-System is implemented using a number of technologies, these include:
