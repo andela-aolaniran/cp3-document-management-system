@@ -1,5 +1,6 @@
 import DocumentController from '../controllers/DocumentController';
 import Authenticator from '../middlewares/Authenticator';
+import DocumentMiddleware from '../middlewares/DocumentMiddleware';
 
 /**
  * Class for creating Document routes
@@ -16,21 +17,6 @@ class DocumentRoutes {
     DocumentRoutes.createDocument(router);
     DocumentRoutes.updateDocument(router);
     DocumentRoutes.deleteDocument(router);
-    DocumentRoutes.fetchUserDocuments(router);
-  }
-
-
-  /**
-   * Method to set up route for fetching all specified user documents
-   * @param{Object} router - Express router
-   * @return{Void} - Returns Void
-   */
-  static fetchUserDocuments(router) {
-    router.get(
-      '/api/users/:id/documents',
-      Authenticator.authenticateUser,
-      DocumentController.fetchUserDocuments
-    );
   }
 
   /**
@@ -42,6 +28,7 @@ class DocumentRoutes {
     router.get(
       '/api/documents',
       Authenticator.authenticateUser,
+      DocumentMiddleware.validateGetRequest,
       DocumentController.fetchDocuments
     );
   }
@@ -55,6 +42,7 @@ class DocumentRoutes {
     router.get(
       '/api/documents/:id',
       Authenticator.authenticateUser,
+      DocumentMiddleware.validateGetRequest,
       DocumentController.fetchDocument
     );
   }
@@ -68,6 +56,7 @@ class DocumentRoutes {
     router.post(
       '/api/documents',
       Authenticator.authenticateUser,
+      DocumentMiddleware.validateCreateRequest,
       DocumentController.createDocument
     );
   }

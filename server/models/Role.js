@@ -8,7 +8,9 @@ export default (sequelize, DataTypes) => {
     },
     title: {
       type: DataTypes.STRING,
-      unique: true,
+      unique: {
+        msg: 'Role title already taken.'
+      },
       allowNull: false,
       validate: {
         notEmpty: {

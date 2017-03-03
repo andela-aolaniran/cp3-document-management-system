@@ -1,4 +1,6 @@
 import database from '../models';
+import ErrorHandler from '../helpers/ErrorHandler';
+import ResponseHandler from '../helpers/ResponseHandler';
 import Authenticator from '../middlewares/Authenticator';
 
 const documentDb = database.Document;
@@ -7,6 +9,24 @@ const documentDb = database.Document;
  * Document controller
  */
 class DocumentController {
+
+  /**
+   * Method to fetch save fields from a Document object
+   * @param {Object} document - Document object
+   * @return {Object} - new User object containing fields
+   * consider safe for public view
+   */
+  static getSafeDocumentFields(document) {
+    return {
+      id: document.id,
+      title: document.title,
+      content: document.content,
+      ownerId: document.ownerId,
+      ownerRoleId: document.roleId,
+      access: document.access,
+      createdAt: document.createdAt
+    };
+  }
   /**
    * Controller method create a new Document
    * @param{Object} request - Request Object
@@ -14,29 +34,23 @@ class DocumentController {
    * @return{Void} - returns void
    */
   static createDocument(request, response) {
-    if (request.body &&
-        request.body.title &&
-        request.body.content &&
-        request.decoded.userId) {
-      const document = {
-        title: request.body.title,
-        content: request.body.content,
-        ownerId: request.decoded.userId,
-        ownerRoleId: request.decoded.roleId,
-        access: request.body.access || 'public' // default access
-      };
-      documentDb.create(document)
-      .then((createdDocument) => {
-        response.status(201).json(createdDocument);
-      })
-      .catch((error) => {
-        response.status(400).send(error.errors);
-      });
-    } else {
-      response.status(400).json({
-        message: 'Required Fields are missing'
-      });
-    }
+    const document = {
+      title: request.body.title,
+      content: request.body.content,
+      ownerId: request.decoded.userId,
+      access: request.body.access || 'public'
+    };
+    documentDb.create(document)
+    .then((createdDocument) => {
+      ResponseHandler.sendResponse(
+        response,
+        201,
+        DocumentController.getSafeDocumentFields(createdDocument)
+      );
+    })
+    .catch((error) => {
+      ErrorHandler.handleRequestError(response, error);
+    });
   }
 
   /**
@@ -97,26 +111,34 @@ class DocumentController {
     .then((document) => {
       if (document) {
         // lets chceck required access
-        // For an Admin, return documents without checking required access
-        if (Authenticator.verifyAdmin(requesterRoleId)) {
-          response.status(200).json(document);
-          // for other users, ensure they have appropriate access rights
-        } else if (
+        if (
           (document.access === 'public'
           || (document.User && requesterRoleId === document.User.roleId))
           && document.access !== 'private') {
-          response.status(200).json(document);
-        } else if (document.ownerId === requesterId) {
-          response.status(200).json(document);
+          ResponseHandler.sendResponse(
+            response,
+            200,
+            DocumentController.getSafeDocumentFields(document)
+          );
+        } else if (
+          document.ownerId === requesterId ||
+          Authenticator.verifyAdmin(requesterRoleId)
+        ) {
+          ResponseHandler.sendResponse(
+            response,
+            200,
+            DocumentController.getSafeDocumentFields(document)
+          );
         } else {
-          response.status(403).json({
-            message: 'Appropriate access is required to view this document'
-          });
+          ResponseHandler.send403(
+            response,
+            { message: 'Need Appropriate Access Right' }
+          );
         }
       } else {
-        response.status(404).json({
-          message: 'No Document found'
-        });
+        ResponseHandler.send404(
+          response
+        );
       }
     });
   }
@@ -174,17 +196,17 @@ class DocumentController {
           }
           return false;
         });
-        response.status(200).json(accessedDocuments);
+        ResponseHandler.sendResponse(
+          response,
+          200,
+          accessedDocuments
+        );
       } else {
-        response.status(404).json({
-          message: 'Documents not found'
-        });
+        ResponseHandler.send404(response);
       }
     })
     .catch((error) => {
-      response.status(500).json({
-        message: error.errors
-      });
+      ErrorHandler.handleRequestError(response, error);
     });
   }
 
@@ -205,53 +227,22 @@ class DocumentController {
         Authenticator.verifyAdmin(requesterRoleId)) {
           foundDocument.destroy()
           .then(() => {
-            response.status(200).json({
-              message: 'Document deleted'
-            });
+            ResponseHandler.sendResponse(
+              response,
+              200,
+              { message: 'Document Deleted' }
+            );
           });
         } else {
-          response.status(403).json({
-            message: 'You do not have access to delete other users document'
-          });
+          ResponseHandler.send403(
+            response,
+            { message: 'Deletion Of Other Users Document Not Allowed' }
+          );
         }
       } else {
-        response.status(404).json({
-          message: 'Document was not found'
-        });
+        ResponseHandler.send404(response);
       }
     });
-  }
-
-  /**
-   * Method to fetch all documents of a specific user
-   * @param{Object} request - Request object
-   * @param{Object} response - Response object
-   * @return{Void} - returns void
-   */
-  static fetchUserDocuments(request, response) {
-    const id = Number(request.params.id);
-    const requesterId = request.decoded.userId;
-    if (requesterId === id || Authenticator.verifyAdmin(requesterId)) {
-      documentDb.findAll({
-        where: {
-          ownerId: id
-        }
-      })
-      .then((documents) => {
-        if (documents.length > 0) {
-          response.status(200).json(documents);
-        } else {
-          response.status(404).json({
-            message: 'No Documents found for this user'
-          });
-        }
-      });
-    } else {
-      // only owner of documents should access this
-      response.status(403).json({
-        message: 'Appropriate access is required to view these documents'
-      });
-    }
   }
 }
 

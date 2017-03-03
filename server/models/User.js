@@ -13,7 +13,7 @@ export default (sequelize, DataTypes) => {
       allowNull: false,
       validate: {
         notEmpty: {
-          msg: 'Firstname is required'
+          msg: 'First Name is required'
         }
       }
     },
@@ -22,7 +22,7 @@ export default (sequelize, DataTypes) => {
       allowNull: false,
       validate: {
         notEmpty: {
-          msg: 'Lastname is required'
+          msg: 'Last Name is required'
         }
       }
     },
@@ -52,7 +52,9 @@ export default (sequelize, DataTypes) => {
     },
     email: {
       type: DataTypes.STRING,
-      unique: true,
+      unique: {
+        msg: 'This email is already taken.'
+      },
       validate: {
         isEmail: {
           msg: 'Email address is invalid'

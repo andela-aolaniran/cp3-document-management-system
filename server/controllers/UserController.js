@@ -1,6 +1,7 @@
 import database from '../models';
+import ResponseHandler from '../helpers/ResponseHandler';
 import Authenticator from '../middlewares/Authenticator';
-
+import ErrorHandler from '../helpers/ErrorHandler';
 // declare the usersDB
 const userDB = database.User;
 
@@ -11,18 +12,22 @@ const userDB = database.User;
 class UserController {
 
   /**
-   * Method to check that the post request contains required Fields
-   * @param{Object} request - post request object
-   * @return{Boolean} - True if request contains all required fields,
-   * otherwise false
+   * Method to fetch save fields from a user object
+   * @param {Object} user - User object
+   * @param {String} token - token to be added to the User
+   * Object sent (Optional)
+   * @return {Object} - new User object containing fields
+   * consider safe for public view
    */
-  static validateCreateRequest(request) {
-    return (request.body &&
-      request.body.email &&
-      request.body.firstName &&
-      request.body.password &&
-      request.body.lastName
-    );
+  static getSafeUserFields(user, token) {
+    return {
+      id: user.id,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      createdAt: user.createdAt,
+      token
+    };
   }
 
   /**
@@ -33,41 +38,26 @@ class UserController {
    */
   static createUser(request, response) {
     const newUser = request.body;
-    const roleId = !newUser.roleId ? 2 : Number(newUser.roleId);
-    if (UserController.validateCreateRequest(request) &&
-      !Authenticator.verifyAdmin(roleId)) {
-      // set a valid roleId
-      newUser.roleId = roleId;
-      userDB.create(newUser)
-      .then((user) => {
-        const token = Authenticator.generateToken(user);
-        user.update({ activeToken: token })
-        .then(() => {
-          response.status(201).json({
-            email: user.email,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            roleId: user.roleId,
-            id: user.id,
-            createdAt: user.createdAt,
-            token
-          });
-        });
-      })
-      .catch((error) => {
-        response.status(400).json({
-          message: error.errors
-        });
+    newUser.roleId = newUser.roleId || 2;
+    userDB.create(newUser)
+    .then((user) => {
+      const token = Authenticator.generateToken(user);
+      Authenticator.setUserActiveToken(user, token)
+      .then(() => {
+        ResponseHandler.sendResponse(
+          response,
+          201,
+          Object.assign(
+            {},
+            UserController.getSafeUserFields(user, token),
+            { roleId: user.roleId }
+          )
+        );
       });
-    } else if (Authenticator.verifyAdmin(roleId)) {
-      response.status(403).json({
-        message: 'Cannot create Admin user'
-      });
-    } else {
-      response.status(400).json({
-        message: 'Required fields are missing'
-      });
-    }
+    })
+    .catch((error) => {
+      ErrorHandler.handleRequestError(response, error);
+    });
   }
 
   /**
@@ -77,34 +67,22 @@ class UserController {
    * @return{undefined} - returns undefined
    */
   static deleteUser(request, response) {
-    const requesterId = request.decoded.roleId;
     const deleteId = Number(request.params.id);
-    if (Authenticator.verifyAdmin(requesterId) &&
-     deleteId !== requesterId) {
-      userDB.destroy({
-        where: {
-          id: deleteId
-        }
-      }).then((rowDeleted) => {
-        if (rowDeleted === 1) {
-          response.status(200).json({
-            message: 'User deleted'
-          });
-        } else {
-          response.status(404).json({
-            message: 'User not found'
-          });
-        }
-      });
-    } else if (!Authenticator.verifyAdmin(requesterId)) {
-      response.status(403).json({
-        message: 'Only admin can delete a user'
-      });
-    } else {
-      response.status(403).json({
-        message: 'Admin user cannot be deleted'
-      });
-    }
+    userDB.destroy({
+      where: {
+        id: deleteId
+      }
+    }).then((rowDeleted) => {
+      if (rowDeleted === 1) {
+        ResponseHandler.sendResponse(
+          response,
+          200,
+          { message: 'User Deleted' }
+        );
+      } else {
+        ResponseHandler.send404(response);
+      }
+    });
   }
 
   /**
@@ -114,41 +92,24 @@ class UserController {
    * @return{undefined} - returns undefined
    */
   static updateUser(request, response) {
-    // users should not be allowed to update other users profile
-    // except for admins
-    const updateId = Number(request.params.id);
-    if (request.decoded.userId === updateId ||
-        Authenticator.verifyAdmin(request.decoded.roleId)) {
-      userDB.findById(updateId)
-      .then((user) => {
-        if (user) {
-          user.update(request.body)
-          .then((updatedUser) => {
-            response.status(200).send({
-              email: updatedUser.email,
-              firstName: updatedUser.firstName,
-              lastName: updatedUser.lastName,
-              roleId: updatedUser.roleId,
-              updatedAt: updatedUser.updatedAt,
-              id: updatedUser.id,
-            });
-          })
-          .catch((error) => {
-            response.status(400).json({
-              message: error.errors
-            });
-          });
-        } else {
-          response.status(404).json({
-            message: 'User Not Found'
-          });
-        }
-      });
-    } else {
-      response.status(403).json({
-        message: 'Forbidden'
-      });
-    }
+    userDB.findById(request.params.id)
+    .then((user) => {
+      if (user) {
+        user.update(request.body)
+        .then((updatedUser) => {
+          ResponseHandler.sendResponse(
+            response,
+            200,
+            UserController.getSafeUserFields(updatedUser)
+          );
+        })
+        .catch((error) => {
+          ErrorHandler.handleRequestError(response, error);
+        });
+      } else {
+        ResponseHandler.send404(response);
+      }
+    });
   }
 
   /**
@@ -159,32 +120,24 @@ class UserController {
    */
   static fetchUser(request, response) {
     const searchId = Number(request.params.id);
-    const requesterId = request.decoded.userId;
-    if (searchId === requesterId || Authenticator.verifyAdmin(requesterId)) {
-      userDB.findById(searchId, {
-        attributes: [
-          'email', 'firstName', 'lastName', 'id', 'roleId', 'createdAt'
-        ]
-      })
-      .then((user) => {
-        if (user) {
-          response.status(200).json(user);
-        } else {
-          response.status(404).json({
-            message: 'User not found'
-          });
-        }
-      })
-      .catch((error) => {
-        response.status(500).json({
-          message: error.errors
-        });
-      });
-    } else {
-      response.status(403).json({
-        message: 'Only admin can view other users profile'
-      });
-    }
+    userDB.findById(searchId)
+    .then((user) => {
+      if (user) {
+        ResponseHandler.sendResponse(
+          response,
+          200,
+          UserController.getSafeUserFields(user)
+        );
+      } else {
+        ResponseHandler.send404(response);
+      }
+    })
+    .catch((error) => {
+      ErrorHandler.handleRequestError(
+        response,
+        error
+      );
+    });
   }
 
   /**
@@ -194,42 +147,37 @@ class UserController {
    * @return{undefined} - returns undefined
    */
   static fetchUsers(request, response) {
-    if (Authenticator.verifyAdmin(request.decoded.userId)) {
-      const search = request.query.search;
-      const limit = request.query.limit;
-      const offset = request.query.offset;
-      const queryBuilder = {
-        attributes: [
-          'email', 'firstName', 'lastName', 'id', 'roleId', 'createdAt'
-        ],
-        order: '"createdAt" DESC'
-      };
-      if (limit) {
-        queryBuilder.limit = limit >= 0 ? limit : 0;
-      }
-      if (offset) {
-        queryBuilder.offset = offset >= 0 ? offset : 0;
-      }
-      if (search) {
-        queryBuilder.where = {
-          $or: [{ firstName: {
-            $iLike: `%${search}%` }
-          }, { lastName: {
-            $iLike: `%${search}%` }
-          }, { email: {
-            $iLike: `%${search}%` }
-          }]
-        };
-      }
-      userDB.findAll(queryBuilder)
-      .then((users) => {
-        response.status(200).json(users);
-      });
-    } else {
-      response.status(403).json({
-        message: 'Only admin can fetch all users'
-      });
+    const search = request.query.search;
+    const limit = request.query.limit;
+    const offset = request.query.offset;
+    const queryBuilder = {
+      order: '"createdAt" DESC'
+    };
+    if (limit) {
+      queryBuilder.limit = limit;
     }
+    if (offset) {
+      queryBuilder.offset = offset;
+    }
+    if (search) {
+      queryBuilder.where = {
+        $or: [{ firstName: {
+          $iLike: `%${search}%` }
+        }, { lastName: {
+          $iLike: `%${search}%` }
+        }, { email: {
+          $iLike: `%${search}%` }
+        }]
+      };
+    }
+    userDB.findAll(queryBuilder)
+    .then((users) => {
+      ResponseHandler.sendResponse(
+        response,
+        200,
+        users.map(user => UserController.getSafeUserFields(user))
+      );
+    });
   }
 
   /**
@@ -253,26 +201,27 @@ class UserController {
             user.update({ activeToken: token })
             .then(() => {
               // send the token here
-              response.status(200).json({
-                message: 'Login Successful',
-                token
-              });
+              ResponseHandler.sendResponse(
+                response,
+                200,
+                { token }
+              );
             });
           } else {
-            response.status(401).json({
-              message: 'Wrong Password'
-            });
+            ResponseHandler.send401(
+              response,
+              { message: 'Wrong Password' }
+            );
           }
         } else {
-          response.status(404).json({
-            message: 'User not found'
-          });
+          ResponseHandler.send404(response);
         }
       });
     } else {
-      response.status(400).json({
-        message: 'Missing Login credentials'
-      });
+      ResponseHandler.send400(
+        response,
+        { message: 'Missing Login Credentials' }
+      );
     }
   }
 
@@ -286,17 +235,62 @@ class UserController {
     const id = request.decoded.userId;
     userDB.findById(id)
     .then((user) => {
+      user.update({ activeToken: null })
+      .then(() => {
+        ResponseHandler.sendResponse(
+          response,
+          200,
+          { message: 'Logout Successful' }
+        );
+      });
+    });
+  }
+
+  /**
+   * Method to fetch all documents of a specific user
+   * @param{Object} request - Request object
+   * @param{Object} response - Response object
+   * @return{Void} - returns void
+   */
+  static fetchUserDocuments(request, response) {
+    const id = Number(request.params.id);
+    const requesterRoleId = request.decoded.roleId;
+    const requesterId = request.decoded.userId;
+    userDB.findById(id, {
+      attributes: ['id', 'firstName', 'lastName', 'email', 'roleId'],
+      include: {
+        model: database.Document,
+        attributes: ['id', 'access', 'title', 'content', 'ownerId', 'createdAt']
+      }
+    })
+    .then((user) => {
       if (user) {
-        user.update({ activeToken: null })
-        .then(() => {
-          response.status(200).json({
-            message: 'Logout Successful'
-          });
+        const documents = user.Documents.filter((document) => {
+          if (Authenticator.verifyAdmin(requesterRoleId)) {
+            return true;
+          // for other users, ensure they have appropriate access rights
+          } else if (
+            (document.access === 'public' ||
+            requesterRoleId === user.roleId)
+            && document.access !== 'private') {
+            return true;
+          } else if (document.access === 'private'
+            && document.ownerId === requesterId) {
+            return true;
+          }
+          return false;
         });
+        const safeUser = Object.assign(
+          {},
+          UserController.getSafeUserFields(user),
+          { Documents: documents });
+        ResponseHandler.sendResponse(
+          response,
+          200,
+          safeUser
+        );
       } else {
-        response.status(404).json({
-          message: 'User not found'
-        });
+        ResponseHandler.send404(response);
       }
     });
   }

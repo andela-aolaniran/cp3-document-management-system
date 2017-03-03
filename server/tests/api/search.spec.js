@@ -29,19 +29,20 @@ describe('Search', () => {
     });
   });
 
-  describe('Documents', () => {
-    it('should return documents limited by a specified number', (done) => {
-      const searchLimit = 3;
+  describe('Search Documents', () => {
+    it(`should return a 400 (bad request) status code if an invalid
+    limit is specified`,
+    (done) => {
+      const searchLimit = -1;
       client.get(`/api/documents/?limit=${searchLimit}`)
       .set({ 'x-access-token': adminUser.token })
       .end((error, response) => {
-        expect(response.status).to.equal(200);
-        expect(response.body.length).to.equal(searchLimit);
+        expect(response.status).to.equal(400);
         done();
       });
     });
 
-    it('should return documents ordered by published date in descending order',
+    it('should return Documents ordered by createdAt date in descending order',
     (done) => {
       client.get('/api/documents/')
       .set({ 'x-access-token': adminUser.token })
@@ -57,7 +58,7 @@ describe('Search', () => {
       });
     });
 
-    it('should return only documents that match a specific query', (done) => {
+    it('should return only Documents that match a specific query', (done) => {
       const searchText = SpecHelper.validPrivateDocument1.title.split(/\s/)[0];
       client.get(`/api/documents/?search=${searchText}`)
       .set({ 'x-access-token': adminUser.token })
@@ -72,13 +73,24 @@ describe('Search', () => {
   });
 
   describe('Users', () => {
-    it('should return documents limited by a specified number', (done) => {
+    it('should return Documents limited by a specified number', (done) => {
       const searchLimit = 3;
       client.get(`/api/users/?limit=${searchLimit}`)
       .set({ 'x-access-token': adminUser.token })
       .end((error, response) => {
         expect(response.status).to.equal(200);
         expect(response.body.length).to.equal(searchLimit);
+        done();
+      });
+    });
+
+    it('should return a 400 status code if an invalid limit is specified',
+    (done) => {
+      const searchLimit = -1;
+      client.get(`/api/users/?limit=${searchLimit}`)
+      .set({ 'x-access-token': adminUser.token })
+      .end((error, response) => {
+        expect(response.status).to.equal(400);
         done();
       });
     });
@@ -116,12 +128,23 @@ describe('Search', () => {
 
   describe('Roles', () => {
     it('should return Roles limited by a specified number', (done) => {
-      const searchLimit = 1;
+      const searchLimit = 2;
       client.get(`/api/roles/?limit=${searchLimit}`)
       .set({ 'x-access-token': adminUser.token })
       .end((error, response) => {
         expect(response.status).to.equal(200);
         expect(response.body.length).to.equal(searchLimit);
+        done();
+      });
+    });
+
+    it('should return a 400 status code if an invalid limit is specified',
+    (done) => {
+      const searchLimit = -1;
+      client.get(`/api/roles/?limit=${searchLimit}`)
+      .set({ 'x-access-token': adminUser.token })
+      .end((error, response) => {
+        expect(response.status).to.equal(400);
         done();
       });
     });

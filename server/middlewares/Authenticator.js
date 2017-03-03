@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken';
+import ResponseHandler from '../helpers/ResponseHandler';
 import database from '../models';
 
 const SECRET_KEY = `${process.env.SECRET_KEY}`;
@@ -8,48 +9,84 @@ const userDb = database.User;
  * Class to implement authentication middlewares
  */
 class Authenticator {
+
   /**
-   * Method to authenticate a user before proceeding
+   * Method to get token from a request object
+   * @param {Object} request - Request Object
+   * @return {Object} - returns the token if it is present in the
+   * request, otherwise returns undefined
+   */
+  static getTokenInRequest(request) {
+    const token = request.headers.authorization ||
+      request.body.token ||
+      request.headers['x-access-token'];
+    return token;
+  }
+
+  /**
+   * Method to set this users active token
+   * @param {Object} user - User model object
+   * @param {String} activeToken - active token to be set for this user
+   * @return {Promise} - Promise object
+   */
+  static setUserActiveToken(user, activeToken) {
+    return user.update({ activeToken });
+  }
+
+  /**
+   * Method to verify a token and return the decoded object
+   * @param {Object} token - Token to be verified
+   * @return{Object|null} - returns decoded object if the token is
+   * valid, otherwise returns null
+   */
+  static verifyToken(token) {
+    try {
+      return jwt.verify(token, SECRET_KEY);
+    } catch (error) {
+      return null;
+    }
+  }
+
+  /**
+   * Method to authenticate a user token before proceeding
    * to protected routes
    * @param {Object} request - The request Object
    * @param {Object} response - The response Object
    * @param {Function} next - Function call to move to the next middleware
    * or endpoint controller
-   * @return {Void} - Returns void
+   * @return {undefined} - Returns undefined
    */
   static authenticateUser(request, response, next) {
-    const token = request.headers.authorization ||
-      request.body.token ||
-      request.headers['x-access-token'];
+    const token = Authenticator.getTokenInRequest(request);
     if (token) {
-      jwt.verify(token, SECRET_KEY, (error, decoded) => {
-        if (error) {
-          response.status(401).json({
-            message: 'Authentication failed due to invalid token!'
-          });
-        } else {
-          const id = decoded.userId;
-          userDb.findOne({
-            where: { id },
-            attributes: ['activeToken']
-          })
-          .then((user) => {
-            const activeToken = user.activeToken;
-            if (activeToken === token) {
-              request.decoded = decoded;
-              next();
-            } else {
-              response.status(401).json({
-                message: 'Authentication failed due to expired token!'
-              });
-            }
-          });
-        }
-      });
+      const decoded = Authenticator.verifyToken(token);
+      if (decoded) {
+        userDb.findById(decoded.userId, {
+          attributes: ['activeToken', 'roleId']
+        })
+        .then((user) => {
+          if (user && user.activeToken === token) {
+            request.decoded = decoded;
+            request.decoded.roleId = user.roleId;
+            next();
+          } else {
+            ResponseHandler.send401(
+              response,
+              { message: 'Invalid Authentication Token' }
+            );
+          }
+        });
+      } else {
+        ResponseHandler.send401(
+          response,
+          { message: 'Invalid Authentication Token' }
+        );
+      }
     } else {
-      response.status(401).json({
-        message: 'Authentication required for this route'
-      });
+      ResponseHandler.send401(
+        response,
+        { message: 'Authentication Token Required' }
+      );
     }
   }
 
@@ -60,8 +97,7 @@ class Authenticator {
    */
   static generateToken(user) {
     return jwt.sign({
-      userId: user.id,
-      roleId: user.roleId
+      userId: user.id
     },
     SECRET_KEY,
     { expiresIn: '2 days' });
@@ -74,7 +110,7 @@ class Authenticator {
    * otherwise false
    */
   static verifyAdmin(roleId) {
-    return roleId === 1;
+    return Number(roleId) === 1;
   }
 }
 

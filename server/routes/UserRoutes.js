@@ -1,5 +1,6 @@
 import UserController from '../controllers/UserController';
 import Authenticator from '../middlewares/Authenticator';
+import UserMiddleware from '../middlewares/UserMiddleware';
 
 /**
  * Class to create an instance of a UserRoutes Object
@@ -20,6 +21,7 @@ class UserRoutes {
     UserRoutes.fetchUsers(router);
     UserRoutes.updateUser(router);
     UserRoutes.deleteUser(router);
+    UserRoutes.fetchUserDocuments(router);
   }
 
   /**
@@ -30,8 +32,9 @@ class UserRoutes {
   static createUser(router) {
     router.post(
       '/api/users/',
+      UserMiddleware.validateCreateRequest,
       UserController.createUser
-      );
+    );
   }
 
   /**
@@ -68,6 +71,7 @@ class UserRoutes {
     router.get(
       '/api/users/',
       Authenticator.authenticateUser,
+      UserMiddleware.validateGetRequest,
       UserController.fetchUsers
     );
   }
@@ -82,6 +86,7 @@ class UserRoutes {
     router.get(
       '/api/users/:id',
       Authenticator.authenticateUser,
+      UserMiddleware.validateGetRequest,
       UserController.fetchUser
     );
   }
@@ -95,6 +100,7 @@ class UserRoutes {
     router.put(
       '/api/users/:id',
       Authenticator.authenticateUser,
+      UserMiddleware.validateUpdateRequest,
       UserController.updateUser
     );
   }
@@ -108,7 +114,21 @@ class UserRoutes {
     router.delete(
       '/api/users/:id',
       Authenticator.authenticateUser,
+      UserMiddleware.validateDeleteRequest,
       UserController.deleteUser
+    );
+  }
+
+  /**
+   * Method to set up route for fetching all specified user documents
+   * @param{Object} router - Express router
+   * @return{Void} - Returns Void
+   */
+  static fetchUserDocuments(router) {
+    router.get(
+      '/api/users/:id/documents',
+      Authenticator.authenticateUser,
+      UserController.fetchUserDocuments
     );
   }
 }
