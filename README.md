@@ -1,6 +1,6 @@
 # cp3-document-management-system
 [![Build Status](https://travis-ci.org/andela-aolaniran/cp3-document-management-system.svg?branch=feature/138543863/implement-api-endpoints)](https://travis-ci.org/andela-aolaniran/cp3-document-management-system)  [![Coverage Status](https://coveralls.io/repos/github/andela-aolaniran/cp3-document-management-system/badge.svg?branch=bug%2F140875763%2Fapi-defense-feedback-implementation)](https://coveralls.io/github/andela-aolaniran/cp3-document-management-system?branch=bug%2F140875763%2Fapi-defense-feedback-implementation)  [![Issue Count](https://codeclimate.com/github/andela-aolaniran/cp3-document-management-system/badges/issue_count.svg)](https://codeclimate.com/github/andela-aolaniran/cp3-document-management-system) [![Code Climate](https://codeclimate.com/github/andela-aolaniran/cp3-document-management-system/badges/gpa.svg)](https://codeclimate.com/github/andela-aolaniran/cp3-document-management-system)
-## cp3-document-management-system
+
 This is a full stack document management system, complete with roles and privileges . Each document defines access rights; the document defines which roles can access it. Also, each document specifies the date it was published.
 Users are categorized by roles.
 
