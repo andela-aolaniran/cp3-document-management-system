@@ -370,3 +370,4 @@ CP3-Document-Management-System is implemented using a number of technologies, th
    [npm-run-all]: <https://www.npmjs.com/package/npm-run-all>
    [webpack]: <https://webpack.github.io/>
    [webpack-dev-middleware]: <https://webpack.github.io/>
+   [webpack-hot-middleware]: <https://webpack.github.io/>
