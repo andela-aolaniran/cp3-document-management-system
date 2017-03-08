@@ -106,7 +106,7 @@ export default class UserMiddleware {
         response,
         { message: 'Invalid Limit' }
       );
-    } else if (request.query && Number(request.query.offset) < 1) {
+    } else if (request.query && Number(request.query.offset) < 0) {
       ResponseHandler.send400(
         response,
         { message: 'Invalid Offset' }

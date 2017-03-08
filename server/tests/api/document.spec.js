@@ -126,14 +126,30 @@ describe('Documents:', () => {
       });
     });
 
+    // our duplicate document
+    let duplicateDocument;
     it(`should set the newly created Document access to the default access
     ('public') if no access is specified`, (done) => {
       const defaultDocument = SpecHelper.generateRandomDocument();
+      duplicateDocument = defaultDocument;
       client.post('/api/documents')
       .send(defaultDocument)
       .set({ 'x-access-token': regularUser1.token })
       .end((error, response) => {
+        expect(response.status).to.equal(201);
         expect(response.body.access).to.equal('public');
+        done();
+      });
+    });
+
+    it(`should not allow creation of duplicate document with respect to the
+    document owner, title, and content`, (done) => {
+      client.post('/api/documents')
+      .send(duplicateDocument)
+      .set({ 'x-access-token': regularUser1.token })
+      .end((error, response) => {
+        expect(response.status).to.equal(400);
+        expect(response.body.access).to.equal(undefined);
         done();
       });
     });
@@ -194,7 +210,7 @@ describe('Documents:', () => {
       .set({ 'x-access-token': regularUser3.token })
       .end((error, response) => {
         expect(response.status).to.equal(200);
-        response.body.Documents.forEach((document) => {
+        response.body.documents.forEach((document) => {
           expect(document.role).to.not.equal('private');
         });
         done();
@@ -219,7 +235,7 @@ describe('Documents:', () => {
       .set({ 'x-access-token': adminUser.token })
       .end((error, response) => {
         expect(response.status).to.equal(200);
-        response.body.Documents.forEach((document) => {
+        response.body.documents.forEach((document) => {
           expect(document.access).to.be.oneOf(['private', 'role', 'public']);
         });
         done();
@@ -241,7 +257,7 @@ describe('Documents:', () => {
         .set({ 'x-access-token': noDocumentsUser.token })
         .end((error1, response1) => {
           expect(response1.status).to.equal(200);
-          expect(response1.body.Documents.length).to.be.equal(0);
+          expect(response1.body.documents.length).to.be.equal(0);
           done();
         });
       });
@@ -254,7 +270,7 @@ describe('Documents:', () => {
       .set({ 'x-access-token': regularUser1.token })
       .end((error, response) => {
         expect(response.status).to.equal(200);
-        response.body.Documents.forEach((document) => {
+        response.body.documents.forEach((document) => {
           expect(document.access).to.be.oneOf(['public', 'role']);
         });
         done();
@@ -367,6 +383,7 @@ describe('Documents:', () => {
           expect(document.access).to.be.oneOf(['role', 'private', 'public']);
           // ensure only this user private documents are returned
           if (document.access === 'private') {
+            console.log(document, regularUser1.id)
             expect(document.ownerId).to.equal(regularUser1.id);
           }
         });

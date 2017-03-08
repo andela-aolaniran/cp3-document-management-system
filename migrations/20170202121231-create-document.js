@@ -10,7 +10,6 @@ module.exports = {
       },
       title: {
         type: Sequelize.STRING,
-        unique: true,
         allowNull: false
       },
       content: {
@@ -26,6 +25,10 @@ module.exports = {
         },
         onUpdate: 'cascade',
         onDelete: 'no action'
+      },
+      ownerRoleId: {
+        type: Sequelize.INTEGER,
+        allowNull: false
       },
       createdAt: {
         allowNull: false,

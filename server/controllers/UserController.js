@@ -150,6 +150,7 @@ class UserController {
     const search = request.query.search;
     const limit = request.query.limit;
     const offset = request.query.offset;
+    const page = request.query.page;
     const queryBuilder = {
       order: '"createdAt" DESC'
     };
@@ -158,6 +159,12 @@ class UserController {
     }
     if (offset) {
       queryBuilder.offset = offset;
+    }
+    if (page) {
+      // override offset if a page is specified, and default limit is 10
+      const pageLimit = limit || 10;
+      queryBuilder.offset = (page * pageLimit) - pageLimit;
+      queryBuilder.limit = pageLimit;
     }
     if (search) {
       queryBuilder.where = {
@@ -172,11 +179,15 @@ class UserController {
     }
     userDB.findAll(queryBuilder)
     .then((users) => {
-      ResponseHandler.sendResponse(
-        response,
-        200,
-        users.map(user => UserController.getSafeUserFields(user))
-      );
+      if (users.length > 0) {
+        ResponseHandler.sendResponse(
+          response,
+          200,
+          users.map(user => UserController.getSafeUserFields(user))
+        );
+      } else {
+        ResponseHandler.send404(response);
+      }
     });
   }
 
@@ -283,7 +294,7 @@ class UserController {
         const safeUser = Object.assign(
           {},
           UserController.getSafeUserFields(user),
-          { Documents: documents });
+          { documents });
         ResponseHandler.sendResponse(
           response,
           200,

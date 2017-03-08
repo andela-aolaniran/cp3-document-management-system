@@ -22,7 +22,6 @@ class DocumentController {
       title: document.title,
       content: document.content,
       ownerId: document.ownerId,
-      ownerRoleId: document.roleId,
       access: document.access,
       createdAt: document.createdAt
     };
@@ -38,6 +37,7 @@ class DocumentController {
       title: request.body.title,
       content: request.body.content,
       ownerId: request.decoded.userId,
+      ownerRoleId: request.decoded.roleId,
       access: request.body.access || 'public'
     };
     documentDb.create(document)
@@ -102,18 +102,14 @@ class DocumentController {
     documentDb.findOne({
       where: {
         id: documentId
-      },
-      include: [{
-        model: database.User,
-        attributes: ['roleId']
-      }]
+      }
     })
     .then((document) => {
       if (document) {
         // lets chceck required access
         if (
           (document.access === 'public'
-          || (document.User && requesterRoleId === document.User.roleId))
+          || (requesterRoleId === document.ownerRoleId))
           && document.access !== 'private') {
           ResponseHandler.sendResponse(
             response,
@@ -140,6 +136,12 @@ class DocumentController {
           response
         );
       }
+    })
+    .catch((error) => {
+      ErrorHandler.handleRequestError(
+        response,
+        error
+      );
     });
   }
 
@@ -153,21 +155,24 @@ class DocumentController {
     const search = request.query.search;
     const limit = request.query.limit;
     const offset = request.query.offset;
+    const page = request.query.page;
     const requesterRoleId = request.decoded.roleId;
     const requesterId = request.decoded.userId;
     const queryBuilder = {
       attributes: ['id', 'ownerId', 'access', 'title', 'content', 'createdAt'],
-      include: [{
-        model: database.User,
-        attributes: ['roleId']
-      }],
-      order: '"createdAt" DESC'
+      order: request.query.order || '"createdAt" DESC'
     };
     if (limit) {
-      queryBuilder.limit = limit >= 0 ? limit : 0;
+      queryBuilder.limit = limit;
     }
     if (offset) {
-      queryBuilder.offset = offset >= 0 ? offset : 0;
+      queryBuilder.offset = offset;
+    }
+    if (page) {
+      // override offset if a page is specified, and default limit is 10
+      const pageLimit = limit || 10;
+      queryBuilder.offset = (page * pageLimit) - pageLimit;
+      queryBuilder.limit = pageLimit;
     }
     if (search) {
       queryBuilder.where = {
@@ -178,28 +183,44 @@ class DocumentController {
         }]
       };
     }
+
+    const accessFilter = Authenticator.verifyAdmin(requesterRoleId) ?
+      [] : [
+        { access: 'public' },
+        { ownerId: requesterId },
+        { $and: [
+          { access: 'role' },
+          { ownerRoleId: requesterRoleId }
+        ] }
+      ];
+
+    const searchFilter = [
+      {
+        title: {
+          $like: `%${search}%` }
+      }, {
+        content: {
+          $like: `%${search}%` }
+      }
+    ];
+
+    if (search) {
+      queryBuilder.where = {
+        $or: [...searchFilter, ...accessFilter]
+      };
+    } else if (!Authenticator.verifyAdmin(requesterRoleId)) {
+      queryBuilder.where = {
+        $or: [...accessFilter]
+      };
+    }
+
     documentDb.findAll(queryBuilder)
-    .then((fetchedDocments) => {
-      if (fetchedDocments.length > 0) {
-        const accessedDocuments = fetchedDocments.filter((document) => {
-          if (Authenticator.verifyAdmin(requesterId)) {
-            return true;
-          // for other users, ensure they have appropriate access rights
-          } else if (
-            (document.access === 'public'
-            || (document.User && requesterRoleId === document.User.roleId))
-            && document.access !== 'private') {
-            return true;
-          } else if (document.access === 'private'
-            && document.ownerId === requesterId) {
-            return true;
-          }
-          return false;
-        });
+    .then((fetchedDocuments) => {
+      if (fetchedDocuments.length > 0) {
         ResponseHandler.sendResponse(
           response,
           200,
-          accessedDocuments
+          fetchedDocuments
         );
       } else {
         ResponseHandler.send404(response);

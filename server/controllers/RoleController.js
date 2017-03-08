@@ -104,6 +104,12 @@ class RoleController {
       } else {
         ResponseHandler.send404(response);
       }
+    })
+    .catch((error) => {
+      ErrorHandler.handleRequestError(
+        response,
+        error
+      );
     });
   }
 
@@ -117,6 +123,7 @@ class RoleController {
     const search = request.query.search;
     const limit = request.query.limit;
     const offset = request.query.offset;
+    const page = request.query.page;
     const queryBuilder = {
       attributes: ['id', 'title', 'createdAt'],
       order: '"createdAt" DESC'
@@ -127,6 +134,12 @@ class RoleController {
     if (offset) {
       queryBuilder.offset = offset;
     }
+    if (page) {
+      // override offset if a page is specified, and default limit is 10
+      const pageLimit = limit || 10;
+      queryBuilder.offset = (page * pageLimit) - pageLimit;
+      queryBuilder.limit = pageLimit;
+    }
     if (search) {
       queryBuilder.where = {
         title: {
@@ -136,11 +149,15 @@ class RoleController {
     }
     roleDb.findAll(queryBuilder)
     .then((roles) => {
-      ResponseHandler.sendResponse(
-        response,
-        200,
-        roles
-      );
+      if (roles.length > 0) {
+        ResponseHandler.sendResponse(
+          response,
+          200,
+          roles
+        );
+      } else {
+        ResponseHandler.send404(response);
+      }
     });
   }
 }

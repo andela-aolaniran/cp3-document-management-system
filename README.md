@@ -4,10 +4,10 @@
 This is a full stack document management system, complete with roles and privileges . Each document defines access rights; the document defines which roles can access it. Also, each document specifies the date it was published.
 Users are categorized by roles.
 
-#### *Postman Collection*
+## Postman Collection
 [![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/79158ea63ffdea6731dd)
 
-#### *Features*
+## Features
 
 1. **Authentication**
   - It uses JWT for authentication.  
@@ -34,7 +34,7 @@ Users are categorized by roles.
   - It ensures private access typed documents can only be retrieved by their owners, public access typed documents can be retrieved by all users and role access typed documents can be retrieved by ONLY users with the same role level as the document owner.     
   - It ensures only authenticated users can delete, edit and update documents they own and users cannot delete documents they do not own (with the exception of the admin). 
 
-#### *API Endpoints*
+## API Endpoints
 | **HTTP Verb** | **Endpoint** | **Functionality**|
 |------|-------|-----------------|
 | **POST** | api/users/login | Logs a user in and returns a token which should be subsequently used to access authenticated endpoints |
@@ -56,7 +56,264 @@ Users are categorized by roles.
 | **PUT** | api/roles/:id | Update role attributes (`admin privilege required`) |
 | **DELETE** | api/delete/:id | Delete role (`admin privilege required`) |
 
-#### *Contributing*
+## API Endpoints Sample Requests & Responses
+##### _Users Endpoint_
+1. *Create User*
+  - Request
+    * Endpoint - `post: /api/users`
+    * Body - `application/json`
+    ````javascript
+    {
+      "firstName": "Unique User",
+      "lastName": "lastname",
+      "email": "uniqueuser@unique.com",
+      "password": "password"
+    }
+    ````
+  - Response
+    * Status - `201`
+    * Body - `application/json`
+    ````javascript
+    {
+      "id": 5,
+      "roleId": 2,
+      "email": "lastname.firstname@mail.com",
+      "firstName": "firstname",
+      "lastName": "lastname",
+      "createdAt": "2017-03-08T18:13:42.019Z",
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
+    }
+    ````
+2. *User Log In*
+  - Request
+    * Endpoint - `post: /api/users/login`
+    * Body - `application/json`
+    ````javascript
+    {
+      "email": "uniqueuser@unique.com",
+      "password": "password"
+    }
+    ````
+  - Response
+    * Status - `200`
+    * Body - `application/json`
+    ````javascript
+    {
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
+    }
+    ````
+3. *User Log out*
+  - Request
+    * Endpoint - `post: /api/users/logout`
+    * Header - `x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9`
+
+  - Response
+    * Status - `200`
+    * Body - `application/json`
+    ````javascript
+    {
+      "message": "Successfully logged out"
+    }
+    ````
+4. *Get users*
+  - Request
+    * Endpoint - `get: /api/users`
+    * Header - `x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9`
+   
+  - Response
+    * Status - `200`
+    * Body - `application/json`
+    ````javascript
+    {
+      [{
+        "id": 5,
+        "email": "testuser1@mail.com",
+        "firstName": "firstname",
+        "lastName": "lastname",
+        "createdAt": "2017-03-08T18:13:42.019Z"
+      },
+      {
+        "id": 4,
+        "email": "testuser2@mail.com",
+        "firstName": "test",
+        "lastName": "user",
+        "createdAt": "2017-03-08T16:02:50.822Z"
+      },
+      {
+        "id": 3,
+        "email": "testuser3@testMail.com",
+        "firstName": "test2",
+        "lastName": "user2",
+        "createdAt": "2017-03-08T15:46:08.499Z"
+      }]
+    }
+    ````
+
+##### _Documents Endpoint_
+1. *Create Document*
+  - Request
+    * Endpoint - `post: /api/documents`
+    * Header - `x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9`
+    * Body - `application/json`
+    ````javascript
+    {
+      "title": "Sample Title",
+      "content": "Sample content",
+      "access": "public"
+    }
+    ````
+  - Response
+    * Status - `201`
+    * Body - `application/json`
+    ````javascript
+    {
+      "id": 14,
+      "title": "Sample Title",
+      "content": "Sample Content",
+      "ownerId": 1,
+      "access": "public",
+      "createdAt": "2017-03-08T18:29:02.187Z"
+    }
+    ````
+2. *Get Documents*
+  - Request
+    * Endpoint - `get: /api/documents`
+    * Body - `application/json`
+    * Header - `x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9`
+  - Response
+    * Status - `200`
+    * Body - `application/json`
+    ````javascript
+      [{
+        "id": 14,
+        "ownerId": 1,
+        "access": "public",
+        "title": "Sample Title",
+        "content": "Sample Content",
+        "createdAt": "2017-03-08T18:29:02.187Z"
+      },
+      {
+        "id": 13,
+        "ownerId": 1,
+        "access": "public",
+        "title": "the titles",
+        "content": "the contents again and again",
+        "createdAt": "2017-03-08T17:19:20.629Z"
+      },
+      {
+        "id": 12,
+        "ownerId": 4,
+        "access": "private",
+        "title": "rerererr",
+        "content": "theh re",
+        "createdAt": "2017-03-08T16:05:48.160Z"
+      },
+      {
+        "id": 4,
+        "ownerId": 2,
+        "access": "public",
+        "title": "Test Document 4",
+        "content": "Test Document 4",
+        "createdAt": "2017-03-08T15:46:08.509Z"
+      }]
+    ````
+3. *Delete Document*
+  - Request
+    * Endpoint - `delete: /api/documents/14`
+    * Header- `x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9`
+
+  - Response
+    * Status - `200`
+    * Body - `application/json`
+    ````javascript
+    {
+      "message": "Successfully Deleted"
+    }
+    ````
+4. *Update Document*
+  - Request
+    * Endpoint - `put: /api/documents/14`
+    * Header- `x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9`
+  - Response
+    * Status - `200`
+    * body - `application/json`
+    ````javascript
+    {
+        "message": "Document Updated"
+    }
+    ````
+
+##### _Roles Endpoint_
+1. *Create Role*
+  - Request
+    * Endpoint - `post: /api/roles`
+    * Header - `x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9`
+    * Body - `application/json`
+    ````javascript
+    {
+      "title": "guest"
+    }
+    ````
+  - Response
+    * Status - `201`
+    * Body - `application/json`
+    ````javascript
+    {
+        "id": 3,
+        "title": "guest"
+    }
+    ````
+2. *Get Roles*
+  - Request
+    * Endpoint - `get: /api/roles`
+    * Body - `application/json`
+    * Header - `x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9`
+  - Response
+    * Status - `200`
+    * Body - `application/json`
+    ````javascript
+      [{
+        "id": 2,
+        "title": "Sample Title",
+        "createdAt": "2017-03-08T18:38:22.308Z"
+      },
+      {
+        "id": 1,
+        "title": "regular",
+        "createdAt": "2017-03-08T15:46:08.245Z"
+      }]
+    ````
+3. *Delete Role*
+  - Request
+    * Endpoint - `delete: /api/roles/3`
+    * Header- `x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9`
+  - Response
+    * Status - `200`
+    * Body - `application/json`
+    ````javascript
+    {
+      "message": "Successfully Deleted"
+    }
+    ````
+4. *Update Role*
+  - Request
+    * Endpoint - `put: /api/roles/3`
+    * Header- `x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9`
+    ````javascript
+    {
+      "title": "ghosts"
+    }
+    ````
+  - Response
+    * Status - `200`
+    * Body - `application/json`
+    ````javascript
+    {
+        "message": "Role Updated"
+    }
+    ````
+    
+## Contributing
 1. Fork this repository to your GitHub account
 2. Clone the forked repository
 3. Create your feature branch
@@ -64,7 +321,7 @@ Users are categorized by roles.
 5. Push to the remote branch
 6. Open a Pull Request
 
-#### *Task List*
+## Task List
 - [x] Setup Version Control System
 - [x] Integrate Slack BOT notifications
 - [x] Integrate Hound CI service
@@ -76,7 +333,7 @@ Users are categorized by roles.
 - [ ] Set up Webpack to run mundane tasks for development of the Client side
 - [ ] create a frontend/client side interface using React with Redux architecture
 
-#### *Technologies*
+## Technologies
 CP3-Document-Management-System is implemented using a number of technologies, these include:
 * [node.js] - evented I/O for the backend
 * [babel-cli] - Babel Command line interface 
@@ -113,4 +370,3 @@ CP3-Document-Management-System is implemented using a number of technologies, th
    [npm-run-all]: <https://www.npmjs.com/package/npm-run-all>
    [webpack]: <https://webpack.github.io/>
    [webpack-dev-middleware]: <https://webpack.github.io/>
-   [webpack-hot-middleware]: <https://webpack.github.io/>

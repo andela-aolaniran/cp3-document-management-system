@@ -3,9 +3,6 @@ export default (sequelize, DataTypes) => {
     title: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: {
-        msg: 'This title is already taken.'
-      },
       validate: {
         notEmpty: {
           msg: 'Title cannot be empty'
@@ -37,6 +34,10 @@ export default (sequelize, DataTypes) => {
           msg: 'OwnerId must be an integer'
         }
       }
+    },
+    ownerRoleId: {
+      type: DataTypes.INTEGER,
+      allowNull: false
     }
   }, {
     classMethods: {

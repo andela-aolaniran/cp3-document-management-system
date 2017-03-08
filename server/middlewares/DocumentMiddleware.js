@@ -1,4 +1,5 @@
 import ResponseHandler from '../helpers/ResponseHandler';
+import database from '../models/index';
 
 /**
  * Middleware class to handle verify/check Document related
@@ -24,7 +25,25 @@ export default class DocumentMiddleware {
       request.body.title &&
       request.body.content
     ) {
-      next();
+      // check for document duplicates here
+      database.Document.findAll({
+        where: {
+          $and: [
+            { ownerId: request.decoded.userId },
+            { title: request.body.title },
+            { content: request.body.content }
+          ]
+        }
+      }).then((documents) => {
+        if (documents.length > 0) {
+          ResponseHandler.send400(
+            response,
+            { message: 'Duplicate Documents Not Allowed' }
+          );
+        } else {
+          next();
+        }
+      });
     } else {
       ResponseHandler.send400(
         response,
@@ -47,7 +66,7 @@ export default class DocumentMiddleware {
         response,
         { message: 'Invalid Limit' }
       );
-    } else if (request.query && Number(request.query.offset) < 1) {
+    } else if (request.query && Number(request.query.offset) < 0) {
       ResponseHandler.send400(
         response,
         { message: 'Invalid Offset' }
