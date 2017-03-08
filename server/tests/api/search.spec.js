@@ -63,6 +63,7 @@ describe('Search', () => {
       client.get(`/api/documents/?search=${searchText}`)
       .set({ 'x-access-token': adminUser.token })
       .end((error, response) => {
+        expect(response.status).to.equal(200);
         response.body.forEach(document =>
           expect(document.title).to.contain(searchText) ||
           expect(document.content).to.contain(searchText)
@@ -112,10 +113,11 @@ describe('Search', () => {
     });
 
     it('should return only users that match a specific query', (done) => {
-      const searchText = 'Azeez';
+      const searchText = adminUser.firstName;
       client.get(`/api/users/?search=${searchText}`)
       .set({ 'x-access-token': adminUser.token })
       .end((error, response) => {
+        expect(response.status).to.equal(200);
         response.body.forEach(user =>
           expect(user.firstName).to.contain(searchText) ||
           expect(user.lastName).to.contain(searchText) ||
@@ -167,9 +169,10 @@ describe('Search', () => {
 
     it('should return only Roles that match a specific query', (done) => {
       const searchText = 'regular';
-      client.get(`/api/users/?search=${searchText}`)
+      client.get(`/api/roles/?search=${searchText}`)
       .set({ 'x-access-token': adminUser.token })
       .end((error, response) => {
+        expect(response.status).to.equal(200);
         response.body.forEach(role =>
           expect(role.title).to.contain(searchText)
         );

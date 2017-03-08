@@ -383,7 +383,6 @@ describe('Documents:', () => {
           expect(document.access).to.be.oneOf(['role', 'private', 'public']);
           // ensure only this user private documents are returned
           if (document.access === 'private') {
-            console.log(document, regularUser1.id)
             expect(document.ownerId).to.equal(regularUser1.id);
           }
         });
