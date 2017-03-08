@@ -1,231 +1,209 @@
 import faker from 'faker';
 
-const testData = {
-  adminUser: {
-    username: faker.internet.userName(),
-    firstName: faker.name.firstName(),
-    lastName: faker.name.lastName(),
-    email: faker.internet.email(),
-    password: faker.internet.password(),
-    roleId: 1
-  },
-  adminUser1: {
-    username: faker.internet.userName(),
-    firstName: faker.name.firstName(),
-    lastName: faker.name.lastName(),
-    email: faker.internet.email(),
-    password: faker.internet.password(),
-    roleId: 1
-  },
-  adminUser2: {
-    username: faker.internet.userName(),
-    firstName: faker.name.firstName(),
-    lastName: faker.name.lastName(),
-    email: faker.internet.email(),
-    password: faker.internet.password(),
-    roleId: 1
-  },
-  adminUser3: {
-    username: faker.internet.userName(),
-    firstName: faker.name.firstName(),
-    lastName: faker.name.lastName(),
-    email: faker.internet.email(),
-    password: faker.internet.password(),
-    roleId: 1
-  },
-  adminUser4: {
-    username: faker.internet.userName(),
-    firstName: faker.name.firstName(),
-    lastName: faker.name.lastName(),
-    email: faker.internet.email(),
-    password: faker.internet.password(),
-    roleId: 1
-  },
-  adminUser5: {
-    username: faker.internet.userName(),
-    firstName: faker.name.firstName(),
-    lastName: faker.name.lastName(),
-    email: faker.internet.email(),
-    password: faker.internet.password(),
-    roleId: 1
-  },
-  adminUserRole: {
-    username: faker.internet.userName(),
-    firstName: faker.name.firstName(),
-    lastName: faker.name.lastName(),
-    email: faker.internet.email(),
-    password: faker.internet.password(),
-    roleId: 1
-  },
-  adminUserSearch: {
-    username: faker.internet.userName(),
-    firstName: faker.name.firstName(),
-    lastName: faker.name.lastName(),
-    email: faker.internet.email(),
-    password: faker.internet.password(),
-    roleId: 1
-  },
-  adminUserForDocumentTest: {
-    username: faker.internet.userName(),
-    firstName: faker.name.firstName(),
-    lastName: faker.name.lastName(),
-    email: faker.internet.email(),
-    password: faker.internet.password(),
-    roleId: 1
-  },
-  testUser: {
-    username: faker.internet.userName(),
-    firstName: faker.name.firstName(),
-    lastName: faker.name.lastName(),
-    email: faker.internet.email(),
-    password: faker.internet.password()
-  },
-  regularUserForDocumentTest: {
-    username: faker.internet.userName(),
-    firstName: faker.name.firstName(),
-    lastName: faker.name.lastName(),
-    email: faker.internet.email(),
-    password: faker.internet.password(),
-    roleId: 2
-  },
-  regularUserForDocumentTest2: {
-    username: faker.internet.userName(),
-    firstName: faker.name.firstName(),
-    lastName: faker.name.lastName(),
-    email: faker.internet.email(),
-    password: faker.internet.password(),
-    roleId: 2
-  },
-  regularUser1: {
-    username: faker.internet.userName(),
-    firstName: faker.name.firstName(),
-    lastName: faker.name.lastName(),
-    email: faker.internet.email(),
-    password: faker.internet.password(),
-    roleId: 2
-  },
-  regularUserRole: {
-    username: faker.internet.userName(),
-    firstName: faker.name.firstName(),
-    lastName: faker.name.lastName(),
-    email: faker.internet.email(),
-    password: faker.internet.password(),
-    roleId: 2
-  },
-  regularUser2: {
-    username: faker.internet.userName(),
-    firstName: faker.name.firstName(),
-    lastName: faker.name.lastName(),
-    email: faker.internet.email(),
-    password: faker.internet.password(),
-    roleId: 2
-  },
-  regularUser3: {
-    username: faker.internet.userName(),
-    firstName: faker.name.firstName(),
-    lastName: faker.name.lastName(),
-    email: faker.internet.email(),
-    password: faker.internet.password(),
-    roleId: 2
-  },
-  regularUser4: {
-    username: faker.internet.userName(),
-    firstName: faker.name.firstName(),
-    lastName: faker.name.lastName(),
-    email: faker.internet.email(),
-    password: faker.internet.password(),
-    roleId: 2
-  },
-  regularUser5: {
-    username: faker.internet.userName(),
-    firstName: faker.name.firstName(),
-    lastName: faker.name.lastName(),
-    email: faker.internet.email(),
-    password: faker.internet.password(),
-    roleId: 2
-  },
-  // Note before using thise documents, a ownerId property should be added
-  documentRole1: {
-    title: faker.company.catchPhrase(),
-    access: 'role',
-    content: faker.lorem.paragraph()
-  },
-  documentPrivate1: {
-    title: faker.company.catchPhrase(),
-    access: 'private',
-    content: faker.lorem.paragraph()
-  },
-  documentPublic1: {
+const SpecHelper = {
+  validPublicDocument: {
     title: faker.company.catchPhrase(),
     access: 'public',
-    content: faker.lorem.paragraph()
+    content: faker.lorem.paragraph(),
+    ownerId: 1
   },
-  documentRole2: {
-    title: faker.company.catchPhrase(),
-    access: 'role',
-    content: faker.lorem.paragraph()
-  },
-  documentPrivate2: {
-    title: faker.company.catchPhrase(),
-    access: 'private',
-    content: faker.lorem.paragraph()
-  },
-  documentPublic2: {
+  validPublicDocument1: {
     title: faker.company.catchPhrase(),
     access: 'public',
-    content: faker.lorem.paragraph()
+    content: faker.lorem.paragraph(),
+    ownerId: 7
   },
-  documentRole3: {
-    title: faker.company.catchPhrase(),
-    access: 'role',
-    content: faker.lorem.paragraph()
-  },
-  documentPrivate3: {
-    title: faker.company.catchPhrase(),
-    access: 'private',
-    content: faker.lorem.paragraph()
-  },
-  documentPublic3: {
+  validPublicDocument2: {
     title: faker.company.catchPhrase(),
     access: 'public',
-    content: faker.lorem.paragraph()
+    content: faker.lorem.paragraph(),
+    ownerId: 6
   },
-  documentRole4: {
-    title: faker.company.catchPhrase(),
-    access: 'role',
-    content: faker.lorem.paragraph()
-  },
-  documentPrivate4: {
-    title: faker.company.catchPhrase(),
-    access: 'private',
-    content: faker.lorem.paragraph()
-  },
-  documentInvalid: {
-  },
-  documentNoAccess: {
-    title: faker.company.catchPhrase(),
-    content: faker.lorem.paragraph()
-  },
-  documentPublic4: {
+  validPublicDocument3: {
     title: faker.company.catchPhrase(),
     access: 'public',
-    content: faker.lorem.paragraph()
+    content: faker.lorem.paragraph(),
+    ownerId: 5
   },
-  newRole1: {
-    title: 'rookie'
+  validPrivateDocument: {
+    title: faker.company.catchPhrase(),
+    access: 'private',
+    content: faker.lorem.paragraph(),
+    ownerId: 1
   },
-  updateRole1: {
-    title: 'rookie update'
+  validPrivateDocument1: {
+    title: faker.company.catchPhrase(),
+    access: 'private',
+    content: faker.lorem.paragraph(),
+    ownerId: 6
   },
-  duplicateRole1: {
-    title: 'rookie'
+  validPrivateDocument2: {
+    title: faker.company.catchPhrase(),
+    access: 'private',
+    content: faker.lorem.paragraph(),
+    ownerId: 3
   },
-  newRole2: {
-    title: 'amateur'
+  validPrivateDocument3: {
+    title: faker.company.catchPhrase(),
+    access: 'private',
+    content: faker.lorem.paragraph(),
+    ownerId: 1
   },
-  newRole3: {
-    title: 'professional'
+  validRoleDocument: {
+    title: faker.company.catchPhrase(),
+    access: 'role',
+    content: faker.lorem.paragraph(),
+    ownerId: 4
+  },
+  validRoleDocument1: {
+    title: faker.company.catchPhrase(),
+    access: 'role',
+    content: faker.lorem.paragraph(),
+    ownerId: 3
+  },
+  validRoleDocument2: {
+    title: faker.company.catchPhrase(),
+    access: 'role',
+    content: faker.lorem.paragraph(),
+    ownerId: 1
+  },
+  validRoleDocument3: {
+    title: faker.company.catchPhrase(),
+    access: 'role',
+    content: faker.lorem.paragraph(),
+    ownerId: 2
+  },
+  validAdminUser: {
+    firstName: faker.name.firstName(),
+    lastName: faker.name.lastName(),
+    email: faker.internet.email(),
+    password: faker.internet.password(),
+    roleId: 1
+  },
+  validRegularUser: {
+    firstName: faker.name.firstName(),
+    lastName: faker.name.lastName(),
+    email: faker.internet.email(),
+    password: faker.internet.password(),
+    roleId: 2
+  },
+  validRegularUser1: {
+    firstName: faker.name.firstName(),
+    lastName: faker.name.lastName(),
+    email: faker.internet.email(),
+    password: faker.internet.password(),
+    roleId: 2
+  },
+  validRegularUser2: {
+    firstName: faker.name.firstName(),
+    lastName: faker.name.lastName(),
+    email: faker.internet.email(),
+    password: faker.internet.password(),
+    roleId: 2
+  },
+  validRegularUser3: {
+    firstName: faker.name.firstName(),
+    lastName: faker.name.lastName(),
+    email: faker.internet.email(),
+    password: faker.internet.password(),
+    roleId: 2
+  },
+  validRegularUser4: {
+    firstName: faker.name.firstName(),
+    lastName: faker.name.lastName(),
+    email: faker.internet.email(),
+    password: faker.internet.password(),
+    roleId: 2
+  },
+  validRegularUser5: {
+    firstName: faker.name.firstName(),
+    lastName: faker.name.lastName(),
+    email: faker.internet.email(),
+    password: faker.internet.password(),
+    roleId: 2
+  },
+  validRegularUser6: {
+    firstName: faker.name.firstName(),
+    lastName: faker.name.lastName(),
+    email: faker.internet.email(),
+    password: faker.internet.password(),
+    roleId: 2
+  },
+  validRegularUser7: {
+    firstName: faker.name.firstName(),
+    lastName: faker.name.lastName(),
+    email: faker.internet.email(),
+    password: faker.internet.password(),
+    roleId: 2
+  },
+  validRegularUser8: {
+    firstName: faker.name.firstName(),
+    lastName: faker.name.lastName(),
+    email: faker.internet.email(),
+    password: faker.internet.password(),
+    roleId: 2
+  },
+  validRegularUser9: {
+    firstName: faker.name.firstName(),
+    lastName: faker.name.lastName(),
+    email: faker.internet.email(),
+    password: faker.internet.password(),
+    roleId: 2
+  },
+  validRegularRole: {
+    title: 'regular'
+  },
+  validAdminRole: {
+    title: 'admin'
+  },
+  /**
+   * Method to help create a new Model record by extending
+   * a base Model record, thereby avoiding mutation
+   * @param{Object} baseRecord - base record to extend
+   * @param{Object} newAttribute - new attribute to be added to this record
+   * @return{Object} - a new Model record
+   */
+  newRecordFromBase(baseRecord, newAttribute) {
+    return Object.assign({}, baseRecord, newAttribute);
+  },
+  /**
+   * Method to generate a random user on the fly
+   * with a specific role type (1 for admin and 2 for regular user)
+   * @param{Number} roleId - role id for this user
+   * @return{Object} - new User
+   */
+  generateRandomUser(roleId) {
+    return {
+      firstName: faker.name.firstName(),
+      lastName: faker.name.lastName(),
+      email: faker.internet.email(),
+      password: faker.internet.password(),
+      roleId
+    };
+  },
+  /**
+   * Method to generate a random role on the fly
+   * @param{Number} roleTitle - title role
+   * @return{Object} - new Role
+   */
+  generateRandomRole(roleTitle) {
+    return {
+      title: roleTitle
+    };
+  },
+   /**
+   * Method to generate a random role on the fly
+   * @param{String} accessType - specific access type for this
+   * document
+   * @return{Object} - new Document
+   */
+  generateRandomDocument(accessType) {
+    return {
+      title: faker.company.catchPhrase(),
+      access: accessType,
+      content: faker.lorem.paragraph()
+    };
   }
 };
 
-export default testData;
+export default SpecHelper;

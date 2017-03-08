@@ -5,28 +5,25 @@ import { connect } from 'react-redux';
 import Validator from 'validator';
 import Notifications, { notify } from 'react-notify-toast';
 import * as userActions from '../../actions/userActions';
-import TextInput from '../common/TextInput';
 import * as authActions from '../../actions/authActions';
+import TextInput from '../common/TextInput';
 
 /**
  * Class to create a custom user sign up form
  */
-class SignUpForm extends React.Component {
+class SignInForm extends React.Component {
    /**
    * constructor for instantiation of an object of this class
    * @param{Object} props - props passed down to this component
    */
   constructor(props) {
     super(props);
-    this.state = Object.assign(
-      {},
-      props.user,
-      {
-        password: '',
-        passwordConfirmation: ''
-      }
-    );
-    this.handleSignUp = this.handleSignUp.bind(this);
+    this.state = {
+      email: '',
+      password: ''
+    };
+
+    this.handleSignIn = this.handleSignIn.bind(this);
     this.handleTextChange = this.handleTextChange.bind(this);
   }
 
@@ -35,20 +32,18 @@ class SignUpForm extends React.Component {
    * @param{Object} event - sign up event
    * @return{Void} - Returns nothing
    */
-  handleSignUp(event) {
+  handleSignIn(event) {
     event.preventDefault();
     if (this.validateInput()) {
-      this.props.authActions.updateSignUpProcessing(true);
-      this.props.userActions.signUp({
+      this.props.authActions.updateSignInProcessing(true);
+      this.props.userActions.login({
         email: this.state.email,
-        firstName: this.state.firstName,
-        lastName: this.state.lastName,
         password: this.state.password
       });
     } else {
       // we want to show errors here
       notify.show(
-        'Required Fields Are Missing',
+        'Required Fields Are Missing/Invalid',
         'custom',
         5000,
         { background: '#ff5252', text: '#FFFFFF' }
@@ -66,10 +61,7 @@ class SignUpForm extends React.Component {
   validateInput() {
     return (
       Validator.isEmail(this.state.email) &&
-      !Validator.isEmpty(this.state.firstName) &&
-      !Validator.isEmpty(this.state.lastName) &&
-      !Validator.isEmpty(this.state.password) &&
-      Validator.equals(this.state.password, this.state.passwordConfirmation)
+      !Validator.isEmpty(this.state.password)
     );
   }
 
@@ -87,7 +79,7 @@ class SignUpForm extends React.Component {
    * @return{Object} - Progress bar component
    */
   renderProgressBar() {
-    if (this.props.processingSignUp) {
+    if (this.props.processingSignIn) {
       return (
         <div className="row">
           <div className="col s6 offset-s3">
@@ -105,15 +97,15 @@ class SignUpForm extends React.Component {
           <button
             type="submit"
             name="btn_login"
-            disabled={this.props.processingSignUp}
+            disabled={this.props.processingSignIn}
             className="btn waves-effect waves-light teal darken-3 center-align"
           >
-            Create Account
+            Sign In
           </button>
-          <Link to="signin">
+          <Link to="signup">
             <h6
               className="center-align"
-            >Already have an account? Sign In</h6>
+            >Do not have an account ? Sign up now</h6>
           </Link>
         </div>
       </div>
@@ -128,10 +120,10 @@ class SignUpForm extends React.Component {
     return (
       <div className="row">
         <div className="col s6 offset-s3">
-          <h3 className="left-align teal-text darken-3">Yo! Sign Up Now</h3>
+          <h3 className="left-align teal-text darken-3">Yo! Sign In</h3>
           <div className="row grey lighten-5 z-depth-2 form-padding">
             <Notifications />
-            <form onSubmit={this.handleSignUp}>
+            <form onSubmit={this.handleSignIn}>
               <br />
               <div className="input-field col s12">
                 <TextInput
@@ -145,31 +137,7 @@ class SignUpForm extends React.Component {
                 />
               </div>
               <div className="row">
-                <div className="input-field col s6">
-                  <TextInput
-                    id="firstName"
-                    type="text"
-                    className="validate"
-                    value={this.state.firstName}
-                    label="First Name"
-                    placeHolder="Enter your first name"
-                    handleTextChange={this.handleTextChange}
-                  />
-                </div>
-                <div className="input-field col s6">
-                  <TextInput
-                    id="lastName"
-                    type="text"
-                    className="validate"
-                    value={this.state.lastName}
-                    label="Last Name"
-                    placeHolder="Enter your last name"
-                    handleTextChange={this.handleTextChange}
-                  />
-                </div>
-              </div>
-              <div className="row">
-                <div className="input-field col s6">
+                <div className="input-field col s12">
                   <TextInput
                     id="password"
                     type="password"
@@ -177,17 +145,6 @@ class SignUpForm extends React.Component {
                     value={this.state.password}
                     label="Password"
                     placeHolder="Enter your password"
-                    handleTextChange={this.handleTextChange}
-                  />
-                </div>
-                <div className="input-field col s6">
-                  <TextInput
-                    id="passwordConfirmation"
-                    type="password"
-                    className="validate"
-                    value={this.state.passwordConfirmation}
-                    label="Confirm Password"
-                    placeHolder="Verify your password"
                     handleTextChange={this.handleTextChange}
                   />
                 </div>
@@ -203,11 +160,10 @@ class SignUpForm extends React.Component {
   }
 }
 
-SignUpForm.propTypes = {
+SignInForm.propTypes = {
   userActions: PropTypes.object.isRequired,
   authActions: PropTypes.object.isRequired,
-  user: PropTypes.object.isRequired,
-  processingSignUp: PropTypes.bool.isRequired
+  processingSignIn: PropTypes.bool.isRequired
 };
 
 /**
@@ -234,8 +190,8 @@ function mapDispatchToProps(dispatch) {
 function mapStateToProps(state) {
   return {
     user: state.user,
-    processingSignUp: state.processingSignUp
+    processingSignIn: state.processingSignIn
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(SignUpForm);
+export default connect(mapStateToProps, mapDispatchToProps)(SignInForm);

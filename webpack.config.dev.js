@@ -15,7 +15,7 @@ export default {
   target: 'web',
   output: {
     // Note: Physical files are only output by the production build task.
-    path: __dirname + '/dist',
+    path: path.join(__dirname, 'dist'),
     publicPath: '/',
     filename: 'bundle.js'
   },
@@ -35,7 +35,7 @@ export default {
       },
       {
         test: /(\.css)$/,
-        loaders: ['style','css']
+        loaders: ['style', 'css']
       },
       {
         test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,

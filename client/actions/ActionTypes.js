@@ -1,1 +1,7 @@
-export const CREATE_COURSE =  'CREATE_COURSE';
+export const SET_USER = 'SET_USER';
+export const LOGIN_USER = 'LOGIN_USER';
+export const LOGOUT_USER = 'LOGOUT_USER';
+export const PROCESSING_SIGN_UP = 'PROCESSING_SIGN_UP';
+export const PROCESSING_SIGN_IN = 'PROCESSING_SIGN_IN';
+export const SIGN_UP_ERRORS = 'SIGN_UP_ERRORS';
+export const SIGN_IN_ERRORS = 'SIGN_IN_ERRORS';

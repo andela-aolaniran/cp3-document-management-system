@@ -1,4 +1,3 @@
-// fetch our dependencies
 import UserController from '../controllers/UserController';
 import Authenticator from '../middlewares/Authenticator';
 
@@ -21,7 +20,6 @@ class UserRoutes {
     UserRoutes.fetchUsers(router);
     UserRoutes.updateUser(router);
     UserRoutes.deleteUser(router);
-    UserRoutes.fetchUserDocuments(router);
   }
 
   /**
@@ -70,7 +68,6 @@ class UserRoutes {
     router.get(
       '/api/users/',
       Authenticator.authenticateUser,
-      Authenticator.verifyAdmin,
       UserController.fetchUsers
     );
   }
@@ -85,7 +82,6 @@ class UserRoutes {
     router.get(
       '/api/users/:id',
       Authenticator.authenticateUser,
-      Authenticator.verifyAdmin,
       UserController.fetchUser
     );
   }
@@ -112,21 +108,7 @@ class UserRoutes {
     router.delete(
       '/api/users/:id',
       Authenticator.authenticateUser,
-      Authenticator.verifyAdmin,
       UserController.deleteUser
-    );
-  }
-
-  /**
-   * Method to set up route for fetching all specified user documents
-   * @param{Object} router - Express router
-   * @return{Void} - Returns Void
-   */
-  static fetchUserDocuments(router) {
-    router.get(
-      '/api/users/:id/documents',
-      Authenticator.authenticateUser,
-      UserController.fetchUserDocuments
     );
   }
 }

@@ -1,18 +1,61 @@
-import React from 'react';
-import {Link} from 'react-router';
-import ReactDOM from 'react-dom';
+import React, { PropTypes } from 'react';
+import { browserHistory } from 'react-router';
 
 /**
  * Header component for the app
  */
 class Header extends React.Component {
 
-  componentDidMount() {
-    //const element = ReactDOM.findDOMNode(this.refs.nav)
+  constructor(props) {
+    super(props);
+    this.goHome = this.goHome.bind(this);
+  }
 
-    //$(element).ready(() => {
-      $('.button-collapse').sideNav();
-    //});
+  componentDidMount() {
+    $('.button-collapse').sideNav();
+  }
+
+  goHome(event) {
+    event.preventDefault();
+    browserHistory.push('/');
+  }
+
+  renderAppropriateNavLinks() {
+    if (this.props.isLoggedIn) {
+      return (
+        <div>
+          <ul className="right hide-on-med-and-down">
+            <li>
+              <a
+                href
+                onClick={this.props.handleAvailableDocuments}
+              >Availaible Documents</a></li>
+            <li>
+              <a
+                href
+                onClick={this.props.handleProfileUpdate}
+              >My Profile</a></li>
+            <li><a href onClick={this.props.handleViewUsers}>All Users</a></li>
+            <li><a href onClick={this.props.handleSignOut}>Sign out</a></li>
+          </ul>
+          <ul className="side-nav" id="mobile-demo">
+            <li>
+              <a
+                href
+                onClick={this.props.handleAvailableDocuments}
+              >Availaible Documents</a></li>
+            <li>
+              <a
+                href
+                onClick={this.props.handleProfileUpdate}
+              >My Profile</a></li>
+            <li><a href onClick={this.props.handleViewUsers}>All Users</a></li>
+            <li><a href onClick={this.props.handleSignOut}>Sign out</a></li>
+          </ul>
+        </div>
+      );
+    }
+    return null;
   }
 
   /**
@@ -21,28 +64,27 @@ class Header extends React.Component {
    */
   render() {
     return (
-      <div>
-        <nav ref='nav'>
-          <div className='nav-wrapper'>
-            <Link to='/' className='brand-logo right'>Logo</Link>
-            <Link to='/' 
-              data-activates="mobile"
-              className="button-collapse">
-                <i className="material-icons">menu</i>
-            </Link>
-            <ul id='nav-mobile' className='left hide-on-med-and-down'>
-              <li><Link to='about' activeClassName='active'>About</Link></li>
-              <li><Link to='sign_up'>Sign Up</Link></li>
-            </ul>
-            <ul class="side-nav" id="mobile">
-              <li><Link to='about' activeClassName='active'>About</Link></li>
-              <li><Link to='sign_up'>Sign Up</Link></li>
-            </ul>
+      <div className="navbar-fixed">
+        <nav className="teal darken-3">
+          <div className="nav-wrapper">
+            <a href onClick={this.goHome} className="brand-logo">CP3 DMS</a>
+            <a href data-activates="mobile-demo" className="button-collapse">
+              <i className="material-icons">menu</i>
+            </a>
+            {this.renderAppropriateNavLinks()}
           </div>
         </nav>
       </div>
     );
   }
 }
+
+Header.propTypes = {
+  handleSignOut: PropTypes.func.isRequired,
+  handleAvailableDocuments: PropTypes.func.isRequired,
+  handleProfileUpdate: PropTypes.func.isRequired,
+  handleViewUsers: PropTypes.func.isRequired,
+  isLoggedIn: PropTypes.bool.isRequired
+};
 
 export default Header;
