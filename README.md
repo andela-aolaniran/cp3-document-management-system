@@ -125,27 +125,29 @@ Users are categorized by roles.
     * Body - `application/json`
     ````javascript
     {
-      [{
-        "id": 5,
-        "email": "testuser1@mail.com",
-        "firstName": "firstname",
-        "lastName": "lastname",
-        "createdAt": "2017-03-08T18:13:42.019Z"
-      },
-      {
-        "id": 4,
-        "email": "testuser2@mail.com",
-        "firstName": "test",
-        "lastName": "user",
-        "createdAt": "2017-03-08T16:02:50.822Z"
-      },
-      {
-        "id": 3,
-        "email": "testuser3@testMail.com",
-        "firstName": "test2",
-        "lastName": "user2",
-        "createdAt": "2017-03-08T15:46:08.499Z"
-      }]
+      [
+        {
+          "id": 5,
+          "email": "testuser1@mail.com",
+          "firstName": "firstname",
+          "lastName": "lastname",
+          "createdAt": "2017-03-08T18:13:42.019Z"
+        },
+        {
+          "id": 4,
+          "email": "testuser2@mail.com",
+          "firstName": "test",
+          "lastName": "user",
+          "createdAt": "2017-03-08T16:02:50.822Z"
+        },
+        {
+          "id": 3,
+          "email": "testuser3@testMail.com",
+          "firstName": "test2",
+          "lastName": "user2",
+          "createdAt": "2017-03-08T15:46:08.499Z"
+        }
+      ]
     }
     ````
 
@@ -184,38 +186,40 @@ Users are categorized by roles.
     * Status - `200`
     * Body - `application/json`
     ````javascript
-      [{
-        "id": 14,
-        "ownerId": 1,
-        "access": "public",
-        "title": "Sample Title",
-        "content": "Sample Content",
-        "createdAt": "2017-03-08T18:29:02.187Z"
-      },
-      {
-        "id": 13,
-        "ownerId": 1,
-        "access": "public",
-        "title": "the titles",
-        "content": "the contents again and again",
-        "createdAt": "2017-03-08T17:19:20.629Z"
-      },
-      {
-        "id": 12,
-        "ownerId": 4,
-        "access": "private",
-        "title": "rerererr",
-        "content": "theh re",
-        "createdAt": "2017-03-08T16:05:48.160Z"
-      },
-      {
-        "id": 4,
-        "ownerId": 2,
-        "access": "public",
-        "title": "Test Document 4",
-        "content": "Test Document 4",
-        "createdAt": "2017-03-08T15:46:08.509Z"
-      }]
+      [
+        {
+          "id": 14,
+          "ownerId": 1,
+          "access": "public",
+          "title": "Sample Title",
+          "content": "Sample Content",
+          "createdAt": "2017-03-08T18:29:02.187Z"
+        },
+        {
+          "id": 13,
+          "ownerId": 1,
+          "access": "public",
+          "title": "the titles",
+          "content": "the contents again and again",
+          "createdAt": "2017-03-08T17:19:20.629Z"
+        },
+        {
+          "id": 12,
+          "ownerId": 4,
+          "access": "private",
+          "title": "rerererr",
+          "content": "theh re",
+          "createdAt": "2017-03-08T16:05:48.160Z"
+        },
+        {
+          "id": 4,
+          "ownerId": 2,
+          "access": "public",
+          "title": "Test Document 4",
+          "content": "Test Document 4",
+          "createdAt": "2017-03-08T15:46:08.509Z"
+        }
+      ]
     ````
 3. *Delete Document*
   - Request
@@ -272,16 +276,18 @@ Users are categorized by roles.
     * Status - `200`
     * Body - `application/json`
     ````javascript
-      [{
-        "id": 2,
-        "title": "Sample Title",
-        "createdAt": "2017-03-08T18:38:22.308Z"
-      },
-      {
-        "id": 1,
-        "title": "regular",
-        "createdAt": "2017-03-08T15:46:08.245Z"
-      }]
+      [
+        {
+          "id": 2,
+          "title": "Sample Title",
+          "createdAt": "2017-03-08T18:38:22.308Z"
+        },
+        {
+          "id": 1,
+          "title": "regular",
+          "createdAt": "2017-03-08T15:46:08.245Z"
+        }
+      ]
     ````
 3. *Delete Role*
   - Request
@@ -371,4 +377,3 @@ CP3-Document-Management-System is implemented using a number of technologies, th
    [webpack]: <https://webpack.github.io/>
    [webpack-dev-middleware]: <https://webpack.github.io/>
    [webpack-hot-middleware]: <https://webpack.github.io/>
-   

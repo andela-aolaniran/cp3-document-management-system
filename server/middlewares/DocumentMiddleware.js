@@ -36,8 +36,9 @@ export default class DocumentMiddleware {
         }
       }).then((documents) => {
         if (documents.length > 0) {
-          ResponseHandler.send400(
+          ResponseHandler.sendResponse(
             response,
+            409,
             { message: 'Duplicate Documents Not Allowed' }
           );
         } else {

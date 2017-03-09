@@ -148,7 +148,7 @@ describe('Documents:', () => {
       .send(duplicateDocument)
       .set({ 'x-access-token': regularUser1.token })
       .end((error, response) => {
-        expect(response.status).to.equal(400);
+        expect(response.status).to.equal(409);
         expect(response.body.access).to.equal(undefined);
         done();
       });
