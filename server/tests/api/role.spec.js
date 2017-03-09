@@ -283,7 +283,7 @@ describe('Roles:', () => {
       .set({ 'x-access-token': adminUser.token })
       .end((error, response) => {
         expect(response.status).to.equal(200);
-        expect(response.body).to.be.instanceOf(Array);
+        expect(response.body).to.be.instanceOf(Object);
         done();
       });
     });

@@ -167,23 +167,24 @@ class UserController {
       queryBuilder.limit = pageLimit;
     }
     if (search) {
+      const searchList = search.split(/\s+/);
       queryBuilder.where = {
-        $or: [{ firstName: {
-          $iLike: `%${search}%` }
-        }, { lastName: {
-          $iLike: `%${search}%` }
-        }, { email: {
-          $iLike: `%${search}%` }
-        }]
+        $or: [{ firstName: { $iLike: { $any: searchList } } },
+        { lastName: { $iLike: { $any: searchList } } },
+        { email: { $iLike: { $any: searchList } } }]
       };
     }
-    userDB.findAll(queryBuilder)
+    userDB.findAndCountAll(queryBuilder)
     .then((users) => {
-      if (users.length > 0) {
+      if (users.rows.length > 0) {
         ResponseHandler.sendResponse(
           response,
           200,
-          users.map(user => UserController.getSafeUserFields(user))
+          {
+            users: users.rows
+              .map(user => UserController.getSafeUserFields(user)),
+            total: users.count
+          }
         );
       } else {
         ResponseHandler.send404(response);

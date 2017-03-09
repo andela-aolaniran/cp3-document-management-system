@@ -175,12 +175,10 @@ class DocumentController {
       queryBuilder.limit = pageLimit;
     }
     if (search) {
+      const searchList = search.split(/\s+/);
       queryBuilder.where = {
-        $or: [{ title: {
-          $like: `%${search}%` }
-        }, { content: {
-          $like: `%${search}%` }
-        }]
+        $or: [{ title: { $iLike: { $any: searchList } } },
+        { content: { $iLike: { $any: searchList } } }]
       };
     }
 
@@ -214,13 +212,16 @@ class DocumentController {
       };
     }
 
-    documentDb.findAll(queryBuilder)
+    documentDb.findAndCountAll(queryBuilder)
     .then((fetchedDocuments) => {
-      if (fetchedDocuments.length > 0) {
+      if (fetchedDocuments.rows.length > 0) {
         ResponseHandler.sendResponse(
           response,
           200,
-          fetchedDocuments
+          {
+            documents: fetchedDocuments.rows,
+            total: fetchedDocuments.count
+          }
         );
       } else {
         ResponseHandler.send404(response);

@@ -141,19 +141,21 @@ class RoleController {
       queryBuilder.limit = pageLimit;
     }
     if (search) {
+      const searchList = search.split(/\s+/);
       queryBuilder.where = {
-        title: {
-          $iLike: `%${search}%`
-        }
+        $or: [{ title: { $iLike: { $any: searchList } } }]
       };
     }
-    roleDb.findAll(queryBuilder)
+    roleDb.findAndCountAll(queryBuilder)
     .then((roles) => {
-      if (roles.length > 0) {
+      if (roles.rows.length > 0) {
         ResponseHandler.sendResponse(
           response,
           200,
-          roles
+          {
+            roles: roles.rows,
+            total: roles.count
+          }
         );
       } else {
         ResponseHandler.send404(response);

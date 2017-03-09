@@ -49,7 +49,7 @@ describe('Search', () => {
       .end((error, response) => {
         expect(response.status).to.equal(200);
         let oldestDate = Date.now();
-        response.body.forEach((document) => {
+        response.body.documents.forEach((document) => {
           const createdDate = Date.parse(document.createdAt);
           expect(createdDate).to.be.lte(oldestDate);
           oldestDate = createdDate;
@@ -64,7 +64,7 @@ describe('Search', () => {
       .set({ 'x-access-token': adminUser.token })
       .end((error, response) => {
         expect(response.status).to.equal(200);
-        response.body.forEach(document =>
+        response.body.documents.forEach(document =>
           expect(document.title).to.contain(searchText) ||
           expect(document.content).to.contain(searchText)
         );
@@ -74,13 +74,13 @@ describe('Search', () => {
   });
 
   describe('Users', () => {
-    it('should return Documents limited by a specified number', (done) => {
+    it('should return Users limited by a specified number', (done) => {
       const searchLimit = 3;
       client.get(`/api/users/?limit=${searchLimit}`)
       .set({ 'x-access-token': adminUser.token })
       .end((error, response) => {
         expect(response.status).to.equal(200);
-        expect(response.body.length).to.equal(searchLimit);
+        expect(response.body.users.length).to.equal(searchLimit);
         done();
       });
     });
@@ -103,7 +103,7 @@ describe('Search', () => {
       .end((error, response) => {
         expect(response.status).to.equal(200);
         let oldestDate = Date.now();
-        response.body.forEach((user) => {
+        response.body.users.forEach((user) => {
           const createdDate = Date.parse(user.createdAt);
           expect(createdDate).to.be.lte(oldestDate);
           oldestDate = createdDate;
@@ -118,7 +118,7 @@ describe('Search', () => {
       .set({ 'x-access-token': adminUser.token })
       .end((error, response) => {
         expect(response.status).to.equal(200);
-        response.body.forEach(user =>
+        response.body.users.forEach(user =>
           expect(user.firstName).to.contain(searchText) ||
           expect(user.lastName).to.contain(searchText) ||
           expect(user.email).to.contain(searchText)
@@ -135,7 +135,7 @@ describe('Search', () => {
       .set({ 'x-access-token': adminUser.token })
       .end((error, response) => {
         expect(response.status).to.equal(200);
-        expect(response.body.length).to.equal(searchLimit);
+        expect(response.body.roles.length).to.equal(searchLimit);
         done();
       });
     });
@@ -158,7 +158,7 @@ describe('Search', () => {
       .end((error, response) => {
         expect(response.status).to.equal(200);
         let oldestDate = Date.now();
-        response.body.forEach((role) => {
+        response.body.roles.forEach((role) => {
           const createdDate = Date.parse(role.createdAt);
           expect(createdDate).to.be.lte(oldestDate);
           oldestDate = createdDate;
@@ -173,7 +173,7 @@ describe('Search', () => {
       .set({ 'x-access-token': adminUser.token })
       .end((error, response) => {
         expect(response.status).to.equal(200);
-        response.body.forEach(role =>
+        response.body.roles.forEach(role =>
           expect(role.title).to.contain(searchText)
         );
         done();

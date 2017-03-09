@@ -275,7 +275,7 @@ describe('Users:', () => {
       .set({ 'x-access-token': regularUserToken })
       .end((error, response) => {
         expect(response.status).to.equal(200);
-        expect(response.body).to.be.instanceof(Array);
+        expect(response.body).to.be.instanceof(Object);
         done();
       });
     });
@@ -285,7 +285,7 @@ describe('Users:', () => {
       .set({ 'x-access-token': adminUserToken })
       .end((error, response) => {
         expect(response.status).to.equal(200);
-        expect(response.body).to.be.instanceOf(Array);
+        expect(response.body).to.be.instanceOf(Object);
         done();
       });
     });
@@ -360,7 +360,7 @@ describe('Users:', () => {
       .set({ 'x-access-token': adminUserToken })
       .end((error, response) => {
         expect(response.status).to.equal(200);
-        expect(response.body).to.be.instanceof(Array);
+        expect(response.body).to.be.instanceof(Object);
         done();
       });
     });

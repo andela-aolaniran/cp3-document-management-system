@@ -301,7 +301,7 @@ describe('Documents:', () => {
       .set({ 'x-access-token': adminUser.token })
       .end((error, response) => {
         expect(response.status).to.equal(200);
-        expect(response.body).to.be.instanceof(Array);
+        expect(response.body).to.be.instanceof(Object);
         done();
       });
     });
@@ -362,8 +362,8 @@ describe('Documents:', () => {
       .set({ 'x-access-token': adminUser.token })
       .end((error, response) => {
         expect(response.status).to.equal(200);
-        const documents = response.body;
-        documents.forEach((document) => {
+        const data = response.body;
+        data.documents.forEach((document) => {
           expect(document.access).to.be.oneOf(['role', 'private', 'public']);
         });
         done();
@@ -378,8 +378,8 @@ describe('Documents:', () => {
       .set({ 'x-access-token': regularUser1.token })
       .end((error, response) => {
         expect(response.status).to.equal(200);
-        const documents = response.body;
-        documents.forEach((document) => {
+        const data = response.body;
+        data.documents.forEach((document) => {
           expect(document.access).to.be.oneOf(['role', 'private', 'public']);
           // ensure only this user private documents are returned
           if (document.access === 'private') {
