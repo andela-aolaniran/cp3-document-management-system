@@ -1,5 +1,6 @@
 import database from '../models';
-import Authenticator from '../middlewares/Authenticator';
+import ErrorHandler from '../helpers/ErrorHandler';
+import ResponseHandler from '../helpers/ResponseHandler';
 
 const roleDb = database.Role;
 
@@ -15,32 +16,23 @@ class RoleController {
    * @return{Void} - Returns void
    */
   static createRole(request, response) {
-    if (Authenticator.verifyAdmin(request.decoded.userId)) {
-      if (request.body && request.body.title) {
-        roleDb.create(request.body)
-        .then((role) => {
-          response.status(201).json({
-            id: role.id,
-            title: role.title
-          });
-        })
-        .catch((error) => {
-          response.status(400).json({
-            success: false,
-            message: error.errors
-          });
-        });
-      } else {
-        response.status(400).json({
-          success: false,
-          message: 'Required field(s) are missing'
-        });
-      }
-    } else {
-      response.status(403).json({
-        message: 'Admin permission required'
-      });
-    }
+    roleDb.create(request.body)
+    .then((role) => {
+      ResponseHandler.sendResponse(
+        response,
+        201,
+        {
+          id: role.id,
+          title: role.title
+        }
+      );
+    })
+    .catch((error) => {
+      ErrorHandler.handleRequestError(
+        response,
+        error
+      );
+    });
   }
 
   /**
@@ -50,30 +42,22 @@ class RoleController {
    * @return{Void} - Returns void
    */
   static updateRole(request, response) {
-    if (Authenticator.verifyAdmin(request.decoded.userId)) {
-      roleDb.update(request.body, {
-        where: {
-          id: request.params.id
-        }
-      })
-      .then((update) => {
-        if (update[0] === 1) {
-          response.status(200).json({
-            id: request.params.id,
-            title: request.body.title
-          });
-        } else {
-          response.status(404).json({
-            success: false,
-            message: 'Could not update the specified role'
-          });
-        }
-      });
-    } else {
-      response.status(403).json({
-        message: 'Admin permission required'
-      });
-    }
+    roleDb.update(request.body, {
+      where: {
+        id: request.params.id
+      }
+    })
+    .then((update) => {
+      if (update[0] === 1) {
+        ResponseHandler.sendResponse(
+          response,
+          200,
+          { message: 'Update Successful' }
+        );
+      } else {
+        ResponseHandler.send404(response);
+      }
+    });
   }
 
   /**
@@ -84,34 +68,20 @@ class RoleController {
    */
   static deleteRole(request, response) {
     const id = request.params.id;
-    if (Authenticator.verifyAdmin(request.decoded.userId)) {
-      if (id === 1 || id === 2) {
-        response.status(403).json({
-          message: 'Cannot delete admin role'
-        });
+    roleDb.destroy({
+      where: { id }
+    })
+    .then((status) => {
+      if (status) {
+        ResponseHandler.sendResponse(
+          response,
+          200,
+          { message: 'Delete Successful' }
+        );
       } else {
-        roleDb.destroy({
-          where: {
-            id
-          }
-        })
-        .then((status) => {
-          if (status) {
-            response.status(200).json({
-              message: 'Role Deleted Successfully'
-            });
-          } else {
-            response.status(404).json({
-              message: 'Deletion Failed'
-            });
-          }
-        });
+        ResponseHandler.send404(response);
       }
-    } else {
-      response.status(403).json({
-        message: 'Admin permission required'
-      });
-    }
+    });
   }
 
   /**
@@ -121,25 +91,26 @@ class RoleController {
    * @return{Void} - Returns void
    */
   static fetchRole(request, response) {
-    if (Authenticator.verifyAdmin(request.decoded.userId)) {
-      roleDb.findById(request.params.id, {
-        attributes: ['id', 'title', 'createdAt']
-      })
-      .then((role) => {
-        if (role) {
-          response.status(200).json(role);
-        } else {
-          response.status(404).json({
-            success: false,
-            message: 'Role Not Found'
-          });
-        }
-      });
-    } else {
-      response.status(403).json({
-        message: 'Admin permission required'
-      });
-    }
+    roleDb.findById(request.params.id, {
+      attributes: ['id', 'title', 'createdAt']
+    })
+    .then((role) => {
+      if (role) {
+        ResponseHandler.sendResponse(
+          response,
+          200,
+          role
+        );
+      } else {
+        ResponseHandler.send404(response);
+      }
+    })
+    .catch((error) => {
+      ErrorHandler.handleRequestError(
+        response,
+        error
+      );
+    });
   }
 
   /**
@@ -149,36 +120,47 @@ class RoleController {
    * @return{Void} - Returns void
    */
   static fetchRoles(request, response) {
-    if (Authenticator.verifyAdmin(request.decoded.userId)) {
-      const search = request.query.search;
-      const limit = request.query.limit;
-      const offset = request.query.offset;
-      const queryBuilder = {
-        attributes: ['id', 'title', 'createdAt'],
-        order: '"createdAt" DESC'
-      };
-      if (limit) {
-        queryBuilder.limit = limit >= 0 ? limit : 0;
-      }
-      if (offset) {
-        queryBuilder.offset = offset >= 0 ? offset : 0;
-      }
-      if (search) {
-        queryBuilder.where = {
-          title: {
-            $iLike: `%${search}%`
-          }
-        };
-      }
-      roleDb.findAll(queryBuilder)
-      .then((roles) => {
-        response.status(200).json(roles);
-      });
-    } else {
-      response.status(403).json({
-        message: 'Admin permission required'
-      });
+    const search = request.query.search;
+    const limit = request.query.limit;
+    const offset = request.query.offset;
+    const page = request.query.page;
+    const queryBuilder = {
+      attributes: ['id', 'title', 'createdAt'],
+      order: '"createdAt" DESC'
+    };
+    if (limit) {
+      queryBuilder.limit = limit;
     }
+    if (offset) {
+      queryBuilder.offset = offset;
+    }
+    if (page) {
+      // override offset if a page is specified, and default limit is 10
+      const pageLimit = limit || 10;
+      queryBuilder.offset = (page * pageLimit) - pageLimit;
+      queryBuilder.limit = pageLimit;
+    }
+    if (search) {
+      const searchList = search.split(/\s+/);
+      queryBuilder.where = {
+        $or: [{ title: { $iLike: { $any: searchList } } }]
+      };
+    }
+    roleDb.findAndCountAll(queryBuilder)
+    .then((roles) => {
+      if (roles.rows.length > 0) {
+        ResponseHandler.sendResponse(
+          response,
+          200,
+          {
+            roles: roles.rows,
+            total: roles.count
+          }
+        );
+      } else {
+        ResponseHandler.send404(response);
+      }
+    });
   }
 }
 

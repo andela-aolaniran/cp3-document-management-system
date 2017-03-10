@@ -29,26 +29,27 @@ describe('Search', () => {
     });
   });
 
-  describe('Documents', () => {
-    it('should return documents limited by a specified number', (done) => {
-      const searchLimit = 3;
+  describe('Search Documents', () => {
+    it(`should return a 400 (bad request) status code if an invalid
+    limit is specified`,
+    (done) => {
+      const searchLimit = -1;
       client.get(`/api/documents/?limit=${searchLimit}`)
       .set({ 'x-access-token': adminUser.token })
       .end((error, response) => {
-        expect(response.status).to.equal(200);
-        expect(response.body.length).to.equal(searchLimit);
+        expect(response.status).to.equal(400);
         done();
       });
     });
 
-    it('should return documents ordered by published date in descending order',
+    it('should return Documents ordered by createdAt date in descending order',
     (done) => {
       client.get('/api/documents/')
       .set({ 'x-access-token': adminUser.token })
       .end((error, response) => {
         expect(response.status).to.equal(200);
         let oldestDate = Date.now();
-        response.body.forEach((document) => {
+        response.body.documents.forEach((document) => {
           const createdDate = Date.parse(document.createdAt);
           expect(createdDate).to.be.lte(oldestDate);
           oldestDate = createdDate;
@@ -57,12 +58,13 @@ describe('Search', () => {
       });
     });
 
-    it('should return only documents that match a specific query', (done) => {
+    it('should return only Documents that match a specific query', (done) => {
       const searchText = SpecHelper.validPrivateDocument1.title.split(/\s/)[0];
       client.get(`/api/documents/?search=${searchText}`)
       .set({ 'x-access-token': adminUser.token })
       .end((error, response) => {
-        response.body.forEach(document =>
+        expect(response.status).to.equal(200);
+        response.body.documents.forEach(document =>
           expect(document.title).to.contain(searchText) ||
           expect(document.content).to.contain(searchText)
         );
@@ -72,13 +74,24 @@ describe('Search', () => {
   });
 
   describe('Users', () => {
-    it('should return documents limited by a specified number', (done) => {
+    it('should return Users limited by a specified number', (done) => {
       const searchLimit = 3;
       client.get(`/api/users/?limit=${searchLimit}`)
       .set({ 'x-access-token': adminUser.token })
       .end((error, response) => {
         expect(response.status).to.equal(200);
-        expect(response.body.length).to.equal(searchLimit);
+        expect(response.body.users.length).to.equal(searchLimit);
+        done();
+      });
+    });
+
+    it('should return a 400 status code if an invalid limit is specified',
+    (done) => {
+      const searchLimit = -1;
+      client.get(`/api/users/?limit=${searchLimit}`)
+      .set({ 'x-access-token': adminUser.token })
+      .end((error, response) => {
+        expect(response.status).to.equal(400);
         done();
       });
     });
@@ -90,7 +103,7 @@ describe('Search', () => {
       .end((error, response) => {
         expect(response.status).to.equal(200);
         let oldestDate = Date.now();
-        response.body.forEach((user) => {
+        response.body.users.forEach((user) => {
           const createdDate = Date.parse(user.createdAt);
           expect(createdDate).to.be.lte(oldestDate);
           oldestDate = createdDate;
@@ -100,11 +113,12 @@ describe('Search', () => {
     });
 
     it('should return only users that match a specific query', (done) => {
-      const searchText = 'Azeez';
+      const searchText = adminUser.firstName;
       client.get(`/api/users/?search=${searchText}`)
       .set({ 'x-access-token': adminUser.token })
       .end((error, response) => {
-        response.body.forEach(user =>
+        expect(response.status).to.equal(200);
+        response.body.users.forEach(user =>
           expect(user.firstName).to.contain(searchText) ||
           expect(user.lastName).to.contain(searchText) ||
           expect(user.email).to.contain(searchText)
@@ -116,12 +130,23 @@ describe('Search', () => {
 
   describe('Roles', () => {
     it('should return Roles limited by a specified number', (done) => {
-      const searchLimit = 1;
+      const searchLimit = 2;
       client.get(`/api/roles/?limit=${searchLimit}`)
       .set({ 'x-access-token': adminUser.token })
       .end((error, response) => {
         expect(response.status).to.equal(200);
-        expect(response.body.length).to.equal(searchLimit);
+        expect(response.body.roles.length).to.equal(searchLimit);
+        done();
+      });
+    });
+
+    it('should return a 400 status code if an invalid limit is specified',
+    (done) => {
+      const searchLimit = -1;
+      client.get(`/api/roles/?limit=${searchLimit}`)
+      .set({ 'x-access-token': adminUser.token })
+      .end((error, response) => {
+        expect(response.status).to.equal(400);
         done();
       });
     });
@@ -133,7 +158,7 @@ describe('Search', () => {
       .end((error, response) => {
         expect(response.status).to.equal(200);
         let oldestDate = Date.now();
-        response.body.forEach((role) => {
+        response.body.roles.forEach((role) => {
           const createdDate = Date.parse(role.createdAt);
           expect(createdDate).to.be.lte(oldestDate);
           oldestDate = createdDate;
@@ -144,10 +169,11 @@ describe('Search', () => {
 
     it('should return only Roles that match a specific query', (done) => {
       const searchText = 'regular';
-      client.get(`/api/users/?search=${searchText}`)
+      client.get(`/api/roles/?search=${searchText}`)
       .set({ 'x-access-token': adminUser.token })
       .end((error, response) => {
-        response.body.forEach(role =>
+        expect(response.status).to.equal(200);
+        response.body.roles.forEach(role =>
           expect(role.title).to.contain(searchText)
         );
         done();

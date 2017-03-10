@@ -15,6 +15,7 @@ describe('Documents Model: ', () => {
       done();
     });
   });
+
   describe('Create Document', () => {
     it('should allow proper creation of a valid public access document',
     (done) => {
@@ -42,7 +43,6 @@ describe('Documents Model: ', () => {
         done();
       });
     });
-
 
     it('should throw validation error for a document without a valid content',
     (done) => {

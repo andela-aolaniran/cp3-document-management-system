@@ -15,7 +15,7 @@
     "prestart": "npm run transpile",
     "heroku-postbuild": "npm run migrate && npm run seed",
     "start": "node dist/app.js",
-    "develop:server": "NODE_ENV=development npm-run-all --parallel test:watch lint:watch open:server",
+    "develop:server": "NODE_ENV=development npm-run-all --parallel lint:watch open:server",
     "open:server": "nodemon server/app.js --exec babel-node",
     "cover": "rm -rf coverage/ && NODE_ENV=test babel-node ./node_modules/babel-istanbul/lib/cli.js cover _mocha -- -R spec server/tests/**/*.spec.js client/tests",
     "coveralls": "npm run cover && cat ./coverage/lcov.info | coveralls"
