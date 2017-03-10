@@ -14,6 +14,28 @@ function processingSignUp(state = initialState.processingSignUp, action) {
   }
 }
 
+function documents(state = initialState.documents, action) {
+  switch (action.type) {
+  case ActionTypes.SET_ALL_DOCUMENTS: {
+    return action.documents;
+  }
+  default: {
+    return state;
+  }
+  }
+}
+
+function fetchingDocuments(state = initialState.fetchingDocuments, action) {
+  switch (action.type) {
+  case ActionTypes.FETCHING_DOCUMENTS: {
+    return action.isFetching;
+  }
+  default: {
+    return state;
+  }
+  }
+}
+
 function processingSignIn(state = initialState.processingSignIn, action) {
   switch (action.type) {
   case ActionTypes.PROCESSING_SIGN_IN: {
@@ -28,7 +50,9 @@ function processingSignIn(state = initialState.processingSignIn, action) {
 const rootReducer = combineReducers({
   user,
   processingSignUp,
-  processingSignIn
+  processingSignIn,
+  documents,
+  fetchingDocuments
 });
 
 export default rootReducer;

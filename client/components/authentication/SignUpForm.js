@@ -3,10 +3,11 @@ import { bindActionCreators } from 'redux';
 import { Link } from 'react-router';
 import { connect } from 'react-redux';
 import Validator from 'validator';
-import Notifications, { notify } from 'react-notify-toast';
+import { notify } from 'react-notify-toast';
 import * as userActions from '../../actions/userActions';
 import TextInput from '../common/TextInput';
 import * as authActions from '../../actions/authActions';
+import Button from '../common/Button';
 
 /**
  * Class to create a custom user sign up form
@@ -102,14 +103,13 @@ class SignUpForm extends React.Component {
     return (
       <div className="row">
         <div className="center-align">
-          <button
+          <Button
             type="submit"
             name="btn_login"
+            value="Create Account"
             disabled={this.props.processingSignUp}
             className="btn waves-effect waves-light teal darken-3 center-align"
-          >
-            Create Account
-          </button>
+          />
           <Link to="signin">
             <h6
               className="center-align"
@@ -130,7 +130,6 @@ class SignUpForm extends React.Component {
         <div className="col s6 offset-s3">
           <h3 className="left-align teal-text darken-3">Yo! Sign Up Now</h3>
           <div className="row grey lighten-5 z-depth-2 form-padding">
-            <Notifications />
             <form onSubmit={this.handleSignUp}>
               <br />
               <div className="input-field col s12">

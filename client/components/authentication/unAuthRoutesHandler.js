@@ -1,18 +1,18 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-export default function (ComposedComponent) {
+export default function (ComposedComponent, redirectUrl) {
   class Authenticate extends React.Component {
 
     componentWillMount() {
-      if (!this.props.user.token) {
-        this.context.router.push('/signin');
+      if (this.props.user.token) {
+        this.context.router.push('/documents');
       }
     }
 
     componentWillUpdate(nextProps) {
-      if (!nextProps.user.token) {
-        this.context.router.push('/signin');
+      if (nextProps.user.token) {
+        this.context.router.push('/documents');
       }
     }
 

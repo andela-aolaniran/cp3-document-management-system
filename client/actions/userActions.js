@@ -23,7 +23,6 @@ export function setUser(newUser) {
  * the user credential data
  */
 export function login(userCredentials) {
-  console.log('user credentials: ', userCredentials)
   return (dispatch) => {
     httpRequester
     .post('/api/users/login')
@@ -64,7 +63,6 @@ export function signOut(userToken) {
     .post('/api/users/logout')
     .set({ 'x-access-token': userToken })
     .end((error, response) => {
-      console.log('signout response gotten', response.body);
       if (response.status === 200) {
         localStorage.removeItem('dms_user');
         const emptyUser = {

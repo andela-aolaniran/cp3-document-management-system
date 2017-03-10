@@ -13,5 +13,7 @@ export default {
   signInErrors: [],
   signUpErrors: [],
   processingSignUp: false,
-  processingSignIn: false
+  processingSignIn: false,
+  fetchingDocuments: false,
+  loadingDocument: false
 };

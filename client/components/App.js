@@ -1,6 +1,7 @@
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import Notifications from 'react-notify-toast';
 import Header from './common/Header';
 import * as userActions from '../actions/userActions';
 
@@ -9,8 +10,8 @@ import * as userActions from '../actions/userActions';
  */
 class App extends Component {
 
-  constructor(props) {
-    super(props);
+  constructor(props, context) {
+    super(props, context);
     this.handleSignOut = this.handleSignOut.bind(this);
     this.handleAvailableDocuments = this.handleAvailableDocuments.bind(this);
     this.handleProfileUpdate = this.handleProfileUpdate.bind(this);
@@ -43,22 +44,19 @@ class App extends Component {
   handleSignOut(event) {
     event.preventDefault();
     this.props.actions.signOut(this.props.user.token);
-    console.log('handle user signOut called');
   }
 
   handleAvailableDocuments(event) {
     event.preventDefault();
-    console.log('handle available documents called');
+    this.context.router.push('/documents');
   }
 
   handleProfileUpdate(event) {
     event.preventDefault();
-    console.log('handle profile update');
   }
 
   handleViewUsers(event) {
     event.preventDefault();
-    console.log('handle view users called');
   }
 
   /**
@@ -69,6 +67,7 @@ class App extends Component {
     return (
       <div >
         { this.renderNavHeader() }
+        <Notifications />
         { this.props.children }
       </div>
     );
@@ -79,6 +78,10 @@ App.propTypes = {
   children: PropTypes.object.isRequired,
   user: PropTypes.object.isRequired,
   actions: PropTypes.object.isRequired
+};
+
+App.contextTypes = {
+  router: React.PropTypes.object.isRequired
 };
 
 /**
