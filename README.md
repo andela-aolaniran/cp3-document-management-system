@@ -333,10 +333,14 @@ Users are categorized by roles.
     ADMIN_LAST_NAME=admin_lastname
     ADMIN_PASSWORD=mypassword 
     ````
-4. Create your feature branch
-5. Commit your changes
-6. Push to the remote branch
-7. Open a Pull Request
+5. Run the following command in your terminal/shell (initializes and seeds the database tables)
+    ```` 
+    sequelize db:migrate && sequelize db:seed:all
+    ````
+6. Create your feature branch
+7. Commit your changes
+8. Push to the remote branch
+9. Open a Pull Request
 
 ## Task List
 - [x] Setup Version Control System
