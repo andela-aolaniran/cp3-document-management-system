@@ -321,11 +321,37 @@ Users are categorized by roles.
     
 ## Contributing
 1. Fork this repository to your GitHub account
-2. Clone the forked repository
-3. Create your feature branch
-4. Commit your changes
-5. Push to the remote branch
-6. Open a Pull Request
+2. Clone the forked repository and cd into it
+3. Create a .env file in the root of the project using this sample configuration 
+(text within the < > represent placeholders)
+    ````
+    SECRET_KEY=mysecretkey
+    DATABASE_URL=postgres://<username>:<password>@<mydatabaseservice.com>:<port>/<databasename>
+    TEST_DB_URL=postgres://<username>:<password>@<mydatabaseservice.com>:<port>/<databasename>
+    DEV_DB_URL=postgres:postgres://<username>:<password>@<mydatabaseservice.com>:<port>/<databasename>
+    ADMIN_EMAIL=<admin@mail.com>
+    ADMIN_FIRST_NAME=<admin_first_name>
+    ADMIN_LAST_NAME=<admin_lastname>
+    ADMIN_PASSWORD=<mypassword>
+    ````
+5. Install all dependencies by running this command below in your terminal/shell
+    ````
+    npm install
+    ````
+6. Run the command below in your terminal/shell (initializes and seeds the database tables)
+    ```` 
+    sequelize db:migrate && sequelize db:seed:all
+    ````
+7. To run the development server enter the command below in your terminal/shell
+    ````
+    npm run develop:server
+    ````
+    You should also explore the scripts section of the package.json to gain familiarity with other npm commands available 
+    for this app.
+8. Create your feature branch
+9. Commit your changes
+10. Push to the remote branch
+11. Open a Pull Request
 
 ## Task List
 - [x] Setup Version Control System
