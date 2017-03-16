@@ -321,7 +321,7 @@ Users are categorized by roles.
     
 ## Contributing
 1. Fork this repository to your GitHub account
-2. Clone the forked repository
+2. Clone the forked repository and cd into it
 3. Create a .env file in the root of the project using this sample configuration 
 (text within the < > represent placeholders)
     ````
@@ -334,14 +334,24 @@ Users are categorized by roles.
     ADMIN_LAST_NAME=<admin_lastname>
     ADMIN_PASSWORD=<mypassword>
     ````
-5. Run the following command in your terminal/shell (initializes and seeds the database tables)
+5. Install all dependencies by running this command below in your terminal/shell
+    ````
+    npm install
+    ````
+6. Run the command below in your terminal/shell (initializes and seeds the database tables)
     ```` 
     sequelize db:migrate && sequelize db:seed:all
     ````
-6. Create your feature branch
-7. Commit your changes
-8. Push to the remote branch
-9. Open a Pull Request
+7. To run the development server enter the command below in your terminal/shell
+    ````
+    npm run develop:server
+    ````
+    You should also explore the scripts section of the package.json to gain familiarity with other npm commands available 
+    for this app.
+8. Create your feature branch
+9. Commit your changes
+10. Push to the remote branch
+11. Open a Pull Request
 
 ## Task List
 - [x] Setup Version Control System
