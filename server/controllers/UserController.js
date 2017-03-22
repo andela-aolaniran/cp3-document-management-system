@@ -213,11 +213,15 @@ class UserController {
             user.update({ activeToken: token })
             .then(() => {
               // send the token here
-              ResponseHandler.sendResponse(
-                response,
-                200,
-                { token }
-              );
+              response.status(200).json({
+                email: user.email,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                roleId: user.roleId,
+                id: user.id,
+                createdAt: user.createdAt,
+                token
+              });
             });
           } else {
             ResponseHandler.send401(
