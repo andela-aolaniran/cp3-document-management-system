@@ -1,5 +1,6 @@
 import supertest from 'supertest';
 import { expect } from 'chai';
+import database from '../../models';
 import app from '../../config/server';
 import SpecHelper from '../helpers/SpecHelper';
 import SeedHelper from '../helpers/SeedHelper';
@@ -31,6 +32,13 @@ describe('Roles:', () => {
           done();
         });
       });
+    });
+  });
+
+  after((done) => {
+    database.sequelize.sync({ force: true })
+    .then(() => {
+      done();
     });
   });
 
