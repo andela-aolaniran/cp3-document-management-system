@@ -34,6 +34,10 @@ export default (sequelize, DataTypes) => {
           msg: 'OwnerId must be an integer'
         }
       }
+    },
+    ownerRoleId: {
+      type: DataTypes.INTEGER,
+      allowNull: false
     }
   }, {
     classMethods: {

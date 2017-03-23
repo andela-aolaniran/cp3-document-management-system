@@ -46,7 +46,8 @@ class SeedHelper {
   static populateRoleTable() {
     const roles = [
       SpecHelper.validAdminRole,
-      SpecHelper.validRegularRole
+      SpecHelper.validRegularRole,
+      SpecHelper.generateRandomRole('random')
     ];
     return database.Role.bulkCreate(roles, { individualHooks: true });
   }

@@ -26,6 +26,10 @@ module.exports = {
         onUpdate: 'cascade',
         onDelete: 'no action'
       },
+      ownerRoleId: {
+        type: Sequelize.INTEGER,
+        allowNull: false
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

@@ -13,6 +13,13 @@ describe('Role Model', () => {
     });
   });
 
+  after((done) => {
+    database.sequelize.sync({ force: true })
+    .then(() => {
+      done();
+    });
+  });
+
   describe('Create Role', () => {
     it('should allow creation of a new valid role', (done) => {
       const role = SpecHelper.validAdminRole;

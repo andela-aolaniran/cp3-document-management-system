@@ -1,5 +1,6 @@
 import RoleController from '../controllers/RoleController';
 import Authenticator from '../middlewares/Authenticator';
+import RoleMiddleware from '../middlewares/RoleMiddleware';
 
 /**
  * Class for creating Role routes
@@ -28,6 +29,7 @@ class RoleRoutes {
     router.get(
       '/api/roles',
       Authenticator.authenticateUser,
+      RoleMiddleware.validateGetRequest,
       RoleController.fetchRoles
     );
   }
@@ -41,6 +43,7 @@ class RoleRoutes {
     router.get(
       '/api/roles/:id',
       Authenticator.authenticateUser,
+      RoleMiddleware.validateGetRequest,
       RoleController.fetchRole
     );
   }
@@ -54,6 +57,7 @@ class RoleRoutes {
     router.post(
       '/api/roles',
       Authenticator.authenticateUser,
+      RoleMiddleware.validateCreateRequest,
       RoleController.createRole
     );
   }
@@ -67,6 +71,7 @@ class RoleRoutes {
     router.put(
       '/api/roles/:id',
       Authenticator.authenticateUser,
+      RoleMiddleware.validateUpdateRequest,
       RoleController.updateRole
     );
   }
@@ -80,6 +85,7 @@ class RoleRoutes {
     router.delete(
       '/api/roles/:id',
       Authenticator.authenticateUser,
+      RoleMiddleware.validateDeleteRequest,
       RoleController.deleteRole);
   }
 }
