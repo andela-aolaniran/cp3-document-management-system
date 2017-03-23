@@ -5,13 +5,20 @@ import SpecHelper from '../helpers/SpecHelper';
 
 const documentDB = database.Document;
 
-describe('Documents Model: ', () => {
+describe('Document Model: ', () => {
   // clear our DB and insert our default roles and user constraints
   before((done) => {
     database.sequelize.sync({ force: true })
     .then(() => SeedHelper.populateRoleTable())
     .then(() => {
       SeedHelper.populateUserTable();
+      done();
+    });
+  });
+
+  after((done) => {
+    database.sequelize.sync({ force: true })
+    .then(() => {
       done();
     });
   });
