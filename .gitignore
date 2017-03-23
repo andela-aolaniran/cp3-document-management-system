@@ -35,3 +35,18 @@ jspm_packages
 
 # Optional REPL history
 .node_repl_history
+
+# Ignore coveralls repo token
+.coveralls.yml
+
+# Ignore npm debug log
+npm-debug.log
+
+# Ignore configuration files
+.env
+
+# mac files
+.DS_Store
+
+# ignore generated dist files
+dist
