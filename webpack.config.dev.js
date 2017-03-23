@@ -10,7 +10,7 @@ module.exports = {
     'eventsource-polyfill',
     // note that it reloads the page if hot module reloading fails.
     'webpack-hot-middleware/client?reload=true',
-    path.resolve(__dirname, 'client/index.jsx')
+    path.resolve(__dirname, 'client/index')
   ],
   target: 'web',
   output: {
@@ -24,12 +24,19 @@ module.exports = {
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoErrorsPlugin()
+    new webpack.NoErrorsPlugin(),
+    new webpack.ProvidePlugin({
+      $: 'jquery',
+      jQuery: 'jquery'
+    })
   ],
+  resolve: {
+    extensions: ['', '.js', '.jsx']
+  },
   module: {
     loaders: [
       {
-        test: /\.jsx$/,
+        test: /\.jsx?$/,
         include: path.join(__dirname, 'client'),
         loaders: ['babel']
       },
