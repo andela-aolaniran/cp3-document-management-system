@@ -1,7 +1,7 @@
-import webpack from 'webpack';
-import path from 'path';
+const webpack = require('webpack');
+const path = require('path');
 
-export default {
+module.exports = {
   debug: true,
   devtool: 'inline-source-map',
   noInfo: false,
@@ -10,12 +10,12 @@ export default {
     'eventsource-polyfill',
     // note that it reloads the page if hot module reloading fails.
     'webpack-hot-middleware/client?reload=true',
-    path.resolve(__dirname, 'client/index')
+    path.resolve(__dirname, 'client/index.jsx')
   ],
   target: 'web',
   output: {
     // Note: Physical files are only output by the production build task.
-    path: path.join(__dirname, 'dist'),
+    path: path.join(__dirname, '/public'),
     publicPath: '/',
     filename: 'bundle.js'
   },
@@ -29,8 +29,8 @@ export default {
   module: {
     loaders: [
       {
-        test: /\.js$/,
-        include: path.join(__dirname, 'src'),
+        test: /\.jsx$/,
+        include: path.join(__dirname, 'client'),
         loaders: ['babel']
       },
       {
