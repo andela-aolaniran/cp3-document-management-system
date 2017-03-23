@@ -29,7 +29,7 @@ class DocumentsList extends React.Component {
 
   generateDocumentsList() {
     if (!this.props.fetchingDocuments) {
-      return this.props.documents.map(document =>
+      return this.props.documents.documents.map(document =>
         (
           <li className="collection-item" key={document.id}>
             <Link to={`/documents/${document.id}`}>

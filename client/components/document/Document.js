@@ -2,7 +2,9 @@ import React, { PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { notify } from 'react-notify-toast';
-import { fetchDocumentsAsync, updateDocumentAsync } from '../../actions/documentActions';
+import {
+  fetchDocumentsAsync, updateDocumentAsync
+} from '../../actions/documentActions';
 import Button from '../common/Button';
 
 /**
@@ -29,7 +31,7 @@ class Document extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const selectedDocument = (nextProps.documents.filter(document =>
+    const selectedDocument = (nextProps.documents.documents.filter(document =>
       String(document.id) === nextProps.params.id))[0];
     if (selectedDocument) {
       this.setState({ selectedDocument: Object.assign({}, selectedDocument) });
@@ -64,12 +66,12 @@ class Document extends React.Component {
       title: this.state.selectedDocument.title,
       content: this.state.selectedDocument.content,
       access: this.state.selectedDocument.access
-    }
+    };
     this.props.updateDocumentAsync(
       this.props.user.token,
       docFields,
       this.state.selectedDocument.id);
-      notify.show(
+    notify.show(
       'Sent update',
       'success',
       1000
@@ -163,7 +165,7 @@ class Document extends React.Component {
     }
     return (
       <div>
-        <h3> Oops... Cannot find that document </h3>
+        <h3> Fetching document </h3>
       </div>
     );
   }
