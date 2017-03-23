@@ -1,13 +1,14 @@
 import supertest from 'supertest';
 import { expect } from 'chai';
 import app from '../../config/server';
+import database from '../../models';
 import SpecHelper from '../helpers/SpecHelper';
 import SeedHelper from '../helpers/SeedHelper';
 
 const client = supertest.agent(app);
 
 describe('Documents:', () => {
-  const adminUser = SpecHelper.validAdminUser;
+  const adminUser = Object.assign({}, SpecHelper.validAdminUser);
   const regularUser1 = SpecHelper.generateRandomUser(2);
   const regularUser2 = SpecHelper.generateRandomUser(2);
   const regularUser3 = SpecHelper.generateRandomUser(2);
@@ -47,6 +48,13 @@ describe('Documents:', () => {
           });
         });
       });
+    });
+  });
+
+  after((done) => {
+    database.sequelize.sync({ force: true })
+    .then(() => {
+      done();
     });
   });
 
