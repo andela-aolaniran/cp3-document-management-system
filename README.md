@@ -99,6 +99,12 @@ Users are categorized by roles.
     * Body - `application/json`
     ````javascript
     {
+      "id": 5,
+      "roleId": 2,
+      "email": "lastname.firstname@mail.com",
+      "firstName": "firstname",
+      "lastName": "lastname",
+      "createdAt": "2017-03-08T18:13:42.019Z",
       "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
     }
     ````

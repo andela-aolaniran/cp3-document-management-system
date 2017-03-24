@@ -13,7 +13,6 @@
     "test:watch": "npm run test -- --watch",
     "transpile": "rm -rf dist/ && babel server --presets babel-preset-es2015 --out-dir dist --ignore ./server/tests",
     "prestart": "npm run transpile",
-    "heroku-postbuild": "npm run migrate && npm run seed",
     "start": "node dist/app.js",
     "develop:server": "NODE_ENV=development npm-run-all --parallel lint:watch open:server",
     "open:server": "nodemon server/app.js --exec babel-node",

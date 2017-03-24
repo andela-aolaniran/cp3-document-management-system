@@ -1,5 +1,6 @@
 import supertest from 'supertest';
 import { expect } from 'chai';
+import database from '../../models';
 import app from '../../config/server';
 import SpecHelper from '../helpers/SpecHelper';
 import SeedHelper from '../helpers/SeedHelper';
@@ -24,6 +25,13 @@ describe('Users:', () => {
         regularUserId = response.body.id;
         done();
       });
+    });
+  });
+
+  after((done) => {
+    database.sequelize.sync({ force: true })
+    .then(() => {
+      done();
     });
   });
 
@@ -628,7 +636,7 @@ describe('Users:', () => {
   });
 
   describe('Delete User', () => {
-    const currentAdminUser = SpecHelper.validAdminUser;
+    const currentAdminUser = Object.assign({}, SpecHelper.validAdminUser);
     before((done) => {
       client.post('/api/users/login')
       .send(currentAdminUser)
