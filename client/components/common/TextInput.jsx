@@ -4,7 +4,7 @@ import React from 'react';
  * Method to create a form text input field
  * @param {Object} props - properties object passed down from the components
  * parent
- * @return {Object} - Component to be rendered 
+ * @return {Object} - Component to be rendered
  */
 const TextInput = props =>
   (
