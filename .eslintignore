@@ -4,3 +4,4 @@ migrations/*
 seeders/*
 coverage/*
 dist/*
+public/*
