@@ -4,8 +4,9 @@ import app from './config/server';
 import addDevSetup from './config/addDevSetup';
 
 // add webpack dev tools if we are in development mode
-if (process.env.NODE_ENV === 'development') {
+if (process.env.NODE_ENV !== 'production') {
   addDevSetup(app);
+  console.log('using development settings');
 }
 
 // configure our catch all routes
