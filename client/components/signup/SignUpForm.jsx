@@ -2,6 +2,7 @@ import React from 'react';
 import validator from 'validator';
 import TextInput from '../common/TextInput';
 import Constant from '../../constants/Constant';
+import Button from '../common/Button';
 
 /**
  * Class for creating a SignUP form object
@@ -114,12 +115,13 @@ class SignUpForm extends React.Component {
           value={this.state.confirmPassword}
           onChange={this.handleChange}
         />
-        <br />
-        <button
-          type="submit"
+        <Button
           disabled={!this.enableSignupButton() ? 'disabled' : ''}
+          value="Sign Up"
+          type="submit"
           className="btn btn-primary btn-block"
-        >Submit</button>
+          onClick={this.handleSubmit}
+        />
       </form>
     );
   }
