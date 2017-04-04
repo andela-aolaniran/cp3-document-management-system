@@ -1,9 +1,9 @@
 import React from 'react';
-import SignUpForm from './signup/SignUpForm';
+import SignInForm from './signin/SignInForm';
 
 const App = () => (
   <div>
-    <SignUpForm />
+    <SignInForm />
   </div>
 );
 

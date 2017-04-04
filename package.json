@@ -13,7 +13,7 @@
     "lint:watch": "npm run lint -- --watch",
     "test:watch": "npm run test -- --watch",
     "transpile": "rm -rf dist/ && babel server --presets babel-preset-es2015 --out-dir dist --ignore ./server/tests",
-    "prestart": "npm run transpile",
+    "prestart": "npm run transpile && npm run build:production",
     "start": "NODE_ENV=production node dist/app.js",
     "build:production": "webpack --config webpack.config.prod.js",
     "develop:server": "NODE_ENV=development npm-run-all --parallel lint:watch open:server",
