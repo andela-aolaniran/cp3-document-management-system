@@ -116,5 +116,9 @@
     "webpack": "1.13.0",
     "webpack-dev-middleware": "1.6.1",
     "webpack-hot-middleware": "2.10.0"
+  },
+  "engines":{
+    "node": "6.11.1",
+    "npm": "3.10.10"
   }
 }
