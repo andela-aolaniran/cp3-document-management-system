@@ -1,30 +1,13 @@
-const webpack = require('webpack');
 const path = require('path');
+const webpack = require('webpack');
 
 module.exports = {
-  debug: true,
-  devtool: 'inline-source-map',
-  noInfo: false,
-  entry: [
-    // necessary for hot reloading with IE
-    'eventsource-polyfill',
-    // note that it reloads the page if hot module reloading fails.
-    'webpack-hot-middleware/client?reload=true',
-    path.resolve(__dirname, 'client/index')
-  ],
-  target: 'web',
+  entry: path.join(__dirname, '/client/index.jsx'),
   output: {
-    // Note: Physical files are only output by the production build task.
-    path: path.join(__dirname, '/public'),
-    publicPath: '/',
-    filename: 'bundle.js'
-  },
-  devServer: {
-    contentBase: path.resolve(__dirname, 'client')
+    filename: 'bundle.js',
+    path: path.join(__dirname, '/public')
   },
   plugins: [
-    new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoErrorsPlugin(),
     new webpack.ProvidePlugin({
       $: 'jquery',
       jQuery: 'jquery'

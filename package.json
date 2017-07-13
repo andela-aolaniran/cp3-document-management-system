@@ -4,7 +4,8 @@
   "description": "A simple document management system api, with a web app which consumes the api",
   "main": "index.js",
   "scripts": {
-    "mocha": "mocha --timeout 5000 --compilers js:babel-core/register server/tests/**/*.spec.js client/tests",
+    "mocha": "mocha --timeout 5000 --compilers js:babel-core/register server/tests/**/*.spec.js client/tests/**/*.spec.jsx",
+    "mocha:client": "mocha --timeout 5000 --compilers js:babel-core/register client/tests/**/*.spec.jsx",
     "migrate": "sequelize db:migrate",
     "seed": "sequelize db:seed:all",
     "test": "NODE_ENV=test npm run mocha",
@@ -13,10 +14,11 @@
     "test:watch": "npm run test -- --watch",
     "transpile": "rm -rf dist/ && babel server --presets babel-preset-es2015 --out-dir dist --ignore ./server/tests",
     "prestart": "npm run transpile",
-    "start": "node dist/app.js",
+    "start": "NODE_ENV=production node dist/app.js",
+    "build:production": "webpack --config webpack.config.prod.js",
     "develop:server": "NODE_ENV=development npm-run-all --parallel lint:watch open:server",
     "open:server": "nodemon server/app.js --exec babel-node",
-    "cover": "rm -rf coverage/ && NODE_ENV=test babel-node ./node_modules/babel-istanbul/lib/cli.js cover _mocha -- -R spec server/tests/**/*.spec.js client/tests",
+    "cover": "rm -rf coverage/ && NODE_ENV=test babel-node ./node_modules/babel-istanbul/lib/cli.js cover _mocha -- -R spec server/tests/**/*.spec.js client/tests/**/*.spec.jsx",
     "coveralls": "npm run cover && cat ./coverage/lcov.info | coveralls"
   },
   "repository": {
@@ -42,7 +44,6 @@
     "coveralls": "^2.11.15",
     "cross-env": "1.0.7",
     "css-loader": "0.23.1",
-    "enzyme": "2.2.0",
     "eslint": "^3.14.1",
     "eslint-config-airbnb": "^14.0.0",
     "eslint-plugin-import": "^2.2.0",
@@ -50,8 +51,6 @@
     "eslint-plugin-react": "^6.9.0",
     "eslint-watch": "2.1.11",
     "eventsource-polyfill": "0.9.6",
-    "expect": "1.19.0",
-    "express": "4.13.4",
     "extract-text-webpack-plugin": "1.0.1",
     "file-loader": "0.8.5",
     "gulp": "^3.9.1",
@@ -65,15 +64,13 @@
     "mocha-lcov-reporter": "^1.2.0",
     "nock": "8.0.0",
     "npm-run-all": "1.8.0",
-    "react-addons-test-utils": "15.0.2",
+    "react-addons-test-utils": "^15.4.2",
     "redux-immutable-state-invariant": "1.2.3",
     "redux-mock-store": "1.0.2",
     "rimraf": "2.5.2",
     "run-sequence": "^1.2.2",
     "style-loader": "0.13.1",
-    "url-loader": "0.5.7",
-    "webpack-dev-middleware": "1.6.1",
-    "webpack-hot-middleware": "2.10.0"
+    "url-loader": "0.5.7"
   },
   "dependencies": {
     "babel": "^6.5.2",
@@ -94,7 +91,9 @@
     "bootstrap": "3.3.6",
     "chai": "^3.5.0",
     "dotenv": "^4.0.0",
+    "expect": "1.19.0",
     "express": "^4.14.1",
+    "enzyme": "2.2.0",
     "faker": "^3.1.0",
     "fm-log": "^4.4.3",
     "jquery": "2.2.3",
@@ -103,8 +102,8 @@
     "open": "0.0.5",
     "pg": "^6.1.2",
     "pg-hstore": "^2.3.2",
-    "react": "15.0.2",
-    "react-dom": "15.0.2",
+    "react": "^15.4.1",
+    "react-dom": "^15.4.1",
     "react-redux": "4.4.5",
     "react-router": "2.4.0",
     "react-router-redux": "4.0.4",
@@ -113,7 +112,13 @@
     "sequelize": "^3.30.0",
     "sequelize-cli": "^2.4.0",
     "supertest": "^3.0.0",
-    "toastr": "2.1.2",
-    "webpack": "1.13.0"
+    "validator": "^7.0.0",
+    "webpack": "1.13.0",
+    "webpack-dev-middleware": "1.6.1",
+    "webpack-hot-middleware": "2.10.0"
+  },
+  "engines":{
+    "node": "6.11.1",
+    "npm": "3.10.10"
   }
 }
