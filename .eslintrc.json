@@ -22,6 +22,7 @@
   ],
   "rules": {
     "import/no-unresolved": 0,
+    "import/extensions": 0,
     "semi": 1,
     "no-var":1,
     "prefer-const": 1,
